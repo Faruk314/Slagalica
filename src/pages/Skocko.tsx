@@ -16,11 +16,97 @@ const Skocko = () => {
     "/images/heart.png",
     "/images/diamond.png",
     "/images/star.png",
+    "/images/skocko.png",
+    "/images/club.png",
+    "/images/spades.png",
+    "/images/heart.png",
+    "/images/diamond.png",
+    "/images/star.png",
+    "/images/skocko.png",
+    "/images/club.png",
+    "/images/spades.png",
+    "/images/heart.png",
+    "/images/diamond.png",
+    "/images/star.png",
+    "/images/skocko.png",
+    "/images/club.png",
+    "/images/spades.png",
+    "/images/heart.png",
+    "/images/diamond.png",
+    "/images/star.png",
   ];
   const [winCombination, setWinCombination] = useState<string[]>([]);
+  const [rowsChecked, setRowsChecked] = useState<number[]>([]);
+  const [hints, setHints] = useState<string[][]>([]);
+
+  const checkCombinationHandler = (
+    playerCombination: string[],
+    rowIndex: number
+  ) => {
+    let rowsCheckedCopy = [...rowsChecked, rowIndex];
+
+    setRowsChecked(rowsCheckedCopy);
+
+    let hints: string[] = [];
+    let winCombinationCopy = [...winCombination];
+    let playerCombinationCopy = [...playerCombination];
+
+    console.log("playerCombinationCopyBefore", playerCombinationCopy);
+    console.log("winCombinationCopyBefore", winCombinationCopy);
+
+    console.log("/");
+    console.log("/");
+
+    //chech for match
+    for (let i = 0; i < winCombination.length; i++) {
+      if (winCombination[i] === playerCombination[i]) {
+        hints.push("red");
+
+        let index = winCombinationCopy.findIndex(
+          (simbol) => simbol === playerCombination[i]
+        );
+
+        let indexTwo = playerCombinationCopy.findIndex(
+          (simbol) => simbol === playerCombination[i]
+        );
+
+        winCombinationCopy.splice(index, 1);
+        playerCombinationCopy.splice(indexTwo, 1);
+      }
+    }
+
+    console.log(
+      "playerCombinationCopyAfterCheckingForMatch",
+      playerCombinationCopy
+    );
+    console.log("winCombinationCopyAfterCheckingForMatch", winCombinationCopy);
+
+    console.log("/");
+    console.log("/");
+
+    for (let i = 0; i < winCombinationCopy.length; i++) {
+      if (winCombinationCopy.includes(playerCombinationCopy[i])) {
+        let index = winCombinationCopy.findIndex(
+          (simbol) => simbol === playerCombinationCopy[i]
+        );
+
+        console.log("includedSimbol", playerCombinationCopy[i]);
+
+        console.log("index", index);
+
+        winCombinationCopy.splice(index, 1);
+
+        hints.push("yellow");
+      }
+    }
+
+    console.log("playerCombinationCopyEnd", playerCombinationCopy);
+    console.log("winCombinationCopyAfterCheckingEnd", winCombinationCopy);
+
+    setHints((prev) => [...prev, hints]);
+  };
 
   const handleSimbolDelete = (row: number, col: number) => {
-    console.log(row, col);
     let newGrid = [...grid];
     newGrid[row][col] = "";
 
@@ -31,14 +117,9 @@ const Skocko = () => {
     let newGrid = [...grid];
 
     for (let row = 0; row < newGrid.length; row++) {
+      if (!newGrid[row].includes("") && !rowsChecked.includes(row)) return;
+
       for (let col = 0; col < newGrid[row].length; col++) {
-        if (
-          newGrid[row][col] !== "" &&
-          newGrid[row][col + 1] !== "" &&
-          newGrid[row][col + 2] !== "" &&
-          newGrid[row][col + 3] !== ""
-        )
-          return;
         if (newGrid[row][col] === "") {
           newGrid[row][col] = simbol;
           setGrid(newGrid);
@@ -64,11 +145,11 @@ const Skocko = () => {
   return (
     <section className="w-full flex flex-col justify-center h-[100vh] max-w-5xl mx-auto">
       {grid.map((row, rowIndex) => (
-        <div key={rowIndex} className="grid grid-cols-5 space-x-1 mx-1">
+        <div key={rowIndex} className="grid grid-cols-5 mx-1 space-x-1">
           {row.map((col, colIndex) => (
             <div
               onClick={() => {
-                if (col !== "") {
+                if (col !== "" && !rowsChecked.includes(rowIndex)) {
                   handleSimbolDelete(rowIndex, colIndex);
                 }
               }}
@@ -80,19 +161,33 @@ const Skocko = () => {
               )}
             </div>
           ))}
-          <div className="h-[5rem] mt-1 flex items-center justify-center">
-            <div className="grid grid-cols-2 items-center justify-center">
-              <div className="h-5 w-5 md:h-7 md:w-7 rounded-full border mr-2"></div>
-              <div className="h-5 w-5 md:h-7 md:w-7 rounded-full border"></div>
-              <div className="h-5 w-5 md:h-7 md:w-7 rounded-full border mt-4"></div>
-              <div className="h-5 w-5 md:h-7 md:w-7 rounded-full border mt-4"></div>
+          {!row.includes("") && !rowsChecked.includes(rowIndex) && (
+            <div
+              onClick={() => checkCombinationHandler(row, rowIndex)}
+              className="flex items-center justify-center mt-1 border cursor-pointer"
+            >
+              <span className="text-3xl">?</span>
             </div>
-          </div>
+          )}
+
+          {rowsChecked.includes(rowIndex) && (
+            <div className="h-[5rem] md:h-[7rem] lg:h-[8rem] mt-1 flex items-center justify-center">
+              <div className="grid items-center justify-center grid-cols-2">
+                {grid[0].map((item, index) => (
+                  <div
+                    style={{ backgroundColor: hints[rowIndex][index] }}
+                    key={index}
+                    className="w-5 h-5 my-2 mr-2 border rounded-full md:h-7 md:w-7"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ))}
 
-      <div className="grid grid-cols-6 space-x-1 m-1">
-        {simbols.map((simbol, index) => (
+      <div className="grid grid-cols-6 m-1 space-x-1">
+        {simbols.slice(0, 6).map((simbol, index) => (
           <div
             onClick={() => handlePlayerMove(simbol)}
             key={index}
