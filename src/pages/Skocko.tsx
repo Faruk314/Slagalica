@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import GameOver from "../modals/GameOver";
 
 const Skocko = () => {
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [openGameOver, setOpenGameOver] = useState(false);
   const [grid, setGrid] = useState<string[][]>([
     ["", "", "", ""],
     ["", "", "", ""],
@@ -39,6 +42,15 @@ const Skocko = () => {
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
 
+  console.log(hints.length);
+
+  const checkGameStatus = () => {
+    if (hints.length === 5) {
+      setIsGameOver(true);
+      setOpenGameOver(true);
+    }
+  };
+
   const checkCombinationHandler = (
     playerCombination: string[],
     rowIndex: number
@@ -50,12 +62,6 @@ const Skocko = () => {
     let hints: string[] = [];
     let winCombinationCopy = [...winCombination];
     let playerCombinationCopy = [...playerCombination];
-
-    console.log("playerCombinationCopyBefore", playerCombinationCopy);
-    console.log("winCombinationCopyBefore", winCombinationCopy);
-
-    console.log("/");
-    console.log("/");
 
     //chech for match
     for (let i = 0; i < winCombination.length; i++) {
@@ -75,24 +81,11 @@ const Skocko = () => {
       }
     }
 
-    console.log(
-      "playerCombinationCopyAfterCheckingForMatch",
-      playerCombinationCopy
-    );
-    console.log("winCombinationCopyAfterCheckingForMatch", winCombinationCopy);
-
-    console.log("/");
-    console.log("/");
-
     for (let i = 0; i < winCombinationCopy.length; i++) {
       if (winCombinationCopy.includes(playerCombinationCopy[i])) {
         let index = winCombinationCopy.findIndex(
           (simbol) => simbol === playerCombinationCopy[i]
         );
-
-        console.log("includedSimbol", playerCombinationCopy[i]);
-
-        console.log("index", index);
 
         winCombinationCopy.splice(index, 1);
 
@@ -100,10 +93,9 @@ const Skocko = () => {
       }
     }
 
-    console.log("playerCombinationCopyEnd", playerCombinationCopy);
-    console.log("winCombinationCopyAfterCheckingEnd", winCombinationCopy);
-
     setHints((prev) => [...prev, hints]);
+
+    checkGameStatus();
   };
 
   const handleSimbolDelete = (row: number, col: number) => {
@@ -197,6 +189,13 @@ const Skocko = () => {
           </div>
         ))}
       </div>
+
+      {openGameOver && (
+        <GameOver
+          winCombination={winCombination}
+          setOpenGameOver={setOpenGameOver}
+        />
+      )}
     </section>
   );
 };
