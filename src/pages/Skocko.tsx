@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import GameOver from "../modals/GameOver";
 
 const Skocko = () => {
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameState, setGameState] = useState("playing");
   const [openGameOver, setOpenGameOver] = useState(false);
   const [grid, setGrid] = useState<string[][]>([
     ["", "", "", ""],
@@ -42,11 +42,28 @@ const Skocko = () => {
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
 
-  console.log(hints.length);
+  console.log(winCombination);
 
-  const checkGameStatus = () => {
+  const checkGameStatus = (currentHints: string[]) => {
+    let count = 0;
+
+    console.log(hints);
+
+    for (let i = 0; i < currentHints.length; i++) {
+      if (currentHints[i] === "red") {
+        count++;
+      }
+    }
+
+    console.log("count", count);
+
+    if (count === 4) {
+      setGameState("win");
+      setOpenGameOver(true);
+    }
+
     if (hints.length === 5) {
-      setIsGameOver(true);
+      setGameState("lose");
       setOpenGameOver(true);
     }
   };
@@ -87,15 +104,21 @@ const Skocko = () => {
           (simbol) => simbol === playerCombinationCopy[i]
         );
 
-        winCombinationCopy.splice(index, 1);
+        let indexTwo = playerCombinationCopy.findIndex(
+          (simbol) => simbol === playerCombinationCopy[i]
+        );
 
-        hints.push("yellow");
+        if (index !== indexTwo) {
+          hints.push("yellow");
+        }
+
+        // winCombinationCopy.splice(index, 1);
       }
     }
 
     setHints((prev) => [...prev, hints]);
 
-    checkGameStatus();
+    checkGameStatus(hints);
   };
 
   const handleSimbolDelete = (row: number, col: number) => {
@@ -120,6 +143,11 @@ const Skocko = () => {
       }
     }
   };
+
+  // ["/images/spades.png",
+  // "/images/skocko.png",
+  // "/images/star.png",
+  // "/images/club.png",]
 
   useEffect(() => {
     const initGame = () => {
@@ -181,7 +209,7 @@ const Skocko = () => {
       <div className="grid grid-cols-6 m-1 space-x-1">
         {simbols.slice(0, 6).map((simbol, index) => (
           <div
-            onClick={() => handlePlayerMove(simbol)}
+            onClick={() => gameState === "playing" && handlePlayerMove(simbol)}
             key={index}
             className="border flex items-center justify-center h-[5rem] md:h-[8rem] cursor-pointer"
           >
@@ -194,6 +222,7 @@ const Skocko = () => {
         <GameOver
           winCombination={winCombination}
           setOpenGameOver={setOpenGameOver}
+          gameState={gameState}
         />
       )}
     </section>
