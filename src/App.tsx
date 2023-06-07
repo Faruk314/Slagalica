@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, BrowserRouter, Route } from "react-router-dom";
+import Asocijacije from "./pages/Asocijacije";
 import Skocko from "./pages/Skocko";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/skocko" element={<Skocko />} />
+        <Route path="/asocijacije" element={<Asocijacije />} />
       </Routes>
     </BrowserRouter>
   );

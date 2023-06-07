@@ -12,8 +12,8 @@ const GameOver = ({ setOpenGameOver, winCombination, gameState }: Props) => {
       <div className="flex flex-col items-center p-2 mx-2 bg-white rounded-md">
         <h2 className="text-xl text-center">
           {gameState === "win"
-            ? " Congratulations you found the winning combination!"
-            : "Unfortunately, you did not find the required combination"}
+            ? "Čestitamo, pronašli ste dobitnu kombinaciju!"
+            : "Nažalost niste pogodili traženu kombinaciju"}
         </h2>
 
         <div className="grid items-center grid-cols-4 py-5 space-x-1">
@@ -26,7 +26,7 @@ const GameOver = ({ setOpenGameOver, winCombination, gameState }: Props) => {
           onClick={() => setOpenGameOver(false)}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
         >
-          Continiue
+          Nastavi
         </button>
       </div>
     </div>
