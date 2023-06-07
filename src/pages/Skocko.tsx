@@ -98,21 +98,15 @@ const Skocko = () => {
       }
     }
 
-    for (let i = 0; i < winCombinationCopy.length; i++) {
+    for (let i = 0; i < playerCombinationCopy.length; i++) {
       if (winCombinationCopy.includes(playerCombinationCopy[i])) {
         let index = winCombinationCopy.findIndex(
           (simbol) => simbol === playerCombinationCopy[i]
         );
 
-        let indexTwo = playerCombinationCopy.findIndex(
-          (simbol) => simbol === playerCombinationCopy[i]
-        );
+        hints.push("yellow");
 
-        if (index !== indexTwo) {
-          hints.push("yellow");
-        }
-
-        // winCombinationCopy.splice(index, 1);
+        winCombinationCopy.splice(index, 1);
       }
     }
 
