@@ -41,21 +41,32 @@ const Skocko = () => {
   const [winCombination, setWinCombination] = useState<string[]>([]);
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
+  const [seconds, setSeconds] = useState(5);
 
   console.log(winCombination);
 
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+
+    if (seconds === 0) {
+      setGameState("lose");
+      setOpenGameOver(true);
+      clearInterval(countdown);
+    }
+
+    return () => clearInterval(countdown);
+  }, [seconds]);
+
   const checkGameStatus = (currentHints: string[]) => {
     let count = 0;
-
-    console.log(hints);
 
     for (let i = 0; i < currentHints.length; i++) {
       if (currentHints[i] === "red") {
         count++;
       }
     }
-
-    console.log("count", count);
 
     if (count === 4) {
       setGameState("win");
@@ -158,6 +169,7 @@ const Skocko = () => {
 
   return (
     <section className="w-full flex flex-col justify-center h-[100vh] max-w-5xl mx-auto">
+      <span className="absolute text-2xl top-2 left-2">{seconds}</span>
       {grid.map((row, rowIndex) => (
         <div key={rowIndex} className="grid grid-cols-5 mx-1 space-x-1">
           {row.map((col, colIndex) => (
