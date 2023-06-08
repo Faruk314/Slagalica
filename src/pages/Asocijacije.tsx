@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import TypeAnswer from "../modals/TypeAnswer";
 
 interface Association {
   first: string;
@@ -10,6 +11,18 @@ interface Association {
 
 const Asocijacije = () => {
   const [openTypeAnswer, setOpenTypeAnswer] = useState(false);
+  const [currentAssociation, setCurrentAssociation] =
+    useState<Association | null>(null);
+  const [answer, setAnswer] = useState("");
+  const [answeredCorrecty, setAnsweredCorrectly] = useState<number[]>([]);
+  const [guessFinal, setGuessFinal] = useState(false);
+  const [finalAnswerGuessed, setFinalAnswerGuessed] = useState(false);
+
+  console.log(currentAssociation);
+  console.log(answeredCorrecty);
+
+  const finalAnswer = "test5";
+
   let ass: Association[] = [
     {
       first: "test1",
@@ -41,8 +54,23 @@ const Asocijacije = () => {
     },
   ];
 
-  const checkCorrectHandler = (association: Association) => {
-    setOpenTypeAnswer(true);
+  const checkCorrectHandler = () => {
+    if (guessFinal && answer === finalAnswer) {
+      setAnsweredCorrectly([0, 1, 2, 3]);
+      setFinalAnswerGuessed(true);
+      setOpenTypeAnswer(false);
+      return;
+    }
+
+    if (answer === currentAssociation?.answer) {
+      const currentAssociationIndex = ass.findIndex(
+        (associaton) =>
+          JSON.stringify(associaton) === JSON.stringify(currentAssociation)
+      );
+
+      setAnsweredCorrectly((prev) => [...prev, currentAssociationIndex]);
+      setOpenTypeAnswer(false);
+    }
   };
 
   const handleClick = (e: any) => {
@@ -70,20 +98,50 @@ const Asocijacije = () => {
             .slice(0, 4)
             .map((association) => (
               <div
+                style={
+                  answeredCorrecty[0] === 0 ? { backgroundColor: "green" } : {}
+                }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
-                <span className="hidden">{association}</span>
-                <span className="">?</span>
+                <span
+                  style={answeredCorrecty[0] === 0 ? { display: "block" } : {}}
+                  className="hidden"
+                >
+                  {association}
+                </span>
+                <span
+                  style={answeredCorrecty[0] === 0 ? { display: "none" } : {}}
+                  className=""
+                >
+                  ?
+                </span>
               </div>
             ))}
           <div
-            onClick={() => checkCorrectHandler(ass[0])}
+            style={
+              answeredCorrecty[0] === 0 ? { backgroundColor: "green" } : {}
+            }
+            onClick={() => {
+              if (answeredCorrecty[0] === 0) return;
+              setOpenTypeAnswer(true);
+              setCurrentAssociation(ass[0]);
+            }}
             className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
           >
-            <span className="hidden">{ass[0].answer}</span>
-            <span className="">Answer</span>
+            <span
+              style={answeredCorrecty[0] === 0 ? { display: "block" } : {}}
+              className="hidden"
+            >
+              {ass[0].answer}
+            </span>
+            <span
+              style={answeredCorrecty[0] === 0 ? { display: "none" } : {}}
+              className=""
+            >
+              Answer
+            </span>
           </div>
         </div>
 
@@ -92,26 +150,81 @@ const Asocijacije = () => {
             .slice(0, 4)
             .map((association) => (
               <div
+                style={
+                  answeredCorrecty[1] === 1 ? { backgroundColor: "green" } : {}
+                }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
-                <span className="hidden">{association}</span>
-                <span className="">?</span>
+                <span
+                  style={answeredCorrecty[1] === 1 ? { display: "block" } : {}}
+                  className="hidden"
+                >
+                  {association}
+                </span>
+                <span
+                  style={answeredCorrecty[1] === 1 ? { display: "none" } : {}}
+                  className=""
+                >
+                  ?
+                </span>
               </div>
             ))}
-          <div className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer">
-            <span className="hidden">{ass[1].answer}</span>
-            <span className="">Answer</span>
+          <div
+            style={
+              answeredCorrecty[1] === 1 ? { backgroundColor: "green" } : {}
+            }
+            onClick={() => {
+              if (answeredCorrecty[1] === 1) return;
+              setOpenTypeAnswer(true);
+              setCurrentAssociation(ass[1]);
+            }}
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+          >
+            <span
+              style={answeredCorrecty[1] === 1 ? { display: "block" } : {}}
+              className="hidden"
+            >
+              {ass[1].answer}
+            </span>
+            <span
+              style={answeredCorrecty[1] === 1 ? { display: "none" } : {}}
+              className=""
+            >
+              Answer
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="cursor-pointer">
-        <div className="flex items-center justify-center w-20 h-10 px-[4rem] my-10 bg-blue-500">
+      <div
+        onClick={() => {
+          if (answeredCorrecty.length > 0 && !finalAnswerGuessed) {
+            setOpenTypeAnswer(true);
+            setGuessFinal(true);
+          }
+        }}
+        className="cursor-pointer"
+      >
+        <div
+          style={
+            !finalAnswerGuessed ? { display: "flex" } : { display: "none" }
+          }
+          className="flex items-center justify-center w-20 h-10 px-[4rem] my-10 bg-blue-500"
+        >
           ?
         </div>
-        <div className="hidden px-5 py-2 my-10 bg-blue-500 ">FEFEFEFEFE</div>
+        <div
+          style={
+            finalAnswerGuessed
+              ? { display: "flex", backgroundColor: "green" }
+              : { display: "none" }
+          }
+          className="hidden px-5 py-2 my-10 bg-blue-500 "
+        >
+          {finalAnswer}
+        </div>
       </div>
 
       <div className="flex space-x-10 text-center">
@@ -120,18 +233,51 @@ const Asocijacije = () => {
             .slice(0, 4)
             .map((association) => (
               <div
+                style={
+                  answeredCorrecty[2] === 2 ? { backgroundColor: "green" } : {}
+                }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
-                <span className="hidden">{association}</span>
-                <span className="">?</span>
+                <span
+                  style={answeredCorrecty[2] === 2 ? { display: "block" } : {}}
+                  className="hidden"
+                >
+                  {association}
+                </span>
+                <span
+                  style={answeredCorrecty[2] === 2 ? { display: "none" } : {}}
+                  className=""
+                >
+                  ?
+                </span>
               </div>
             ))}
 
-          <div className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer">
-            <span className="hidden">{ass[2].answer}</span>
-            <span className="">Answer</span>
+          <div
+            style={
+              answeredCorrecty[2] === 2 ? { backgroundColor: "green" } : {}
+            }
+            onClick={() => {
+              if (answeredCorrecty[2] === 2) return;
+              setOpenTypeAnswer(true);
+              setCurrentAssociation(ass[2]);
+            }}
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+          >
+            <span
+              style={answeredCorrecty[2] === 2 ? { display: "block" } : {}}
+              className="hidden"
+            >
+              {ass[2].answer}
+            </span>
+            <span
+              style={answeredCorrecty[2] === 2 ? { display: "none" } : {}}
+              className=""
+            >
+              Answer
+            </span>
           </div>
         </div>
 
@@ -140,29 +286,61 @@ const Asocijacije = () => {
             .slice(0, 4)
             .map((association) => (
               <div
+                style={
+                  answeredCorrecty[3] === 3 ? { backgroundColor: "green" } : {}
+                }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
-                <span className="hidden">{association}</span>
-                <span className="">?</span>
+                <span
+                  style={answeredCorrecty[3] === 3 ? { display: "block" } : {}}
+                  className="hidden"
+                >
+                  {association}
+                </span>
+                <span
+                  style={answeredCorrecty[3] === 3 ? { display: "none" } : {}}
+                  className=""
+                >
+                  ?
+                </span>
               </div>
             ))}
-          <div className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer">
-            <span className="hidden">{ass[3].answer}</span>
-            <span className="">Answer</span>
+          <div
+            style={
+              answeredCorrecty[3] === 3 ? { backgroundColor: "green" } : {}
+            }
+            onClick={() => {
+              if (answeredCorrecty[3] === 3) return;
+              setOpenTypeAnswer(true);
+              setCurrentAssociation(ass[3]);
+            }}
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+          >
+            <span
+              style={answeredCorrecty[3] === 3 ? { display: "block" } : {}}
+              className="hidden"
+            >
+              {ass[3].answer}
+            </span>
+            <span
+              style={answeredCorrecty[3] === 3 ? { display: "none" } : {}}
+              className=""
+            >
+              Answer
+            </span>
           </div>
         </div>
       </div>
 
       {openTypeAnswer && (
-        <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)]">
-          <div className="flex flex-col items-center p-2 mx-2 text-black bg-white rounded-md">
-            <h2>Unesite vas odgovor</h2>
-
-            <textarea className="p-1 my-1 border" rows={1} />
-          </div>
-        </div>
+        <TypeAnswer
+          guessFinal={guessFinal}
+          setOpenTypeAnswer={setOpenTypeAnswer}
+          setAnswer={setAnswer}
+          checkCorrectHandler={checkCorrectHandler}
+        />
       )}
     </section>
   );
