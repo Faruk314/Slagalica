@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TypeAnswer from "../modals/TypeAnswer";
 
 interface Association {
@@ -17,40 +17,56 @@ const Asocijacije = () => {
   const [answeredCorrecty, setAnsweredCorrectly] = useState<number[]>([]);
   const [guessFinal, setGuessFinal] = useState(false);
   const [finalAnswerGuessed, setFinalAnswerGuessed] = useState(false);
+  const [seconds, setSeconds] = useState(5);
 
   console.log(currentAssociation);
   console.log(answeredCorrecty);
 
-  const finalAnswer = "test5";
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+
+    if (seconds === 0) {
+      console.log("You run out of time");
+      clearInterval(countdown);
+    }
+
+    return () => {
+      clearInterval(countdown);
+    };
+  }, [seconds]);
+
+  const finalAnswer = "NOVAK";
 
   let ass: Association[] = [
     {
-      first: "test1",
-      second: "test1",
-      third: "test1",
-      fourth: "test1",
-      answer: "test1",
+      first: "BREJ",
+      second: "MREZA",
+      third: "VIMBLDON",
+      fourth: "REKET",
+      answer: "TENIS",
     },
     {
-      first: "test2",
-      second: "test2",
-      third: "test2",
-      fourth: "test2",
-      answer: "test2",
+      first: "DRZAVA",
+      second: "SLJIVA",
+      third: ".RS",
+      fourth: "BEOGRAD",
+      answer: "SRBIJA",
     },
     {
-      first: "test3",
-      second: "test3",
-      third: "test3",
-      fourth: "test3",
-      answer: "test3",
+      first: "LIGA",
+      second: "PRVAK",
+      third: "POBEDNIK",
+      fourth: "AS",
+      answer: "SAMPION",
     },
     {
-      first: "test4",
-      second: "test4",
-      third: "test4",
-      fourth: "test4",
-      answer: "test4",
+      first: "SUMADIJA",
+      second: "FIAT",
+      third: "ZASTAVA",
+      fourth: "GRAD",
+      answer: "KRAGUJEVAC",
     },
   ];
 
@@ -92,11 +108,12 @@ const Asocijacije = () => {
 
   return (
     <section className="flex flex-col items-center justify-center h-[100vh] text-white text-center">
+      <span className="absolute text-black top-2">{seconds}</span>
       <div className="flex space-x-10">
         <div>
-          {Object.keys(ass[0])
+          {Object.entries(ass[0])
             .slice(0, 4)
-            .map((association) => (
+            .map(([key, value]) => (
               <div
                 style={
                   answeredCorrecty.includes(0)
@@ -104,7 +121,7 @@ const Asocijacije = () => {
                     : {}
                 }
                 onClick={handleClick}
-                key={association}
+                key={key}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
@@ -113,7 +130,7 @@ const Asocijacije = () => {
                   }
                   className="hidden"
                 >
-                  {association}
+                  {value}
                 </span>
                 <span
                   style={
@@ -152,9 +169,9 @@ const Asocijacije = () => {
         </div>
 
         <div>
-          {Object.keys(ass[1])
+          {Object.entries(ass[1])
             .slice(0, 4)
-            .map((association) => (
+            .map(([key, value]) => (
               <div
                 style={
                   answeredCorrecty.includes(1)
@@ -162,7 +179,7 @@ const Asocijacije = () => {
                     : {}
                 }
                 onClick={handleClick}
-                key={association}
+                key={key}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
@@ -171,7 +188,7 @@ const Asocijacije = () => {
                   }
                   className="hidden"
                 >
-                  {association}
+                  {value}
                 </span>
                 <span
                   style={
@@ -241,9 +258,9 @@ const Asocijacije = () => {
 
       <div className="flex space-x-10 text-center">
         <div>
-          {Object.keys(ass[2])
+          {Object.entries(ass[2])
             .slice(0, 4)
-            .map((association) => (
+            .map(([key, value]) => (
               <div
                 style={
                   answeredCorrecty.includes(2)
@@ -251,7 +268,7 @@ const Asocijacije = () => {
                     : {}
                 }
                 onClick={handleClick}
-                key={association}
+                key={key}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
@@ -260,7 +277,7 @@ const Asocijacije = () => {
                   }
                   className="hidden"
                 >
-                  {association}
+                  {value}
                 </span>
                 <span
                   style={
@@ -300,9 +317,9 @@ const Asocijacije = () => {
         </div>
 
         <div>
-          {Object.keys(ass[3])
+          {Object.entries(ass[3])
             .slice(0, 4)
-            .map((association) => (
+            .map(([key, value]) => (
               <div
                 style={
                   answeredCorrecty.includes(3)
@@ -310,7 +327,7 @@ const Asocijacije = () => {
                     : {}
                 }
                 onClick={handleClick}
-                key={association}
+                key={key}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
@@ -319,7 +336,7 @@ const Asocijacije = () => {
                   }
                   className="hidden"
                 >
-                  {association}
+                  {value}
                 </span>
                 <span
                   style={
