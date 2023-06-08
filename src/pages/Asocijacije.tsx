@@ -99,20 +99,26 @@ const Asocijacije = () => {
             .map((association) => (
               <div
                 style={
-                  answeredCorrecty[0] === 0 ? { backgroundColor: "green" } : {}
+                  answeredCorrecty.includes(0)
+                    ? { backgroundColor: "green" }
+                    : {}
                 }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
-                  style={answeredCorrecty[0] === 0 ? { display: "block" } : {}}
+                  style={
+                    answeredCorrecty.includes(0) ? { display: "block" } : {}
+                  }
                   className="hidden"
                 >
                   {association}
                 </span>
                 <span
-                  style={answeredCorrecty[0] === 0 ? { display: "none" } : {}}
+                  style={
+                    answeredCorrecty.includes(0) ? { display: "none" } : {}
+                  }
                   className=""
                 >
                   ?
@@ -121,23 +127,23 @@ const Asocijacije = () => {
             ))}
           <div
             style={
-              answeredCorrecty[0] === 0 ? { backgroundColor: "green" } : {}
+              answeredCorrecty.includes(0) ? { backgroundColor: "green" } : {}
             }
             onClick={() => {
-              if (answeredCorrecty[0] === 0) return;
+              if (answeredCorrecty.includes(0)) return;
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[0]);
             }}
             className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
           >
             <span
-              style={answeredCorrecty[0] === 0 ? { display: "block" } : {}}
+              style={answeredCorrecty.includes(0) ? { display: "block" } : {}}
               className="hidden"
             >
               {ass[0].answer}
             </span>
             <span
-              style={answeredCorrecty[0] === 0 ? { display: "none" } : {}}
+              style={answeredCorrecty.includes(0) ? { display: "none" } : {}}
               className=""
             >
               Answer
@@ -151,20 +157,26 @@ const Asocijacije = () => {
             .map((association) => (
               <div
                 style={
-                  answeredCorrecty[1] === 1 ? { backgroundColor: "green" } : {}
+                  answeredCorrecty.includes(1)
+                    ? { backgroundColor: "green" }
+                    : {}
                 }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
-                  style={answeredCorrecty[1] === 1 ? { display: "block" } : {}}
+                  style={
+                    answeredCorrecty.includes(1) ? { display: "block" } : {}
+                  }
                   className="hidden"
                 >
                   {association}
                 </span>
                 <span
-                  style={answeredCorrecty[1] === 1 ? { display: "none" } : {}}
+                  style={
+                    answeredCorrecty.includes(1) ? { display: "none" } : {}
+                  }
                   className=""
                 >
                   ?
@@ -173,23 +185,23 @@ const Asocijacije = () => {
             ))}
           <div
             style={
-              answeredCorrecty[1] === 1 ? { backgroundColor: "green" } : {}
+              answeredCorrecty.includes(1) ? { backgroundColor: "green" } : {}
             }
             onClick={() => {
-              if (answeredCorrecty[1] === 1) return;
+              if (answeredCorrecty.includes(1)) return;
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[1]);
             }}
             className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
           >
             <span
-              style={answeredCorrecty[1] === 1 ? { display: "block" } : {}}
+              style={answeredCorrecty.includes(1) ? { display: "block" } : {}}
               className="hidden"
             >
               {ass[1].answer}
             </span>
             <span
-              style={answeredCorrecty[1] === 1 ? { display: "none" } : {}}
+              style={answeredCorrecty.includes(1) ? { display: "none" } : {}}
               className=""
             >
               Answer
@@ -234,20 +246,26 @@ const Asocijacije = () => {
             .map((association) => (
               <div
                 style={
-                  answeredCorrecty[2] === 2 ? { backgroundColor: "green" } : {}
+                  answeredCorrecty.includes(2)
+                    ? { backgroundColor: "green" }
+                    : {}
                 }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
-                  style={answeredCorrecty[2] === 2 ? { display: "block" } : {}}
+                  style={
+                    answeredCorrecty.includes(2) ? { display: "block" } : {}
+                  }
                   className="hidden"
                 >
                   {association}
                 </span>
                 <span
-                  style={answeredCorrecty[2] === 2 ? { display: "none" } : {}}
+                  style={
+                    answeredCorrecty.includes(2) ? { display: "none" } : {}
+                  }
                   className=""
                 >
                   ?
@@ -257,23 +275,23 @@ const Asocijacije = () => {
 
           <div
             style={
-              answeredCorrecty[2] === 2 ? { backgroundColor: "green" } : {}
+              answeredCorrecty.includes(2) ? { backgroundColor: "green" } : {}
             }
             onClick={() => {
-              if (answeredCorrecty[2] === 2) return;
+              if (answeredCorrecty.includes(2)) return;
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[2]);
             }}
             className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
           >
             <span
-              style={answeredCorrecty[2] === 2 ? { display: "block" } : {}}
+              style={answeredCorrecty.includes(2) ? { display: "block" } : {}}
               className="hidden"
             >
               {ass[2].answer}
             </span>
             <span
-              style={answeredCorrecty[2] === 2 ? { display: "none" } : {}}
+              style={answeredCorrecty.includes(2) ? { display: "none" } : {}}
               className=""
             >
               Answer
@@ -287,20 +305,26 @@ const Asocijacije = () => {
             .map((association) => (
               <div
                 style={
-                  answeredCorrecty[3] === 3 ? { backgroundColor: "green" } : {}
+                  answeredCorrecty.includes(3)
+                    ? { backgroundColor: "green" }
+                    : {}
                 }
                 onClick={handleClick}
                 key={association}
                 className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
               >
                 <span
-                  style={answeredCorrecty[3] === 3 ? { display: "block" } : {}}
+                  style={
+                    answeredCorrecty.includes(3) ? { display: "block" } : {}
+                  }
                   className="hidden"
                 >
                   {association}
                 </span>
                 <span
-                  style={answeredCorrecty[3] === 3 ? { display: "none" } : {}}
+                  style={
+                    answeredCorrecty.includes(3) ? { display: "none" } : {}
+                  }
                   className=""
                 >
                   ?
@@ -309,23 +333,23 @@ const Asocijacije = () => {
             ))}
           <div
             style={
-              answeredCorrecty[3] === 3 ? { backgroundColor: "green" } : {}
+              answeredCorrecty.includes(3) ? { backgroundColor: "green" } : {}
             }
             onClick={() => {
-              if (answeredCorrecty[3] === 3) return;
+              if (answeredCorrecty.includes(3)) return;
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[3]);
             }}
             className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
           >
             <span
-              style={answeredCorrecty[3] === 3 ? { display: "block" } : {}}
+              style={answeredCorrecty.includes(3) ? { display: "block" } : {}}
               className="hidden"
             >
               {ass[3].answer}
             </span>
             <span
-              style={answeredCorrecty[3] === 3 ? { display: "none" } : {}}
+              style={answeredCorrecty.includes(3) ? { display: "none" } : {}}
               className=""
             >
               Answer
