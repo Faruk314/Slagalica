@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, BrowserRouter, Route } from "react-router-dom";
 import Asocijacije from "./pages/Asocijacije";
 import MojBroj from "./pages/MojBroj";
+import Quiz from "./pages/Quiz";
 import Skocko from "./pages/Skocko";
 import Spojnice from "./pages/Spojnice";
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/asocijacije" element={<Asocijacije />} />
         <Route path="/mojbroj" element={<MojBroj />} />
         <Route path="/spojnice" element={<Spojnice />} />
+        <Route path="/quiz" element={<Quiz />} />
       </Routes>
     </BrowserRouter>
   );
