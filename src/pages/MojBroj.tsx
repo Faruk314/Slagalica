@@ -48,7 +48,8 @@ const MojBroj = () => {
 
     if (typeof lastChar === "number" && char === "(") return;
 
-    if (typeof char === "number" && charIndex) {
+    if (typeof char === "number" && charIndex !== null) {
+      console.log("123");
       setUsedNumbersIndexes((prev) => [...prev, charIndex]);
     }
 
