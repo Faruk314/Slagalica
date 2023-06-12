@@ -1,10 +1,4 @@
-import { type } from "os";
 import React, { useEffect, useState, useRef } from "react";
-
-interface ClosestApproximation {
-  result: number;
-  expression: string;
-}
 
 const MojBroj = () => {
   const [chars, setChars] = useState<Array<string | number>>([]);
@@ -12,11 +6,20 @@ const MojBroj = () => {
   const [randomNumbers, setRandomNumbers] = useState<number[]>([]);
   const operands = ["(", ")", "+", "-", "*", "/"];
   const isEffectExecutedRef = useRef(false);
+  const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
+
+  console.log(usedNumbersIndexes);
 
   const submitHandler = () => {};
 
   const deleteCharHandler = () => {
     let charsCopy = [...chars];
+    let usedNumbersCopy = [...usedNumbersIndexes];
+
+    if (typeof charsCopy[charsCopy.length - 1] === "number") {
+      usedNumbersCopy.splice(usedNumbersCopy.length - 1, 1);
+      setUsedNumbersIndexes(usedNumbersCopy);
+    }
 
     charsCopy.splice(charsCopy.length - 1, 1);
 
@@ -25,7 +28,9 @@ const MojBroj = () => {
     setChars(charsCopy);
   };
 
-  const handleClick = (char: any) => {
+  const handleClick = (char: any, charIndex: number | null) => {
+    console.log("char", char);
+    console.log("charIndex", charIndex);
     console.log(chars);
     const operators = ["+", "-", "/", "*"];
     const lastChar: any = chars[chars.length - 1];
@@ -42,34 +47,89 @@ const MojBroj = () => {
     if (operators.includes(lastChar) && char === ")") return;
 
     if (typeof lastChar === "number" && char === "(") return;
-    // Valid click, update the chars array
+
+    if (typeof char === "number" && charIndex) {
+      setUsedNumbersIndexes((prev) => [...prev, charIndex]);
+    }
+
     const updatedChars = [...chars, char];
     setChars(updatedChars);
   };
 
   useEffect(() => {
+    function findTargetNumber(
+      randomTargetNumber: number,
+      randomNumbers: number[]
+    ): number {
+      const target = randomTargetNumber;
+      const numbers = randomNumbers;
+
+      let closestNumber = Infinity;
+      let closestDifference = Infinity;
+
+      const generateExpressions = (
+        currentNumber: number,
+        currentIndex: number
+      ) => {
+        if (currentIndex === numbers.length) {
+          const difference = Math.abs(currentNumber - target);
+          if (difference < closestDifference) {
+            closestDifference = difference;
+            closestNumber = currentNumber;
+          }
+          return;
+        }
+
+        const nextNumber = numbers[currentIndex];
+
+        generateExpressions(currentNumber + nextNumber, currentIndex + 1);
+        generateExpressions(currentNumber - nextNumber, currentIndex + 1);
+        generateExpressions(currentNumber * nextNumber, currentIndex + 1);
+        if (nextNumber !== 0 && currentNumber % nextNumber === 0) {
+          generateExpressions(currentNumber / nextNumber, currentIndex + 1);
+        }
+      };
+
+      generateExpressions(0, 0);
+
+      return closestNumber !== Infinity ? closestNumber : -1;
+    }
+
     const initGame = () => {
       let randomNumbers: number[] = [];
       let nums = [10, 25, 50, 75, 100, 20];
 
-      for (let i = 0; i < 6; i++) {
-        let randomNum;
+      let randomTargetNumber: number;
+      let expression: number;
 
-        if (i < 4) {
-          randomNum = Math.floor(Math.random() * 9) + 1;
-          randomNumbers.push(randomNum);
-        } else {
-          randomNum = Math.floor(Math.random() * nums.length);
-          let randomSplice = nums.splice(randomNum, 1);
-          randomNumbers.push(...randomSplice);
+      while (true) {
+        randomNumbers = [];
+        nums = [10, 25, 50, 75, 100, 20];
+
+        for (let i = 0; i < 6; i++) {
+          let randomNum;
+
+          if (i < 4) {
+            randomNum = Math.floor(Math.random() * 9) + 1;
+            randomNumbers.push(randomNum);
+          } else {
+            randomNum = Math.floor(Math.random() * nums.length);
+            let randomSplice = nums.splice(randomNum, 1);
+            randomNumbers.push(...randomSplice);
+          }
+        }
+
+        randomTargetNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+        expression = findTargetNumber(randomTargetNumber, randomNumbers);
+
+        if (expression === randomTargetNumber) {
+          break;
         }
       }
 
-      let randomTargetNumber = Math.floor(
-        Math.random() * (999 - 100 + 1) + 100
-      );
+      console.log("Target Number Expression:", expression);
 
-      setTargetNumber(randomTargetNumber);
+      setTargetNumber(expression);
       setRandomNumbers(randomNumbers);
     };
 
@@ -90,9 +150,9 @@ const MojBroj = () => {
           <div className="grid grid-cols-6 gap-1 mt-2 rounded-md">
             {randomNumbers.map((number, index) => (
               <button
-                disabled={chars.includes(number) ? true : false}
+                disabled={usedNumbersIndexes.includes(index) ? true : false}
                 onClick={() => {
-                  handleClick(number);
+                  handleClick(number, index);
                 }}
                 key={index}
                 className="flex items-center justify-center h-10 bg-blue-500 rounded-md disabled:text-gray-400"
@@ -114,7 +174,7 @@ const MojBroj = () => {
             {operands.map((operand, index) => (
               <button
                 onClick={() => {
-                  handleClick(operand);
+                  handleClick(operand, null);
                 }}
                 key={index}
                 className="flex items-center justify-center text-xl bg-blue-500 border rounded-md"
