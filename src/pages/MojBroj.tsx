@@ -1,10 +1,9 @@
+import { type } from "os";
 import React, { useEffect, useState, useRef } from "react";
 
-type Operation = number | "+" | "-" | "*" | "/";
-interface Solution {
+interface ClosestApproximation {
+  result: number;
   expression: string;
-  value: number;
-  difference: number;
 }
 
 const MojBroj = () => {
@@ -13,9 +12,8 @@ const MojBroj = () => {
   const [randomNumbers, setRandomNumbers] = useState<number[]>([]);
   const operands = ["(", ")", "+", "-", "*", "/"];
   const isEffectExecutedRef = useRef(false);
-  const [computerSolution, setComputerSolution] = useState<string>("");
-  const [computerNumber, setComputerNumber] = useState(0);
-  const [diffrence, setDiffrence] = useState(0);
+
+  const submitHandler = () => {};
 
   const deleteCharHandler = () => {
     let charsCopy = [...chars];
@@ -27,97 +25,29 @@ const MojBroj = () => {
     setChars(charsCopy);
   };
 
-  const handleClick = (char: number | string) => {
-    let updatedChars = [...chars, char];
+  const handleClick = (char: any) => {
+    console.log(chars);
+    const operators = ["+", "-", "/", "*"];
+    const lastChar: any = chars[chars.length - 1];
 
+    if (chars.length === 0 && (operators.includes(char) || char === ")"))
+      return;
+
+    if (typeof lastChar === "number" && typeof char === "number") return;
+
+    if (operators.includes(lastChar) && operators.includes(char)) return;
+
+    if (lastChar === "(" && char === ")") return;
+
+    if (operators.includes(lastChar) && char === ")") return;
+
+    if (typeof lastChar === "number" && char === "(") return;
+    // Valid click, update the chars array
+    const updatedChars = [...chars, char];
     setChars(updatedChars);
   };
 
-  function generateOperations(length: number): Operation[][] {
-    const operations: Operation[][] = [];
-
-    const backtrack = (current: Operation[], index: number): void => {
-      if (index === length) {
-        operations.push(current);
-        return;
-      }
-
-      const num = index + 1;
-
-      backtrack([...current, num], index + 1);
-      backtrack([...current, "+"], index + 1);
-      backtrack([...current, "-"], index + 1);
-      backtrack([...current, "*"], index + 1);
-      backtrack([...current, "/"], index + 1);
-    };
-
-    backtrack([], 0);
-
-    return operations;
-  }
-
-  function buildExpression(numbers: number[], operation: Operation[]): string {
-    if (numbers.length !== operation.length + 1) {
-      throw new Error("Invalid numbers and operations length");
-    }
-
-    let expression = numbers[0].toString();
-
-    for (let i = 0; i < operation.length; i++) {
-      if (typeof operation[i] === "number") {
-        expression += operation[i] < 0 ? operation[i] : `+${operation[i]}`;
-      } else {
-        expression += ` ${operation[i]}`;
-      }
-
-      expression += numbers[i + 1].toString();
-    }
-
-    return expression;
-  }
-
-  function evaluateExpression(expression: string): number | null {
-    try {
-      return eval(expression);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function isInteger(value: number): boolean {
-    return Number.isInteger(value);
-  }
-
   useEffect(() => {
-    function solveNumberPuzzle(
-      numbers: number[],
-      target: number
-    ): Solution | null {
-      const operations: Operation[][] = generateOperations(numbers.length - 1);
-
-      let closestSolution: Solution | null = null;
-      let closestDifference = Infinity;
-
-      for (const operation of operations) {
-        const expression = buildExpression(numbers, operation);
-        const value: any = evaluateExpression(expression);
-
-        if (isInteger(value)) {
-          const difference = Math.abs(value - target);
-          if (difference < closestDifference) {
-            closestSolution = {
-              expression,
-              value,
-              difference,
-            };
-            closestDifference = difference;
-          }
-        }
-      }
-
-      return closestSolution;
-    }
-
     const initGame = () => {
       let randomNumbers: number[] = [];
       let nums = [10, 25, 50, 75, 100, 20];
@@ -138,18 +68,6 @@ const MojBroj = () => {
       let randomTargetNumber = Math.floor(
         Math.random() * (999 - 100 + 1) + 100
       );
-
-      const solution = solveNumberPuzzle(randomNumbers, randomTargetNumber);
-      if (solution !== null) {
-        setComputerSolution(solution.expression);
-        setComputerNumber(solution.value);
-        setDiffrence(solution.difference);
-        console.log("Solution found:", solution.expression);
-        console.log("Value:", solution.value);
-        console.log("Difference:", solution.difference);
-      } else {
-        console.log("No solution found.");
-      }
 
       setTargetNumber(randomTargetNumber);
       setRandomNumbers(randomNumbers);
@@ -172,9 +90,12 @@ const MojBroj = () => {
           <div className="grid grid-cols-6 gap-1 mt-2 rounded-md">
             {randomNumbers.map((number, index) => (
               <button
-                onClick={() => handleClick(number)}
+                disabled={chars.includes(number) ? true : false}
+                onClick={() => {
+                  handleClick(number);
+                }}
                 key={index}
-                className="flex items-center justify-center h-10 bg-blue-500 rounded-md"
+                className="flex items-center justify-center h-10 bg-blue-500 rounded-md disabled:text-gray-400"
               >
                 {number}
               </button>
@@ -183,8 +104,8 @@ const MojBroj = () => {
         </div>
 
         <div className="border border-black h-[2rem] rounded-md mx-2 text-black flex justify-center items-center">
-          {chars.map((char) => (
-            <span>{char}</span>
+          {chars.map((char, index) => (
+            <span key={index}>{char}</span>
           ))}
         </div>
 
@@ -192,7 +113,9 @@ const MojBroj = () => {
           <div className="grid grid-cols-6 gap-1">
             {operands.map((operand, index) => (
               <button
-                onClick={() => handleClick(operand)}
+                onClick={() => {
+                  handleClick(operand);
+                }}
                 key={index}
                 className="flex items-center justify-center text-xl bg-blue-500 border rounded-md"
               >
@@ -201,16 +124,25 @@ const MojBroj = () => {
             ))}
           </div>
 
-          <div className="flex flex-col items-center mt-5 space-y-2 text-black">
-            <h3>Result</h3>
-            <div className="w-[10rem] border border-black rounded-md h-[3rem]"></div>
-
+          <div className="flex justify-center mx-auto mt-5 space-x-2">
             <button
               onClick={deleteCharHandler}
               className="px-2 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-400"
             >
               DELETE
             </button>
+
+            <button
+              onClick={submitHandler}
+              className="px-2 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-400"
+            >
+              SUBMIT
+            </button>
+          </div>
+
+          <div className="flex flex-col items-center mt-5 space-y-2 text-black">
+            <h3>Result</h3>
+            <div className="w-[10rem] border border-black rounded-md h-[3rem]"></div>
           </div>
         </div>
       </div>
