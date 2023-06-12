@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Parser } from "expr-eval";
 
 const MojBroj = () => {
   const [chars, setChars] = useState<Array<string | number>>([]);
@@ -7,10 +8,23 @@ const MojBroj = () => {
   const operands = ["(", ")", "+", "-", "*", "/"];
   const isEffectExecutedRef = useRef(false);
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
+  const [result, setResult] = useState<number | null>(null);
 
-  console.log(usedNumbersIndexes);
+  console.log(chars);
 
-  const submitHandler = () => {};
+  const submitHandler = () => {
+    const parser = new Parser();
+    const resultString = chars.join(" ");
+
+    try {
+      const result = parser.evaluate(resultString);
+      console.log("Result:", result);
+      setResult(result);
+    } catch (error) {
+      console.error("Invalid expression:", error);
+      setResult(0);
+    }
+  };
 
   const deleteCharHandler = () => {
     let charsCopy = [...chars];
@@ -23,15 +37,10 @@ const MojBroj = () => {
 
     charsCopy.splice(charsCopy.length - 1, 1);
 
-    console.log(charsCopy);
-
     setChars(charsCopy);
   };
 
   const handleClick = (char: any, charIndex: number | null) => {
-    console.log("char", char);
-    console.log("charIndex", charIndex);
-    console.log(chars);
     const operators = ["+", "-", "/", "*"];
     const lastChar: any = chars[chars.length - 1];
 
@@ -49,7 +58,6 @@ const MojBroj = () => {
     if (typeof lastChar === "number" && char === "(") return;
 
     if (typeof char === "number" && charIndex !== null) {
-      console.log("123");
       setUsedNumbersIndexes((prev) => [...prev, charIndex]);
     }
 
@@ -128,8 +136,6 @@ const MojBroj = () => {
         }
       }
 
-      console.log("Target Number Expression:", expression);
-
       setTargetNumber(expression);
       setRandomNumbers(randomNumbers);
     };
@@ -203,7 +209,9 @@ const MojBroj = () => {
 
           <div className="flex flex-col items-center mt-5 space-y-2 text-black">
             <h3>Result</h3>
-            <div className="w-[10rem] border border-black rounded-md h-[3rem]"></div>
+            <div className="w-[10rem] border border-black rounded-md h-[3rem] flex items-center justify-center">
+              <span>{result}</span>
+            </div>
           </div>
         </div>
       </div>
