@@ -49,3 +49,17 @@ export const getLongestWord = asyncHandler(async (req, res) => {
 
   res.json(longestWord);
 });
+
+export const checkWordValidity = asyncHandler(async (req, res) => {
+  const { word } = req.body;
+
+  let wordValid = wordList.findIndex((string) => string === word.toLowerCase());
+
+  console.log(wordValid);
+
+  if (wordValid !== -1) {
+    return res.json(true);
+  } else {
+    return res.json(false);
+  }
+});
