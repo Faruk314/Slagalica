@@ -150,7 +150,7 @@ const MojBroj = () => {
     <section className="flex items-center h-[100vh] text-white font-bold">
       <div className="flex flex-col w-full max-w-4xl mx-auto space-y-5">
         <div className="mx-2">
-          <div className="h-[3rem] bg-blue-500 w-[10rem] mx-auto flex justify-center items-center rounded-md">
+          <div className="h-[3rem] bg-blue-600 w-[10rem] mx-auto flex justify-center items-center rounded-md">
             <span className="text-2xl"> {targetNumber}</span>
           </div>
 
@@ -162,7 +162,7 @@ const MojBroj = () => {
                   handleClick(number, index);
                 }}
                 key={index}
-                className="flex items-center justify-center h-10 bg-blue-500 rounded-md disabled:text-gray-400"
+                className="flex items-center justify-center h-10 bg-blue-600 rounded-md disabled:text-gray-400"
               >
                 {number}
               </button>
@@ -184,7 +184,7 @@ const MojBroj = () => {
                   handleClick(operand, null);
                 }}
                 key={index}
-                className="flex items-center justify-center text-xl bg-blue-500 border rounded-md"
+                className="flex items-center justify-center py-1 text-xl bg-blue-600 border rounded-md"
               >
                 <span>{operand}</span>
               </button>
@@ -194,24 +194,17 @@ const MojBroj = () => {
           <div className="flex justify-center mx-auto mt-5 space-x-2">
             <button
               onClick={deleteCharHandler}
-              className="px-2 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-400"
+              className="px-2 py-1 text-white bg-red-600 rounded-md hover:bg-red-500"
             >
               DELETE
             </button>
 
             <button
               onClick={submitHandler}
-              className="px-2 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-400"
+              className="px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500"
             >
               SUBMIT
             </button>
-          </div>
-
-          <div className="flex flex-col items-center mt-5 space-y-2 text-black">
-            <h3>Result</h3>
-            <div className="w-[10rem] border border-black rounded-md h-[3rem] flex items-center justify-center">
-              <span>{result}</span>
-            </div>
           </div>
         </div>
       </div>

@@ -17,10 +17,7 @@ const Asocijacije = () => {
   const [answeredCorrecty, setAnsweredCorrectly] = useState<number[]>([]);
   const [guessFinal, setGuessFinal] = useState(false);
   const [finalAnswerGuessed, setFinalAnswerGuessed] = useState(false);
-  const [seconds, setSeconds] = useState(5);
-
-  console.log(currentAssociation);
-  console.log(answeredCorrecty);
+  const [seconds, setSeconds] = useState(120);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -107,7 +104,7 @@ const Asocijacije = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center h-[100vh] text-white text-center">
+    <section className="flex flex-col items-center justify-center h-[100vh] text-white text-center font-bold">
       <span className="absolute text-black top-2">{seconds}</span>
       <div className="flex space-x-10">
         <div>
@@ -122,7 +119,7 @@ const Asocijacije = () => {
                 }
                 onClick={handleClick}
                 key={key}
-                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
               >
                 <span
                   style={
@@ -151,7 +148,7 @@ const Asocijacije = () => {
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[0]);
             }}
-            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
           >
             <span
               style={answeredCorrecty.includes(0) ? { display: "block" } : {}}
@@ -180,7 +177,7 @@ const Asocijacije = () => {
                 }
                 onClick={handleClick}
                 key={key}
-                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
               >
                 <span
                   style={
@@ -209,7 +206,7 @@ const Asocijacije = () => {
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[1]);
             }}
-            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
           >
             <span
               style={answeredCorrecty.includes(1) ? { display: "block" } : {}}
@@ -240,7 +237,7 @@ const Asocijacije = () => {
           style={
             !finalAnswerGuessed ? { display: "flex" } : { display: "none" }
           }
-          className="flex items-center justify-center w-20 h-10 px-[4rem] my-10 bg-blue-500"
+          className="flex items-center justify-center w-20 h-10 px-[4rem] my-10 bg-blue-600 rounded-md"
         >
           ?
         </div>
@@ -250,7 +247,7 @@ const Asocijacije = () => {
               ? { display: "flex", backgroundColor: "green" }
               : { display: "none" }
           }
-          className="hidden px-5 py-2 my-10 bg-blue-500 "
+          className="hidden px-5 py-2 my-10 bg-blue-600 "
         >
           {finalAnswer}
         </div>
@@ -269,7 +266,7 @@ const Asocijacije = () => {
                 }
                 onClick={handleClick}
                 key={key}
-                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
               >
                 <span
                   style={
@@ -299,7 +296,7 @@ const Asocijacije = () => {
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[2]);
             }}
-            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
           >
             <span
               style={answeredCorrecty.includes(2) ? { display: "block" } : {}}
@@ -328,7 +325,7 @@ const Asocijacije = () => {
                 }
                 onClick={handleClick}
                 key={key}
-                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+                className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
               >
                 <span
                   style={
@@ -357,7 +354,7 @@ const Asocijacije = () => {
               setOpenTypeAnswer(true);
               setCurrentAssociation(ass[3]);
             }}
-            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-500 border-2 border-white cursor-pointer"
+            className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
           >
             <span
               style={answeredCorrecty.includes(3) ? { display: "block" } : {}}

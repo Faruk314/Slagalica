@@ -41,23 +41,23 @@ const Skocko = () => {
   const [winCombination, setWinCombination] = useState<string[]>([]);
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
-  const [seconds, setSeconds] = useState(5);
+  const [seconds, setSeconds] = useState(100000);
 
   console.log(winCombination);
 
-  useEffect(() => {
-    const countdown = setInterval(() => {
-      setSeconds((prev) => prev - 1);
-    }, 1000);
+  // useEffect(() => {
+  //   const countdown = setInterval(() => {
+  //     setSeconds((prev) => prev - 1);
+  //   }, 1000);
 
-    if (seconds === 0) {
-      setGameState("lose");
-      setOpenGameOver(true);
-      clearInterval(countdown);
-    }
+  //   if (seconds === 0) {
+  //     setGameState("lose");
+  //     setOpenGameOver(true);
+  //     clearInterval(countdown);
+  //   }
 
-    return () => clearInterval(countdown);
-  }, [seconds]);
+  //   return () => clearInterval(countdown);
+  // }, [seconds]);
 
   const checkGameStatus = (currentHints: string[]) => {
     let count = 0;
@@ -168,7 +168,7 @@ const Skocko = () => {
   }, []);
 
   return (
-    <section className="w-full flex flex-col justify-center h-[100vh] max-w-5xl mx-auto">
+    <section className="w-full flex flex-col justify-center h-[100vh] max-w-3xl mx-auto">
       <span className="absolute text-2xl top-2 left-2">{seconds}</span>
       {grid.map((row, rowIndex) => (
         <div key={rowIndex} className="grid grid-cols-5 mx-1 space-x-1">
@@ -180,7 +180,7 @@ const Skocko = () => {
                 }
               }}
               key={colIndex}
-              className="border flex items-center justify-center h-[5rem] md:h-[7rem] lg:h-[8rem] mt-1 cursor-pointer"
+              className="bg-blue-600 rounded-md flex items-center justify-center h-[5rem] md:h-[6rem] mt-1 cursor-pointer"
             >
               {col !== "" && (
                 <img src={col} alt="" className="w-10 h-10 md:h-15 md:w-15" />
@@ -190,20 +190,20 @@ const Skocko = () => {
           {!row.includes("") && !rowsChecked.includes(rowIndex) && (
             <div
               onClick={() => checkCombinationHandler(row, rowIndex)}
-              className="flex items-center justify-center mt-1 border cursor-pointer"
+              className="flex items-center justify-center mt-1 font-bold text-white bg-blue-600 rounded-md cursor-pointer"
             >
               <span className="text-3xl">?</span>
             </div>
           )}
 
           {rowsChecked.includes(rowIndex) && (
-            <div className="h-[5rem] md:h-[7rem] lg:h-[8rem] mt-1 flex items-center justify-center">
+            <div className="h-[5rem]  mt-1 flex items-center justify-center">
               <div className="grid items-center justify-center grid-cols-2">
                 {grid[0].map((item, index) => (
                   <div
                     style={{ backgroundColor: hints[rowIndex][index] }}
                     key={index}
-                    className="w-5 h-5 my-2 mr-2 border rounded-full md:h-7 md:w-7"
+                    className="w-5 h-5 my-2 mr-2 border border-black rounded-full md:h-7 md:w-7"
                   ></div>
                 ))}
               </div>
@@ -217,9 +217,9 @@ const Skocko = () => {
           <div
             onClick={() => gameState === "playing" && handlePlayerMove(simbol)}
             key={index}
-            className="border flex items-center justify-center h-[5rem] md:h-[8rem] cursor-pointer"
+            className="bg-blue-600 rounded-md flex items-center justify-center h-[5rem] md:h-[6rem] cursor-pointer"
           >
-            <img src={simbol} alt="" className="w-10 h-10 md:h-15 md:w-15" />
+            <img src={simbol} alt="" className="w-10 h-10" />
           </div>
         ))}
       </div>

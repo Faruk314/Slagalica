@@ -178,16 +178,16 @@ const Quiz = () => {
   }, []);
 
   return (
-    <section className="flex items-center h-[100vh] text-white">
+    <section className="flex items-center h-[100vh] text-white font-bold">
       <div className="w-full max-w-4xl mx-2 md:mx-auto">
-        <div className="relative flex justify-center py-4 text-center bg-blue-500 rounded-md">
+        <div className="relative h-[5rem] flex justify-center items-center text-center bg-blue-600 rounded-md">
           <p>
             {`${currentQuestionIndex + 1} )`}{" "}
             {questions[currentQuestionIndex].question}
           </p>
           <button
             onClick={() => dontKnowAnswerHandler()}
-            className="absolute right-0 top-[-2.2rem] px-2 rounded-md py-1 bg-blue-500"
+            className="absolute right-0 top-[-2.2rem] px-2 rounded-md py-1 bg-blue-600 hover:bg-blue-500"
           >
             Ne znam
           </button>
@@ -205,7 +205,7 @@ const Quiz = () => {
               }
               onClick={() => checkCorrectHandler(value)}
               key={key}
-              className="py-2 bg-blue-500 rounded-md"
+              className="py-2 bg-blue-600 rounded-md hover:bg-blue-500"
             >
               {value}
             </button>

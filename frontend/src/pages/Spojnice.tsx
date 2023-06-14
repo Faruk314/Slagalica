@@ -125,7 +125,7 @@ const Spojnice = () => {
   }, []);
 
   return (
-    <section className="flex items-center justify-center h-[100vh]">
+    <section className="flex items-center justify-center h-[100vh] font-bold">
       <div className="flex space-x-10 text-white">
         <div className="flex flex-col space-y-1">
           {leftSide.map((item) => (

@@ -91,7 +91,7 @@ const Slagalica = () => {
           <button
             disabled={chosenLettersIndexes.includes(index) ? true : false}
             onClick={() => handleClick(letter, index)}
-            className="h-[3rem] bg-blue-500 rounded-md disabled:text-gray-400"
+            className="h-[3rem] bg-blue-600 rounded-md disabled:text-gray-400"
             key={index}
           >
             {letter}
@@ -114,7 +114,7 @@ const Slagalica = () => {
       <button
         disabled={chosenLetters.length > 1 ? false : true}
         onClick={submitHandler}
-        className="p-2 mx-auto font-bold text-white bg-blue-500 rounded-md hover:bg-blue-400"
+        className="p-2 mx-auto font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500"
       >
         SUBMIT
       </button>
