@@ -2,14 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const SinglePlayer = () => {
-  // <Route path="/singlePlayer" element={<SinglePlayer />} />
-  // <Route path="/longestWord" element={<LongestWord />} />
-  // <Route path="/targetNumber" element={<TargetNumber />} />
-  // <Route path="/matchingPairs" element={<MatchingPairs />} />
-  // <Route path="/quiz" element={<Quiz />} />
-  // <Route path="/mastermind" element={<Mastermind />} />
-  // <Route path="/associations" element={<Associations />} />
-
   return (
     <div className="flex flex-col items-center justify-center h-[100vh]">
       <div className="flex flex-col items-center justify-center space-y-4 text-2xl font-bold text-white">

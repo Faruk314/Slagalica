@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 interface Spojnica {
@@ -59,66 +60,35 @@ const MatchingPairs = () => {
   }, [rightClickedIndex, leftClickedIndex]);
 
   useEffect(() => {
-    const initGame = () => {
-      let data = [
-        {
-          id: 1,
-          question: "JACK DANIELS",
-          answer: "VISKI",
-        },
-        {
-          id: 2,
-          question: "TUBORG",
-          answer: "PIVO",
-        },
-        {
-          id: 3,
-          question: "SMIRNOFF",
-          answer: "VOTKA",
-        },
-        {
-          id: 4,
-          question: "BACARDI",
-          answer: "RUM",
-        },
-        {
-          id: 5,
-          question: "GORDONS",
-          answer: "DZIN",
-        },
-        {
-          id: 6,
-          question: "TWO FINGERS",
-          answer: "TEKILA",
-        },
-        {
-          id: 7,
-          question: "SHERIDIANS",
-          answer: "LIKER",
-        },
-        {
-          id: 8,
-          question: "MARTELL",
-          answer: "KONJAK",
-        },
-      ];
+    const initGame = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/matchingPair/getMatchingPairs"
+        );
 
-      const leftSideData = data.map((object) => {
-        return {
-          id: object.id,
-          question: object.question,
-        };
-      });
+        const leftSideData = response.data.map((object: Spojnica) => {
+          return {
+            id: object.id,
+            question: object.question,
+          };
+        });
 
-      const rightSideData = data.map((object) => {
-        return {
-          id: object.id,
-          answer: object.answer,
-        };
-      });
+        const rightSideData = response.data.map((object: Spojnica) => {
+          return {
+            id: object.id,
+            answer: object.answer,
+          };
+        });
 
-      setLeftSide(leftSideData.sort((a, b) => Math.random() - 0.5));
-      setRightSide(rightSideData.sort((a, b) => Math.random() - 0.5));
+        setLeftSide(
+          leftSideData.sort((a: Spojnica, b: Spojnica) => Math.random() - 0.5)
+        );
+        setRightSide(
+          rightSideData.sort((a: Spojnica, b: Spojnica) => Math.random() - 0.5)
+        );
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     initGame();
@@ -139,7 +109,7 @@ const MatchingPairs = () => {
               }
               onClick={() => handleLeftSideClick(item.id)}
               key={item.id}
-              className="h-10 bg-blue-600 rounded-md border w-[10rem] block focus:bg-blue-500"
+              className="h-[3.2rem] bg-blue-600 rounded-md border w-[10rem] block focus:bg-blue-500"
             >
               <span className="">{item.question}</span>
             </button>
@@ -162,7 +132,7 @@ const MatchingPairs = () => {
                 }
               }}
               key={item.id}
-              className="h-10 bg-blue-600 rounded-md border w-[10rem] block"
+              className="h-[3.2rem] bg-blue-600 rounded-md border w-[10rem] block"
             >
               <span className="">{item.answer}</span>
             </button>

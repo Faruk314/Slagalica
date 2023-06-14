@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { checkWordValidity, getLongestWord } from "../controllers/wordGame.js";
+import {
+  checkWordValidity,
+  getLongestWord,
+} from "../controllers/longestWord.js";
 
 const router = Router();
 
