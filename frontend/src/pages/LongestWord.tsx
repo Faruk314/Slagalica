@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import axios from "axios";
+import { GameContext } from "../context/GameContext";
 
 const LongestWord = () => {
   const [longestWord, setLongestWord] = useState("");
@@ -9,10 +10,9 @@ const LongestWord = () => {
   const [chosenLettersIndexes, setChosenLettersIndexes] = useState<number[]>(
     []
   );
-  const [points, setPoints] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
 
-  console.log(points);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const { updateScore } = useContext(GameContext);
 
   const submitHandler = async () => {
     const word: string = chosenLetters.join("");
@@ -23,14 +23,12 @@ const LongestWord = () => {
         { word }
       );
 
-      console.log(validity);
-
       if (validity.data && word.length === longestWord.length) {
-        setPoints(10);
+        updateScore("longestWord", 20);
       }
 
       if (validity.data && word.length !== longestWord.length) {
-        setPoints(word.length);
+        updateScore("longestWord", word.length);
       }
 
       setIsGameOver(true);

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { GameContext } from "../context/GameContext";
 import GameOver from "../modals/GameOver";
 
 const Mastermind = () => {
@@ -41,7 +42,8 @@ const Mastermind = () => {
   const [winCombination, setWinCombination] = useState<string[]>([]);
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
-  const [seconds, setSeconds] = useState(120);
+  const [seconds, setSeconds] = useState(10000);
+  const { updateScore } = useContext(GameContext);
 
   console.log(winCombination);
 
@@ -70,6 +72,7 @@ const Mastermind = () => {
 
     if (count === 4) {
       setGameState("win");
+      updateScore("mastermind", 30);
       setOpenGameOver(true);
     }
 
