@@ -12,6 +12,8 @@ const TargetNumber = () => {
 
   console.log(chars);
 
+  console.log(targetNumber);
+
   const submitHandler = () => {
     const parser = new Parser();
     const resultString = chars.join(" ");

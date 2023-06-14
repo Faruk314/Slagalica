@@ -12,6 +12,8 @@ const LongestWord = () => {
   const [points, setPoints] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
 
+  console.log(points);
+
   const submitHandler = async () => {
     const word: string = chosenLetters.join("");
 
@@ -20,6 +22,8 @@ const LongestWord = () => {
         "http://localhost:4000/api/wordgame/checkWordValidity",
         { word }
       );
+
+      console.log(validity);
 
       if (validity.data && word.length === longestWord.length) {
         setPoints(10);

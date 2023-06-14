@@ -41,23 +41,23 @@ const Mastermind = () => {
   const [winCombination, setWinCombination] = useState<string[]>([]);
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
-  const [seconds, setSeconds] = useState(100000);
+  const [seconds, setSeconds] = useState(120);
 
   console.log(winCombination);
 
-  // useEffect(() => {
-  //   const countdown = setInterval(() => {
-  //     setSeconds((prev) => prev - 1);
-  //   }, 1000);
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
 
-  //   if (seconds === 0) {
-  //     setGameState("lose");
-  //     setOpenGameOver(true);
-  //     clearInterval(countdown);
-  //   }
+    if (seconds === 0) {
+      setGameState("lose");
+      setOpenGameOver(true);
+      clearInterval(countdown);
+    }
 
-  //   return () => clearInterval(countdown);
-  // }, [seconds]);
+    return () => clearInterval(countdown);
+  }, [seconds]);
 
   const checkGameStatus = (currentHints: string[]) => {
     let count = 0;
