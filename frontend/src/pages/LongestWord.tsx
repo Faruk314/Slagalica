@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
-const Slagalica = () => {
+const LongestWord = () => {
   const [longestWord, setLongestWord] = useState("");
   const [letters, setLetters] = useState<string[]>([]);
   const [chosenLetters, setChossenLetters] = useState<string[]>([]);
@@ -122,4 +122,4 @@ const Slagalica = () => {
   );
 };
 
-export default Slagalica;
+export default LongestWord;

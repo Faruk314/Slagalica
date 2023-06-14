@@ -9,7 +9,7 @@ interface Association {
   answer: string;
 }
 
-const Asocijacije = () => {
+const Associations = () => {
   const [openTypeAnswer, setOpenTypeAnswer] = useState(false);
   const [currentAssociation, setCurrentAssociation] =
     useState<Association | null>(null);
@@ -384,4 +384,4 @@ const Asocijacije = () => {
   );
 };
 
-export default Asocijacije;
+export default Associations;

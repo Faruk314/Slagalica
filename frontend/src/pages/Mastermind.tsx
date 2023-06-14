@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import GameOver from "../modals/GameOver";
 
-const Skocko = () => {
+const Mastermind = () => {
   const [gameState, setGameState] = useState("playing");
   const [openGameOver, setOpenGameOver] = useState(false);
   const [grid, setGrid] = useState<string[][]>([
@@ -235,4 +235,4 @@ const Skocko = () => {
   );
 };
 
-export default Skocko;
+export default Mastermind;

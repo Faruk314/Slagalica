@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Parser } from "expr-eval";
 
-const MojBroj = () => {
+const TargetNumber = () => {
   const [chars, setChars] = useState<Array<string | number>>([]);
   const [targetNumber, setTargetNumber] = useState(0);
   const [randomNumbers, setRandomNumbers] = useState<number[]>([]);
@@ -212,4 +212,4 @@ const MojBroj = () => {
   );
 };
 
-export default MojBroj;
+export default TargetNumber;

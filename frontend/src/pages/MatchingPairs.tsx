@@ -6,7 +6,7 @@ interface Spojnica {
   answer?: string;
 }
 
-const Spojnice = () => {
+const MatchingPairs = () => {
   const [gameOver, setGameOver] = useState(false);
   const [leftSide, setLeftSide] = useState<Spojnica[]>([]);
   const [rightSide, setRightSide] = useState<Spojnica[]>([]);
@@ -173,4 +173,4 @@ const Spojnice = () => {
   );
 };
 
-export default Spojnice;
+export default MatchingPairs;

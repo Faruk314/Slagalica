@@ -2,44 +2,52 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const SinglePlayer = () => {
+  // <Route path="/singlePlayer" element={<SinglePlayer />} />
+  // <Route path="/longestWord" element={<LongestWord />} />
+  // <Route path="/targetNumber" element={<TargetNumber />} />
+  // <Route path="/matchingPairs" element={<MatchingPairs />} />
+  // <Route path="/quiz" element={<Quiz />} />
+  // <Route path="/mastermind" element={<Mastermind />} />
+  // <Route path="/associations" element={<Associations />} />
+
   return (
     <div className="flex flex-col items-center justify-center h-[100vh]">
       <div className="flex flex-col items-center justify-center space-y-4 text-2xl font-bold text-white">
         <Link
           className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500"
-          to="/slagalica"
+          to="/longestWord"
         >
-          Slagalica
+          Longest Word
         </Link>
         <Link
           className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500"
-          to="/mojbroj"
+          to="/targetNumber"
         >
-          MojBroj
+          Target Number
         </Link>
         <Link
           className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500"
-          to="/spojnice"
+          to="/matchingPairs"
         >
-          Spojnice
+          Matching pairs
         </Link>
         <Link
           className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500"
           to="/quiz"
         >
-          Tko Zna Zna
+          Quiz
         </Link>
         <Link
           className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500"
-          to="/skocko"
+          to="/mastermind"
         >
-          Skocko
+          Mastermind
         </Link>
         <Link
           className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500"
-          to="/asocijacije"
+          to="/associations"
         >
-          Asocijacije
+          Associations
         </Link>
       </div>
     </div>
