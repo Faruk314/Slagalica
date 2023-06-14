@@ -6,7 +6,7 @@ export const getMatchingPairs = asyncHandler(async (req, res) => {
   const randomNum = Math.floor(Math.random() * categories.length);
   const randomCategorie = categories[randomNum];
 
-  let q = "SELECT `id`,`question`,`answer` FROM spojnice WHERE `category` = ?";
+  let q = "SELECT `id`,`question`,`answer` FROM pairs WHERE `category` = ?";
 
   let data = await query(q, [randomCategorie]);
 
