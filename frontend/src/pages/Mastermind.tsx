@@ -40,7 +40,7 @@ const Mastermind = () => {
   const [winCombination, setWinCombination] = useState<string[]>([]);
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
-  const [seconds, setSeconds] = useState(10000);
+  const [seconds, setSeconds] = useState(90);
   const { updateScore, gameStates, updateGameState } = useContext(GameContext);
 
   console.log(winCombination);
@@ -50,13 +50,17 @@ const Mastermind = () => {
       setSeconds((prev) => prev - 1);
     }, 1000);
 
-    if (seconds === 0) {
+    if (gameStates.mastermind !== "playing") {
+      return clearInterval(countdown);
+    }
+
+    if (seconds === 0 && gameStates.mastermind === "playing") {
       updateGameState("mastermind", "lose");
       clearInterval(countdown);
     }
 
     return () => clearInterval(countdown);
-  }, [seconds]);
+  }, [seconds, gameStates.mastermind]);
 
   const checkGameStatus = (currentHints: string[]) => {
     let count = 0;

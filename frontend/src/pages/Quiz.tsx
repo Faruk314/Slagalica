@@ -23,6 +23,25 @@ const Quiz = () => {
   const [points, setPoints] = useState(0);
   const [isTimeOut, setIsTimeOut] = useState(false);
   const { updateScore, gameStates, updateGameState } = useContext(GameContext);
+  const [seconds, setSeconds] = useState(120);
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+
+    if (gameStates.quiz !== "playing") {
+      return clearInterval(countdown);
+    }
+
+    if (seconds === 0 && gameStates.quiz === "playing") {
+      updateGameState("quiz", "lose");
+      updateScore("quiz", points);
+      clearInterval(countdown);
+    }
+
+    return () => clearInterval(countdown);
+  }, [seconds, gameStates.quiz]);
 
   const dontKnowAnswerHandler = () => {
     let correctAnswerIndex = Object.entries(currentAnswers).findIndex(
@@ -121,6 +140,9 @@ const Quiz = () => {
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">
+      <div className="absolute top-0 left-0">
+        <span className="text-black">{seconds}</span>
+      </div>
       {questions.length > 0 && (
         <div className="w-full max-w-4xl mx-2 md:mx-auto">
           <div className="relative h-[5rem] flex justify-center items-center text-center bg-blue-600 rounded-md">
