@@ -7,7 +7,7 @@ export const getAssociations = asyncHandler(async (req, res) => {
   const randomFinalAnswer = finalAnswers[randomNum];
 
   let q =
-    "SELECT `first`,`second`,`third`,`fourth`,`answer`,`finalAnswer` FROM associations WHERE `finalAnswer` = ?";
+    "SELECT `id`,`first`,`second`,`third`,`fourth`,`answer`,`finalAnswer` FROM associations WHERE `finalAnswer` = ?";
 
   let data = await query(q, [randomFinalAnswer]);
 

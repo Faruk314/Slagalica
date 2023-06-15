@@ -14,31 +14,44 @@ interface Association {
 
 const Associations = () => {
   const [openTypeAnswer, setOpenTypeAnswer] = useState(false);
-  const [currentAssociation, setCurrentAssociation] =
-    useState<Association | null>(null);
+  const [currentAssociationIndex, setCurrentAssociationIndex] = useState<
+    number | null
+  >(null);
   const [answer, setAnswer] = useState("");
   const [answeredCorrecty, setAnsweredCorrectly] = useState<number[]>([]);
   const [guessFinal, setGuessFinal] = useState(false);
-  const [finalAnswerGuessed, setFinalAnswerGuessed] = useState(false);
+  const [gameState, setGameState] = useState("playing");
   const [seconds, setSeconds] = useState(120);
   const [ass, setAss] = useState<Association[]>([]);
   const isEffectExecutedRef = useRef(false);
   const [finalAnswer, setFinalAnswer] = useState("");
+  const [score, setScore] = useState(0);
+  const [fieldsOpenCount, setFieldsOpenCount] = useState<any>({
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+  });
 
-  useEffect(() => {
-    const countdown = setInterval(() => {
-      setSeconds((prev) => prev - 1);
-    }, 1000);
+  console.log("answeredCorrectly", answeredCorrecty);
+  console.log(answer);
 
-    if (seconds === 0) {
-      console.log("You run out of time");
-      clearInterval(countdown);
-    }
+  console.log(score, "score");
 
-    return () => {
-      clearInterval(countdown);
-    };
-  }, [seconds]);
+  // useEffect(() => {
+  //   const countdown = setInterval(() => {
+  //     setSeconds((prev) => prev - 1);
+  //   }, 1000);
+
+  //   if (seconds === 0) {
+  //     console.log("You run out of time");
+  //     clearInterval(countdown);
+  //   }
+
+  //   return () => {
+  //     clearInterval(countdown);
+  //   };
+  // }, [seconds]);
 
   useEffect(() => {
     const initGame = async () => {
@@ -62,314 +75,151 @@ const Associations = () => {
   }, []);
 
   const checkCorrectHandler = () => {
-    if (guessFinal && answer === finalAnswer) {
+    if (guessFinal && answer.toLowerCase() === finalAnswer.toLowerCase()) {
       setAnsweredCorrectly([0, 1, 2, 3]);
-      setFinalAnswerGuessed(true);
+      setGameState("win");
       setOpenTypeAnswer(false);
+      setScore((prev) => prev + 8);
       return;
     }
 
-    if (answer === currentAssociation?.answer) {
-      const currentAssociationIndex = ass.findIndex(
-        (associaton) =>
-          JSON.stringify(associaton) === JSON.stringify(currentAssociation)
-      );
+    if (currentAssociationIndex === null) return;
 
+    let correctAnswer = ass[currentAssociationIndex].answer;
+
+    if (answer.toLowerCase() === correctAnswer.toLowerCase()) {
       setAnsweredCorrectly((prev) => [...prev, currentAssociationIndex]);
       setOpenTypeAnswer(false);
+      setScore(
+        (prev) =>
+          prev + 3 + (4 - fieldsOpenCount[currentAssociationIndex].length)
+      );
     }
   };
 
-  const handleClick = (e: any) => {
-    const firstChild = e.target.firstChild;
-    const lastChild = e.target.lastChild;
+  const handleClick = (e: any, row: number, associationIndex: number) => {
+    const fieldsCountCopy: any = { ...fieldsOpenCount };
 
-    if (
-      firstChild &&
-      firstChild.classList &&
-      firstChild.classList.contains("hidden")
-    ) {
-      firstChild.classList.remove("hidden");
+    if (!fieldsCountCopy[row].includes(associationIndex)) {
+      fieldsCountCopy[row].push(associationIndex);
     }
 
-    if (lastChild && lastChild.classList) {
-      lastChild.classList.add("hidden");
-    }
+    setFieldsOpenCount(fieldsCountCopy);
   };
 
   return (
     <section className="flex flex-col items-center justify-center h-[100vh] text-white text-center font-bold">
       <span className="absolute text-black top-2">{seconds}</span>
 
-      {ass.length > 0 && (
-        <div className="flex space-x-10">
-          <div>
-            {Object.entries(ass[0])
-              .slice(0, 4)
-              .map(([key, value]) => (
-                <div
-                  style={
-                    answeredCorrecty.includes(0)
-                      ? { backgroundColor: "green" }
-                      : {}
-                  }
-                  onClick={handleClick}
-                  key={key}
-                  className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-                >
-                  <span
-                    style={
-                      answeredCorrecty.includes(0) ? { display: "block" } : {}
-                    }
-                    className="hidden"
-                  >
-                    {value}
-                  </span>
-                  <span
-                    style={
-                      answeredCorrecty.includes(0) ? { display: "none" } : {}
-                    }
-                    className=""
-                  >
-                    ?
-                  </span>
-                </div>
-              ))}
-            <div
+      <div className="grid grid-cols-2 gap-x-5 gap-y-20">
+        {ass.map((association, row) => (
+          <div key={association.id} className="flex flex-col space-y-1">
+            <button
               style={
-                answeredCorrecty.includes(0) ? { backgroundColor: "green" } : {}
+                answeredCorrecty.includes(row)
+                  ? { backgroundColor: "green" }
+                  : {}
+              }
+              onClick={(e) => handleClick(e, row, 0)}
+              className="h-[2.5rem] w-[8rem] md:w-[10rem] flex justify-center items-center bg-blue-600 rounded-md"
+            >
+              <span>
+                {fieldsOpenCount[row].includes(0) ||
+                answeredCorrecty.includes(row)
+                  ? association.first
+                  : "?"}
+              </span>
+            </button>
+            <button
+              style={
+                answeredCorrecty.includes(row)
+                  ? { backgroundColor: "green" }
+                  : {}
+              }
+              onClick={(e) => handleClick(e, row, 1)}
+              className="h-[2.5rem] w-[8rem] md:w-[10rem] flex justify-center items-center bg-blue-600 rounded-md"
+            >
+              <span>
+                {fieldsOpenCount[row].includes(1) ||
+                answeredCorrecty.includes(row)
+                  ? association.second
+                  : "?"}
+              </span>
+            </button>
+            <button
+              style={
+                answeredCorrecty.includes(row)
+                  ? { backgroundColor: "green" }
+                  : {}
+              }
+              onClick={(e) => handleClick(e, row, 2)}
+              className="h-[2.5rem] w-[8rem] md:w-[10rem] flex justify-center items-center bg-blue-600 rounded-md"
+            >
+              <span>
+                {fieldsOpenCount[row].includes(2) ||
+                answeredCorrecty.includes(row)
+                  ? association.third
+                  : "?"}
+              </span>
+            </button>
+            <button
+              style={
+                answeredCorrecty.includes(row)
+                  ? { backgroundColor: "green" }
+                  : {}
+              }
+              onClick={(e) => handleClick(e, row, 3)}
+              className="h-[2.5rem] w-[8rem] md:w-[10rem] flex justify-center items-center bg-blue-600 rounded-md"
+            >
+              <span className="">
+                {fieldsOpenCount[row].includes(3) ||
+                answeredCorrecty.includes(row)
+                  ? association.fourth
+                  : "?"}
+              </span>
+            </button>
+            <button
+              style={
+                answeredCorrecty.includes(row)
+                  ? { backgroundColor: "green" }
+                  : {}
               }
               onClick={() => {
-                if (answeredCorrecty.includes(0)) return;
+                if (
+                  answeredCorrecty.includes(row) ||
+                  fieldsOpenCount[row].length === 0
+                )
+                  return;
                 setOpenTypeAnswer(true);
-                setCurrentAssociation(ass[0]);
+                setCurrentAssociationIndex(row);
               }}
-              className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
+              className="h-[2.5rem] w-[8rem] md:w-[10rem] flex justify-center items-center bg-blue-600 rounded-md"
             >
-              <span
-                style={answeredCorrecty.includes(0) ? { display: "block" } : {}}
-                className="hidden"
-              >
-                {ass[0].answer}
+              <span className="">
+                {answeredCorrecty.includes(row) ? association.answer : "?"}
               </span>
-              <span
-                style={answeredCorrecty.includes(0) ? { display: "none" } : {}}
-                className=""
-              >
-                Answer
-              </span>
-            </div>
+            </button>
           </div>
-
-          <div>
-            {Object.entries(ass[1])
-              .slice(0, 4)
-              .map(([key, value]) => (
-                <div
-                  style={
-                    answeredCorrecty.includes(1)
-                      ? { backgroundColor: "green" }
-                      : {}
-                  }
-                  onClick={handleClick}
-                  key={key}
-                  className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-                >
-                  <span
-                    style={
-                      answeredCorrecty.includes(1) ? { display: "block" } : {}
-                    }
-                    className="hidden"
-                  >
-                    {value}
-                  </span>
-                  <span
-                    style={
-                      answeredCorrecty.includes(1) ? { display: "none" } : {}
-                    }
-                    className=""
-                  >
-                    ?
-                  </span>
-                </div>
-              ))}
-            <div
-              style={
-                answeredCorrecty.includes(1) ? { backgroundColor: "green" } : {}
-              }
-              onClick={() => {
-                if (answeredCorrecty.includes(1)) return;
-                setOpenTypeAnswer(true);
-                setCurrentAssociation(ass[1]);
-              }}
-              className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-            >
-              <span
-                style={answeredCorrecty.includes(1) ? { display: "block" } : {}}
-                className="hidden"
-              >
-                {ass[1].answer}
-              </span>
-              <span
-                style={answeredCorrecty.includes(1) ? { display: "none" } : {}}
-                className=""
-              >
-                Answer
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div
-        onClick={() => {
-          if (answeredCorrecty.length > 0 && !finalAnswerGuessed) {
-            setOpenTypeAnswer(true);
-            setGuessFinal(true);
-          }
-        }}
-        className="cursor-pointer"
-      >
-        <div
-          style={
-            !finalAnswerGuessed ? { display: "flex" } : { display: "none" }
-          }
-          className="flex items-center justify-center w-20 h-10 px-[4rem] my-10 bg-blue-600 rounded-md"
-        >
-          ?
-        </div>
-        <div
-          style={
-            finalAnswerGuessed
-              ? { display: "flex", backgroundColor: "green" }
-              : { display: "none" }
-          }
-          className="hidden px-5 py-2 my-10 bg-blue-600 "
-        >
-          {finalAnswer}
-        </div>
+        ))}
       </div>
 
-      {ass.length > 0 && (
-        <div className="flex space-x-10 text-center">
-          <div>
-            {Object.entries(ass[2])
-              .slice(0, 4)
-              .map(([key, value]) => (
-                <div
-                  style={
-                    answeredCorrecty.includes(2)
-                      ? { backgroundColor: "green" }
-                      : {}
-                  }
-                  onClick={handleClick}
-                  key={key}
-                  className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-                >
-                  <span
-                    style={
-                      answeredCorrecty.includes(2) ? { display: "block" } : {}
-                    }
-                    className="hidden"
-                  >
-                    {value}
-                  </span>
-                  <span
-                    style={
-                      answeredCorrecty.includes(2) ? { display: "none" } : {}
-                    }
-                    className=""
-                  >
-                    ?
-                  </span>
-                </div>
-              ))}
-
-            <div
-              style={
-                answeredCorrecty.includes(2) ? { backgroundColor: "green" } : {}
-              }
-              onClick={() => {
-                if (answeredCorrecty.includes(2)) return;
-                setOpenTypeAnswer(true);
-                setCurrentAssociation(ass[2]);
-              }}
-              className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-            >
-              <span
-                style={answeredCorrecty.includes(2) ? { display: "block" } : {}}
-                className="hidden"
-              >
-                {ass[2].answer}
-              </span>
-              <span
-                style={answeredCorrecty.includes(2) ? { display: "none" } : {}}
-                className=""
-              >
-                Answer
-              </span>
-            </div>
-          </div>
-
-          <div>
-            {Object.entries(ass[3])
-              .slice(0, 4)
-              .map(([key, value]) => (
-                <div
-                  style={
-                    answeredCorrecty.includes(3)
-                      ? { backgroundColor: "green" }
-                      : {}
-                  }
-                  onClick={handleClick}
-                  key={key}
-                  className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-                >
-                  <span
-                    style={
-                      answeredCorrecty.includes(3) ? { display: "block" } : {}
-                    }
-                    className="hidden"
-                  >
-                    {value}
-                  </span>
-                  <span
-                    style={
-                      answeredCorrecty.includes(3) ? { display: "none" } : {}
-                    }
-                    className=""
-                  >
-                    ?
-                  </span>
-                </div>
-              ))}
-            <div
-              style={
-                answeredCorrecty.includes(3) ? { backgroundColor: "green" } : {}
-              }
-              onClick={() => {
-                if (answeredCorrecty.includes(3)) return;
-                setOpenTypeAnswer(true);
-                setCurrentAssociation(ass[3]);
-              }}
-              className="flex items-center justify-center w-20 h-10 px-[4rem] bg-blue-600 border-2 border-white cursor-pointer rounded-md"
-            >
-              <span
-                style={answeredCorrecty.includes(3) ? { display: "block" } : {}}
-                className="hidden"
-              >
-                {ass[3].answer}
-              </span>
-              <span
-                style={answeredCorrecty.includes(3) ? { display: "none" } : {}}
-                className=""
-              >
-                Answer
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+      <button
+        style={
+          gameState === "win"
+            ? { backgroundColor: "green" }
+            : gameState === "lose"
+            ? { backgroundColor: "red" }
+            : {}
+        }
+        onClick={() => {
+          if (gameState !== "playing" || answeredCorrecty.length === 0) return;
+          setGuessFinal(true);
+          setOpenTypeAnswer(true);
+        }}
+        className="absolute top-[50% + 10rem] right-[50% - 10rem] bg-blue-600 h-[2.5rem] w-[10rem] md:w-[12rem] rounded-md flex justify-center items-center"
+      >
+        <span className="">{gameState === "win" ? finalAnswer : "?"}</span>
+      </button>
 
       {openTypeAnswer && (
         <TypeAnswer

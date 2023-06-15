@@ -25,8 +25,6 @@ const Quiz = () => {
   const [gameOver, setGameOver] = useState(false);
   const { updateScore } = useContext(GameContext);
 
-  console.log(gameOver, "gameOver");
-
   const dontKnowAnswerHandler = () => {
     let correctAnswerIndex = Object.entries(currentAnswers).findIndex(
       ([key, value]) => value === questions[currentQuestionIndex].correctAnswer
@@ -63,10 +61,6 @@ const Quiz = () => {
 
   useEffect(() => {
     if (currentQuestionIndex && currentQuestionIndex < 10) {
-      console.log(currentQuestionIndex);
-
-      console.log("proslo", currentQuestionIndex);
-
       setCurrentAnswers({
         answerOne: questions[currentQuestionIndex].answerOne,
         answersTwo: questions[currentQuestionIndex].answerTwo,
