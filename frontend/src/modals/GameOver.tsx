@@ -1,12 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
-  setOpenGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   winCombination: string[];
   gameState: string;
 }
 
-const GameOver = ({ setOpenGameOver, winCombination, gameState }: Props) => {
+const GameOver = ({ winCombination, gameState }: Props) => {
+  const navigate = useNavigate();
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)]">
       <div className="flex flex-col items-center p-2 mx-2 bg-white rounded-md">
@@ -23,7 +25,7 @@ const GameOver = ({ setOpenGameOver, winCombination, gameState }: Props) => {
         </div>
 
         <button
-          onClick={() => setOpenGameOver(false)}
+          onClick={() => navigate("/singlePlayer")}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
         >
           Nastavi

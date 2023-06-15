@@ -4,7 +4,6 @@ import GameOver from "../modals/GameOver";
 
 const Mastermind = () => {
   const [gameState, setGameState] = useState("playing");
-  const [openGameOver, setOpenGameOver] = useState(false);
   const [grid, setGrid] = useState<string[][]>([
     ["", "", "", ""],
     ["", "", "", ""],
@@ -54,7 +53,6 @@ const Mastermind = () => {
 
     if (seconds === 0) {
       setGameState("lose");
-      setOpenGameOver(true);
       clearInterval(countdown);
     }
 
@@ -73,12 +71,11 @@ const Mastermind = () => {
     if (count === 4) {
       setGameState("win");
       updateScore("mastermind", 30);
-      setOpenGameOver(true);
+      return;
     }
 
-    if (hints.length === 5) {
+    if ([...hints, currentHints].length === 6) {
       setGameState("lose");
-      setOpenGameOver(true);
     }
   };
 
@@ -227,12 +224,8 @@ const Mastermind = () => {
         ))}
       </div>
 
-      {openGameOver && (
-        <GameOver
-          winCombination={winCombination}
-          setOpenGameOver={setOpenGameOver}
-          gameState={gameState}
-        />
+      {gameState !== "playing" && (
+        <GameOver winCombination={winCombination} gameState={gameState} />
       )}
     </section>
   );
