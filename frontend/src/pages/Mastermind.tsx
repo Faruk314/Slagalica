@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { GameContext } from "../context/GameContext";
 import GameOver from "../modals/GameOver";
@@ -42,6 +43,41 @@ const Mastermind = () => {
   const [hints, setHints] = useState<string[][]>([]);
   const [seconds, setSeconds] = useState(90);
   const { updateScore, gameStates, updateGameState } = useContext(GameContext);
+
+  useEffect(() => {
+    const initGame = () => {
+      //generating win combination by shuffling simbols array and taking first 4 simbols
+      const randomCombination: string[] = simbols
+        .sort((a, b) => 0.5 - Math.random())
+        .slice(0, 4);
+
+      setWinCombination(randomCombination);
+    };
+
+    initGame();
+  }, []);
+
+  useEffect(() => {
+    const retrieveGameState = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/mastermind"
+        );
+
+        console.log(response.data);
+
+        setGrid(response.data.grid);
+        setWinCombination(response.data.winCombination);
+        setRowsChecked(response.data.rowsChecked);
+        setHints(response.data.hints);
+        setSeconds(response.data.seconds);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    retrieveGameState();
+  }, []);
 
   console.log(winCombination);
 
@@ -151,19 +187,6 @@ const Mastermind = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const initGame = () => {
-      //generating win combination by shuffling simbols array and taking first 4 simbols
-      const randomCombination: string[] = simbols
-        .sort((a, b) => 0.5 - Math.random())
-        .slice(0, 4);
-
-      setWinCombination(randomCombination);
-    };
-
-    initGame();
-  }, []);
 
   return (
     <section className="w-full flex flex-col justify-center h-[100vh] max-w-3xl mx-auto">

@@ -1,10 +1,23 @@
-import React, { useContext } from "react";
+import axios from "axios";
+import React, { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
 
 const SinglePlayer = () => {
   const { playerScore, totalScore, gameStates } = useContext(GameContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const createGameSession = async () => {
+      try {
+        await axios.post("http://localhost:4000/api/game/createGameSession");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    createGameSession();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center h-[100vh] text-white font-bold  ">
