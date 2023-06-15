@@ -1,5 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { GameContext } from "../context/GameContext";
+import MatchingPairsModal from "../modals/MatchingPairsModal";
 
 interface Spojnica {
   id: number;
@@ -18,6 +20,8 @@ const MatchingPairs = () => {
   const [rightClickedIndex, setRightClickedIndex] = useState<number | null>(
     null
   );
+  const [score, setScore] = useState(0);
+  const { updateScore } = useContext(GameContext);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -30,6 +34,7 @@ const MatchingPairs = () => {
   useEffect(() => {
     const checkGameStatus = () => {
       if (totalAnswered === 8) {
+        updateScore("matchingPairs", score);
         setRightSide((prev) => prev.sort((a, b) => a.id - b.id));
         setLeftSide((prev) => prev.sort((a, b) => a.id - b.id));
         setGameOver(true);
@@ -37,12 +42,13 @@ const MatchingPairs = () => {
     };
 
     checkGameStatus();
-  }, [totalAnswered]);
+  }, [totalAnswered, score]);
 
   useEffect(() => {
     const checkCorrect = () => {
       if (rightClickedIndex && rightClickedIndex === leftClickedIndex) {
         setCorrects((prev) => [...prev, rightClickedIndex]);
+        setScore((prev) => prev + 4);
       }
 
       if (leftClickedIndex && rightClickedIndex !== leftClickedIndex) {
@@ -139,6 +145,8 @@ const MatchingPairs = () => {
           ))}
         </div>
       </div>
+
+      {gameOver && <MatchingPairsModal />}
     </section>
   );
 };

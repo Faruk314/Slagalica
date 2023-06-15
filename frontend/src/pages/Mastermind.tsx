@@ -149,11 +149,6 @@ const Mastermind = () => {
     }
   };
 
-  // ["/images/spades.png",
-  // "/images/skocko.png",
-  // "/images/star.png",
-  // "/images/club.png",]
-
   useEffect(() => {
     const initGame = () => {
       //generating win combination by shuffling simbols array and taking first 4 simbols
