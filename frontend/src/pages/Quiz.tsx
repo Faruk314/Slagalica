@@ -1,5 +1,8 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { GameContext } from "../context/GameContext";
+import QuizModal from "../modals/QuizModal";
+import TargetNumber from "./TargetNumber";
 
 interface Question {
   id: number;
@@ -17,8 +20,12 @@ const Quiz = () => {
   const [correct, setCorrect] = useState<number | null>(null);
   const [incorrect, setIncorrect] = useState<number | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [points, setPoints] = useState(0);
+  const [isTimeOut, setIsTimeOut] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const { updateScore } = useContext(GameContext);
 
-  console.log(currentAnswers);
+  console.log(gameOver, "gameOver");
 
   const dontKnowAnswerHandler = () => {
     let correctAnswerIndex = Object.entries(currentAnswers).findIndex(
@@ -35,7 +42,7 @@ const Quiz = () => {
       let correctAnswerIndex = Object.entries(currentAnswers).findIndex(
         ([key, value]) => value === answer
       );
-
+      setPoints((prev) => prev + 4);
       setCorrect(correctAnswerIndex);
     }
 
@@ -48,13 +55,18 @@ const Quiz = () => {
           value === questions[currentQuestionIndex].correctAnswer
       );
 
+      setPoints((prev) => prev - 2);
       setCorrect(correctAnswerIndex);
       setIncorrect(incorrectAnswerIndex);
     }
   };
 
   useEffect(() => {
-    if (currentQuestionIndex) {
+    if (currentQuestionIndex && currentQuestionIndex < 10) {
+      console.log(currentQuestionIndex);
+
+      console.log("proslo", currentQuestionIndex);
+
       setCurrentAnswers({
         answerOne: questions[currentQuestionIndex].answerOne,
         answersTwo: questions[currentQuestionIndex].answerTwo,
@@ -68,13 +80,21 @@ const Quiz = () => {
     let timeout;
 
     if (correct) {
+      setIsTimeOut(true);
       timeout = setTimeout(() => {
         setCorrect(null);
         setIncorrect(null);
-        setCurrentQuestionIndex((prev) => prev + 1);
+        if (currentQuestionIndex < 9) {
+          setCurrentQuestionIndex((prev) => prev + 1);
+        } else {
+          setGameOver(true);
+          updateScore("quiz", points);
+        }
+
+        setIsTimeOut(false);
       }, 2000);
     }
-  }, [correct]);
+  }, [correct, currentQuestionIndex, points]);
 
   useEffect(() => {
     const initGame = async () => {
@@ -116,7 +136,7 @@ const Quiz = () => {
               {questions[currentQuestionIndex].question}
             </p>
             <button
-              onClick={() => dontKnowAnswerHandler()}
+              onClick={() => !isTimeOut && dontKnowAnswerHandler()}
               className="absolute right-0 top-[-2.2rem] px-2 rounded-md py-1 bg-blue-600 hover:bg-blue-500"
             >
               Ne znam
@@ -133,7 +153,7 @@ const Quiz = () => {
                     ? { backgroundColor: "red" }
                     : {}
                 }
-                onClick={() => checkCorrectHandler(value)}
+                onClick={() => !isTimeOut && checkCorrectHandler(value)}
                 key={key}
                 className="py-2 bg-blue-600 rounded-md hover:bg-blue-500"
               >
@@ -143,6 +163,8 @@ const Quiz = () => {
           </div>
         </div>
       )}
+
+      {gameOver && <QuizModal />}
     </section>
   );
 };
