@@ -78,3 +78,15 @@ export const createGameSession = asyncHandler(async (req, res) => {
     res.status(500).json("Error creating game session");
   }
 });
+
+export const deleteGameSession = asyncHandler(async (req, res) => {
+  const userId = 1;
+
+  try {
+    await client.del(userId);
+    res.status(200).json("successfully deleted game session");
+  } catch (error) {
+    console.log("Error deleting game session");
+    res.status(500).json("Error deleting game session");
+  }
+});
