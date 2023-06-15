@@ -1,5 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Parser } from "expr-eval";
+import { GameContext } from "../context/GameContext";
+import TargetNumberModal from "../modals/TargetNumberModal";
 
 const TargetNumber = () => {
   const [chars, setChars] = useState<Array<string | number>>([]);
@@ -9,10 +11,7 @@ const TargetNumber = () => {
   const isEffectExecutedRef = useRef(false);
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
   const [result, setResult] = useState<number | null>(null);
-
-  console.log(chars);
-
-  console.log(targetNumber);
+  const { updateScore } = useContext(GameContext);
 
   const submitHandler = () => {
     const parser = new Parser();
@@ -21,6 +20,21 @@ const TargetNumber = () => {
     try {
       const result = parser.evaluate(resultString);
       console.log("Result:", result);
+
+      const difference = targetNumber - result;
+
+      if (difference === 0) {
+        updateScore("targetNumber", 30);
+      }
+
+      if (difference === 1) {
+        updateScore("targetNumber", 20);
+      }
+
+      if (difference > 1 && difference <= 5) {
+        updateScore("targetNumber", 10);
+      }
+
       setResult(result);
     } catch (error) {
       console.error("Invalid expression:", error);
@@ -210,6 +224,13 @@ const TargetNumber = () => {
           </div>
         </div>
       </div>
+
+      {result && (
+        <TargetNumberModal
+          computerNumber={targetNumber}
+          playerNumber={result}
+        />
+      )}
     </section>
   );
 };
