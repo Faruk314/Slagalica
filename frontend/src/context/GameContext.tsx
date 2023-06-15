@@ -67,8 +67,6 @@ export const GameContextProvider = ({ children }: any) => {
     targetNumber: 0,
   });
 
-  console.log(playerScore);
-
   const updateGameState = (name: string, state: string) => {
     setGameStates((prevState) => ({
       ...prevState,

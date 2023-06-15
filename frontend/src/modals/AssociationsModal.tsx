@@ -23,6 +23,8 @@ const AssociationsModal = ({ gameState, finalAnswer }: Props) => {
           </div>
         )}
 
+        {gameState === "lose" && <span>You run out of time!</span>}
+
         <div className="text-center">
           <span>Number of points: </span>
           <span className="font-bold">{playerScore.associations}</span>

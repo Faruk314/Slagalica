@@ -22,7 +22,7 @@ const Associations = () => {
   const [answer, setAnswer] = useState("");
   const [answeredCorrecty, setAnsweredCorrectly] = useState<number[]>([]);
   const [guessFinal, setGuessFinal] = useState(false);
-  const [seconds, setSeconds] = useState(120);
+  const [seconds, setSeconds] = useState(100);
   const [ass, setAss] = useState<Association[]>([]);
   const isEffectExecutedRef = useRef(false);
   const [finalAnswer, setFinalAnswer] = useState("");
@@ -35,25 +35,25 @@ const Associations = () => {
   });
   const { updateScore, updateGameState, gameStates } = useContext(GameContext);
 
-  console.log("answeredCorrectly", answeredCorrecty);
-  console.log(answer);
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
 
-  console.log(score, "score");
+    if (gameStates.associations !== "playing") {
+      return clearInterval(countdown);
+    }
 
-  // useEffect(() => {
-  //   const countdown = setInterval(() => {
-  //     setSeconds((prev) => prev - 1);
-  //   }, 1000);
+    if (seconds === 0 && gameStates.associations === "playing") {
+      updateGameState("associations", "lose");
+      updateScore("associations", score);
+      clearInterval(countdown);
+    }
 
-  //   if (seconds === 0) {
-  //     console.log("You run out of time");
-  //     clearInterval(countdown);
-  //   }
-
-  //   return () => {
-  //     clearInterval(countdown);
-  //   };
-  // }, [seconds]);
+    return () => {
+      clearInterval(countdown);
+    };
+  }, [seconds, gameStates.associations]);
 
   useEffect(() => {
     const initGame = async () => {
@@ -62,7 +62,6 @@ const Associations = () => {
           "http://localhost:4000/api/associations/getAssociations"
         );
 
-        console.log(response.data);
         setFinalAnswer(response.data[0].finalAnswer);
         setAss(response.data);
       } catch (error) {
