@@ -22,8 +22,7 @@ const Quiz = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [points, setPoints] = useState(0);
   const [isTimeOut, setIsTimeOut] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const { updateScore } = useContext(GameContext);
+  const { updateScore, gameStates, updateGameState } = useContext(GameContext);
 
   const dontKnowAnswerHandler = () => {
     let correctAnswerIndex = Object.entries(currentAnswers).findIndex(
@@ -81,7 +80,7 @@ const Quiz = () => {
         if (currentQuestionIndex < 9) {
           setCurrentQuestionIndex((prev) => prev + 1);
         } else {
-          setGameOver(true);
+          updateGameState("quiz", "win");
           updateScore("quiz", points);
         }
 
@@ -158,7 +157,7 @@ const Quiz = () => {
         </div>
       )}
 
-      {gameOver && <QuizModal />}
+      {gameStates.quiz !== "playing" && <QuizModal />}
     </section>
   );
 };

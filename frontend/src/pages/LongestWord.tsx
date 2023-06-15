@@ -11,9 +11,8 @@ const LongestWord = () => {
   const [chosenLettersIndexes, setChosenLettersIndexes] = useState<number[]>(
     []
   );
-
-  const [gameState, setGameState] = useState("playing");
-  const { updateScore } = useContext(GameContext);
+  const { updateGameState } = useContext(GameContext);
+  const { updateScore, gameStates } = useContext(GameContext);
 
   const submitHandler = async () => {
     const word: string = chosenLetters.join("");
@@ -26,20 +25,20 @@ const LongestWord = () => {
 
       if (validity.data && word.length === longestWord.length) {
         updateScore("longestWord", 20);
-        setGameState("win");
+        updateGameState("longestWord", "win");
       }
 
       if (validity.data && word.length !== longestWord.length) {
         updateScore("longestWord", word.length);
-        setGameState("win");
+        updateGameState("longestWord", "win");
       }
 
       if (validity.data === false) {
-        setGameState("lose");
+        updateGameState("longestWord", "lose");
       }
     } catch (error) {
       console.log(error);
-      setGameState("lose");
+      updateGameState("longestWord", "lose");
     }
   };
 
@@ -127,9 +126,9 @@ const LongestWord = () => {
         SUBMIT
       </button>
 
-      {gameState !== "playing" && (
+      {gameStates.longestWord !== "playing" && (
         <LongestWordModal
-          gameState={gameState}
+          gameState={gameStates.longestWord}
           word={chosenLetters.join("")}
           computerWord={longestWord}
         />

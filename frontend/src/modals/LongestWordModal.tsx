@@ -21,7 +21,7 @@ const LongestWordModal = ({ gameState, word, computerWord }: Props) => {
               We accept the word <span className="font-bold">{word}</span>
             </h2>
             <h2>
-              Our word is{" "}
+              Computer word is{" "}
               <span className="font-bold">{computerWord.toUpperCase()}</span>
             </h2>
 

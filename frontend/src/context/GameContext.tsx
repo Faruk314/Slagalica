@@ -9,10 +9,21 @@ interface PlayerScore {
   targetNumber: number;
 }
 
+interface GameStates {
+  associations: string;
+  longestWord: string;
+  mastermind: string;
+  matchingPairs: string;
+  quiz: string;
+  targetNumber: string;
+}
+
 interface GameContextProps {
   playerScore: PlayerScore;
   updateScore: (name: string, score: number) => void;
   totalScore: number;
+  updateGameState: (name: string, state: string) => void;
+  gameStates: GameStates;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -24,12 +35,29 @@ export const GameContext = createContext<GameContextProps>({
     quiz: 0,
     targetNumber: 0,
   },
+  gameStates: {
+    associations: "playing",
+    longestWord: "playing",
+    mastermind: "playing",
+    matchingPairs: "playing",
+    quiz: "playing",
+    targetNumber: "playing",
+  },
   updateScore: () => {},
   totalScore: 0,
+  updateGameState: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
   const [totalScore, setTotalScore] = useState(0);
+  const [gameStates, setGameStates] = useState<GameStates>({
+    associations: "playing",
+    longestWord: "playing",
+    mastermind: "playing",
+    matchingPairs: "playing",
+    quiz: "playing",
+    targetNumber: "playing",
+  });
   const [playerScore, setPlayerScore] = useState<PlayerScore>({
     associations: 0,
     longestWord: 0,
@@ -41,6 +69,13 @@ export const GameContextProvider = ({ children }: any) => {
 
   console.log(playerScore);
 
+  const updateGameState = (name: string, state: string) => {
+    setGameStates((prevState) => ({
+      ...prevState,
+      [name]: state,
+    }));
+  };
+
   const updateScore = (name: string, score: number) => {
     setPlayerScore((prevScore) => ({
       ...prevScore,
@@ -51,7 +86,15 @@ export const GameContextProvider = ({ children }: any) => {
   };
 
   return (
-    <GameContext.Provider value={{ playerScore, updateScore, totalScore }}>
+    <GameContext.Provider
+      value={{
+        playerScore,
+        updateScore,
+        totalScore,
+        updateGameState,
+        gameStates,
+      }}
+    >
       {children}
     </GameContext.Provider>
   );

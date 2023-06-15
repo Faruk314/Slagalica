@@ -22,7 +22,6 @@ const Associations = () => {
   const [answer, setAnswer] = useState("");
   const [answeredCorrecty, setAnsweredCorrectly] = useState<number[]>([]);
   const [guessFinal, setGuessFinal] = useState(false);
-  const [gameState, setGameState] = useState("playing");
   const [seconds, setSeconds] = useState(120);
   const [ass, setAss] = useState<Association[]>([]);
   const isEffectExecutedRef = useRef(false);
@@ -34,7 +33,7 @@ const Associations = () => {
     2: [],
     3: [],
   });
-  const { updateScore } = useContext(GameContext);
+  const { updateScore, updateGameState, gameStates } = useContext(GameContext);
 
   console.log("answeredCorrectly", answeredCorrecty);
   console.log(answer);
@@ -80,7 +79,8 @@ const Associations = () => {
   const checkCorrectHandler = () => {
     if (guessFinal && answer.toLowerCase() === finalAnswer.toLowerCase()) {
       setAnsweredCorrectly([0, 1, 2, 3]);
-      setGameState("win");
+
+      updateGameState("associations", "win");
       setOpenTypeAnswer(false);
       let numberOfClosedFields =
         16 -
@@ -215,20 +215,26 @@ const Associations = () => {
 
       <button
         style={
-          gameState === "win"
+          gameStates.associations === "win"
             ? { backgroundColor: "green" }
-            : gameState === "lose"
+            : gameStates.associations === "lose"
             ? { backgroundColor: "red" }
             : {}
         }
         onClick={() => {
-          if (gameState !== "playing" || answeredCorrecty.length === 0) return;
+          if (
+            gameStates.associations !== "playing" ||
+            answeredCorrecty.length === 0
+          )
+            return;
           setGuessFinal(true);
           setOpenTypeAnswer(true);
         }}
         className="absolute top-[50% + 10rem] right-[50% - 10rem] bg-blue-600 h-[2.5rem] w-[10rem] md:w-[12rem] rounded-md flex justify-center items-center"
       >
-        <span className="">{gameState === "win" ? finalAnswer : "?"}</span>
+        <span className="">
+          {gameStates.associations === "win" ? finalAnswer : "?"}
+        </span>
       </button>
 
       {openTypeAnswer && (
@@ -240,8 +246,11 @@ const Associations = () => {
         />
       )}
 
-      {gameState !== "playing" && (
-        <AssociationsModal gameState={gameState} finalAnswer={finalAnswer} />
+      {gameStates.associations !== "playing" && (
+        <AssociationsModal
+          gameState={gameStates.associations}
+          finalAnswer={finalAnswer}
+        />
       )}
     </section>
   );

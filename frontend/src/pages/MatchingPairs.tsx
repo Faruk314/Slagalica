@@ -10,7 +10,6 @@ interface Spojnica {
 }
 
 const MatchingPairs = () => {
-  const [gameOver, setGameOver] = useState(false);
   const [leftSide, setLeftSide] = useState<Spojnica[]>([]);
   const [rightSide, setRightSide] = useState<Spojnica[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
@@ -21,7 +20,7 @@ const MatchingPairs = () => {
     null
   );
   const [score, setScore] = useState(0);
-  const { updateScore } = useContext(GameContext);
+  const { updateScore, gameStates, updateGameState } = useContext(GameContext);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -37,7 +36,7 @@ const MatchingPairs = () => {
         updateScore("matchingPairs", score);
         setRightSide((prev) => prev.sort((a, b) => a.id - b.id));
         setLeftSide((prev) => prev.sort((a, b) => a.id - b.id));
-        setGameOver(true);
+        updateGameState("matchingPairs", "win");
       }
     };
 
@@ -128,7 +127,8 @@ const MatchingPairs = () => {
               style={
                 corrects.includes(item.id)
                   ? { backgroundColor: "green" }
-                  : incorrects.includes(item.id) && gameOver
+                  : incorrects.includes(item.id) &&
+                    gameStates.matchingPairs !== "playing"
                   ? { backgroundColor: "red" }
                   : {}
               }
@@ -146,7 +146,7 @@ const MatchingPairs = () => {
         </div>
       </div>
 
-      {gameOver && <MatchingPairsModal />}
+      {gameStates.matchingPairs !== "playing" && <MatchingPairsModal />}
     </section>
   );
 };

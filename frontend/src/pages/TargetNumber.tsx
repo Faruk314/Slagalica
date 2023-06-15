@@ -11,7 +11,7 @@ const TargetNumber = () => {
   const isEffectExecutedRef = useRef(false);
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
   const [result, setResult] = useState<number | null>(null);
-  const { updateScore } = useContext(GameContext);
+  const { updateScore, updateGameState, gameStates } = useContext(GameContext);
 
   const submitHandler = () => {
     const parser = new Parser();
@@ -35,10 +35,12 @@ const TargetNumber = () => {
         updateScore("targetNumber", 10);
       }
 
+      updateGameState("targetNumber", "win");
       setResult(result);
     } catch (error) {
       console.error("Invalid expression:", error);
       setResult(0);
+      updateGameState("targetNumber", "lose");
     }
   };
 
@@ -225,7 +227,7 @@ const TargetNumber = () => {
         </div>
       </div>
 
-      {result && (
+      {gameStates.targetNumber !== "playing" && result && (
         <TargetNumberModal
           computerNumber={targetNumber}
           playerNumber={result}

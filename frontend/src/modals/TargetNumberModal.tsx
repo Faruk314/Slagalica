@@ -14,7 +14,7 @@ const TargetNumberModal = ({ computerNumber, playerNumber }: Props) => {
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)] font-normal">
       <div className="flex flex-col items-center px-3 py-2 mx-2 space-y-2 text-black bg-white rounded-md">
-        <h2 className="font-bold">Our number is {computerNumber}</h2>
+        <h2 className="font-bold">Computer number is {computerNumber}</h2>
         <h2 className="font-bold">Your number is {playerNumber}</h2>
 
         <div className="text-center">

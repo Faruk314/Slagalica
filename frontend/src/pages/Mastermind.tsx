@@ -3,7 +3,6 @@ import { GameContext } from "../context/GameContext";
 import GameOver from "../modals/GameOver";
 
 const Mastermind = () => {
-  const [gameState, setGameState] = useState("playing");
   const [grid, setGrid] = useState<string[][]>([
     ["", "", "", ""],
     ["", "", "", ""],
@@ -42,7 +41,7 @@ const Mastermind = () => {
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
   const [seconds, setSeconds] = useState(10000);
-  const { updateScore } = useContext(GameContext);
+  const { updateScore, gameStates, updateGameState } = useContext(GameContext);
 
   console.log(winCombination);
 
@@ -52,7 +51,7 @@ const Mastermind = () => {
     }, 1000);
 
     if (seconds === 0) {
-      setGameState("lose");
+      updateGameState("mastermind", "lose");
       clearInterval(countdown);
     }
 
@@ -69,13 +68,13 @@ const Mastermind = () => {
     }
 
     if (count === 4) {
-      setGameState("win");
+      updateGameState("mastermind", "win");
       updateScore("mastermind", 30);
       return;
     }
 
     if ([...hints, currentHints].length === 6) {
-      setGameState("lose");
+      updateGameState("mastermind", "lose");
     }
   };
 
@@ -210,7 +209,9 @@ const Mastermind = () => {
       <div className="grid grid-cols-6 m-1 space-x-1">
         {simbols.slice(0, 6).map((simbol, index) => (
           <div
-            onClick={() => gameState === "playing" && handlePlayerMove(simbol)}
+            onClick={() =>
+              gameStates.mastermind === "playing" && handlePlayerMove(simbol)
+            }
             key={index}
             className="bg-blue-600 rounded-md flex items-center justify-center h-[5rem] md:h-[6rem] cursor-pointer"
           >
@@ -219,8 +220,11 @@ const Mastermind = () => {
         ))}
       </div>
 
-      {gameState !== "playing" && (
-        <GameOver winCombination={winCombination} gameState={gameState} />
+      {gameStates.mastermind !== "playing" && (
+        <GameOver
+          winCombination={winCombination}
+          gameState={gameStates.mastermind}
+        />
       )}
     </section>
   );
