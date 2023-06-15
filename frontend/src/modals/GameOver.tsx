@@ -14,8 +14,8 @@ const GameOver = ({ winCombination, gameState }: Props) => {
       <div className="flex flex-col items-center p-2 mx-2 bg-white rounded-md">
         <h2 className="text-xl text-center">
           {gameState === "win"
-            ? "Čestitamo, pronašli ste dobitnu kombinaciju!"
-            : "Nažalost niste pogodili traženu kombinaciju"}
+            ? "You got the right combination!"
+            : "You did not get the right combination"}
         </h2>
 
         <div className="grid items-center grid-cols-4 py-5 space-x-1">

@@ -1,5 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { GameContext } from "../context/GameContext";
+import AssociationsModal from "../modals/AssociationsModal";
 import TypeAnswer from "../modals/TypeAnswer";
 
 interface Association {
@@ -32,6 +34,7 @@ const Associations = () => {
     2: [],
     3: [],
   });
+  const { updateScore } = useContext(GameContext);
 
   console.log("answeredCorrectly", answeredCorrecty);
   console.log(answer);
@@ -79,7 +82,14 @@ const Associations = () => {
       setAnsweredCorrectly([0, 1, 2, 3]);
       setGameState("win");
       setOpenTypeAnswer(false);
-      setScore((prev) => prev + 8);
+      let numberOfClosedFields =
+        16 -
+        (fieldsOpenCount[0].length +
+          fieldsOpenCount[1].length +
+          fieldsOpenCount[2].length +
+          fieldsOpenCount[3].length) +
+        4 * 3;
+      updateScore("associations", numberOfClosedFields + 8);
       return;
     }
 
@@ -228,6 +238,10 @@ const Associations = () => {
           setAnswer={setAnswer}
           checkCorrectHandler={checkCorrectHandler}
         />
+      )}
+
+      {gameState !== "playing" && (
+        <AssociationsModal gameState={gameState} finalAnswer={finalAnswer} />
       )}
     </section>
   );
