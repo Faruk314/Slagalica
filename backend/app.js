@@ -1,5 +1,6 @@
 import express from "express";
 import wordRoutes from "./routes/longestWord.js";
+import gameRoutes from "./routes/game.js";
 import matchingPairRoutes from "./routes/matchingPairs.js";
 import associationsRoutes from "./routes/associations.js";
 import quizRoutes from "./routes/quiz.js";
@@ -23,6 +24,7 @@ app.use("/api/wordgame", wordRoutes);
 app.use("/api/matchingPair", matchingPairRoutes);
 app.use("/api/associations", associationsRoutes);
 app.use("/api/quiz", quizRoutes);
+app.use("/api/game", gameRoutes);
 
 app.listen(port, () => {
   console.log("123");
