@@ -12,6 +12,27 @@ const TargetNumber = () => {
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
   const [result, setResult] = useState<number | null>(null);
   const { updateScore, updateGameState, gameStates } = useContext(GameContext);
+  const [seconds, setSeconds] = useState(90);
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+
+    if (gameStates.targetNumber !== "playing") {
+      return clearInterval(countdown);
+    }
+
+    if (seconds === 0 && gameStates.targetNumber === "playing") {
+      setResult(0);
+      updateGameState("targetNumber", "lose");
+      updateScore("targetNumber", 0);
+
+      clearInterval(countdown);
+    }
+
+    return () => clearInterval(countdown);
+  }, [seconds, gameStates.targetNumber]);
 
   const submitHandler = () => {
     const parser = new Parser();
@@ -166,6 +187,7 @@ const TargetNumber = () => {
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">
+      <span className="absolute top-0 text-black">{seconds}</span>
       <div className="flex flex-col w-full max-w-4xl mx-auto space-y-5">
         <div className="mx-2">
           <div className="h-[3rem] bg-blue-600 w-[10rem] mx-auto flex justify-center items-center rounded-md">
@@ -227,7 +249,7 @@ const TargetNumber = () => {
         </div>
       </div>
 
-      {gameStates.targetNumber !== "playing" && result && (
+      {gameStates.targetNumber !== "playing" && result !== null && (
         <TargetNumberModal
           computerNumber={targetNumber}
           playerNumber={result}
