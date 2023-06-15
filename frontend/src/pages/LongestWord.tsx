@@ -4,6 +4,7 @@ import { GameContext } from "../context/GameContext";
 import LongestWordModal from "../modals/LongestWordModal";
 
 const LongestWord = () => {
+  const [seconds, setSeconds] = useState(60);
   const [longestWord, setLongestWord] = useState("");
   const [letters, setLetters] = useState<string[]>([]);
   const [chosenLetters, setChossenLetters] = useState<string[]>([]);
@@ -13,6 +14,26 @@ const LongestWord = () => {
   );
   const { updateGameState } = useContext(GameContext);
   const { updateScore, gameStates } = useContext(GameContext);
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+
+    if (gameStates.longestWord !== "playing") {
+      return clearInterval(countdown);
+    }
+
+    if (seconds === 0 && gameStates.longestWord === "playing") {
+      updateGameState("longestWord", "timeLose");
+      updateScore("longestWord", 0);
+      clearInterval(countdown);
+    }
+
+    return () => {
+      clearInterval(countdown);
+    };
+  }, [seconds, gameStates.longestWord]);
 
   const submitHandler = async () => {
     const word: string = chosenLetters.join("");
@@ -93,6 +114,7 @@ const LongestWord = () => {
 
   return (
     <section className="flex flex-col justify-center h-[100vh] mx-2 mt-2 space-y-5  max-w-5xl md:mx-auto">
+      <span className="absolute top-0">{seconds}</span>
       <div className="grid grid-cols-6 gap-2 text-xl font-bold text-white rounded-md">
         {letters.map((letter, index) => (
           <button

@@ -21,6 +21,7 @@ const MatchingPairs = () => {
   );
   const [score, setScore] = useState(0);
   const { updateScore, gameStates, updateGameState } = useContext(GameContext);
+  const [seconds, setSeconds] = useState(60);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -29,6 +30,26 @@ const MatchingPairs = () => {
   const handleRightSideClick = (id: number) => {
     setRightClickedIndex(id);
   };
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+
+    if (gameStates.matchingPairs !== "playing") {
+      return clearInterval(countdown);
+    }
+
+    if (seconds === 0 && gameStates.matchingPairs === "playing") {
+      updateGameState("matchingPairs", "timeLose");
+      updateScore("matchingPairs", score);
+      clearInterval(countdown);
+    }
+
+    return () => {
+      clearInterval(countdown);
+    };
+  }, [seconds, gameStates.matchingPairs]);
 
   useEffect(() => {
     const checkGameStatus = () => {
@@ -101,6 +122,9 @@ const MatchingPairs = () => {
 
   return (
     <section className="flex items-center justify-center h-[100vh] font-bold">
+      <div className="absolute top-0 left-0">
+        <span>{seconds}</span>
+      </div>
       <div className="flex space-x-10 text-white">
         <div className="flex flex-col space-y-1">
           {leftSide.map((item) => (
