@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import axios from "axios";
 import { GameContext } from "../context/GameContext";
+import LongestWordModal from "../modals/LongestWordModal";
 
 const LongestWord = () => {
   const [longestWord, setLongestWord] = useState("");
@@ -11,7 +12,7 @@ const LongestWord = () => {
     []
   );
 
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameState, setGameState] = useState("playing");
   const { updateScore } = useContext(GameContext);
 
   const submitHandler = async () => {
@@ -25,15 +26,20 @@ const LongestWord = () => {
 
       if (validity.data && word.length === longestWord.length) {
         updateScore("longestWord", 20);
+        setGameState("win");
       }
 
       if (validity.data && word.length !== longestWord.length) {
         updateScore("longestWord", word.length);
+        setGameState("win");
       }
 
-      setIsGameOver(true);
+      if (validity.data === false) {
+        setGameState("lose");
+      }
     } catch (error) {
       console.log(error);
+      setGameState("lose");
     }
   };
 
@@ -120,6 +126,14 @@ const LongestWord = () => {
       >
         SUBMIT
       </button>
+
+      {gameState !== "playing" && (
+        <LongestWordModal
+          gameState={gameState}
+          word={chosenLetters.join("")}
+          computerWord={longestWord}
+        />
+      )}
     </section>
   );
 };
