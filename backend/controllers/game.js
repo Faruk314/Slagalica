@@ -90,3 +90,19 @@ export const deleteGameSession = asyncHandler(async (req, res) => {
     res.status(500).json("Error deleting game session");
   }
 });
+
+export const getGameState = asyncHandler(async (req, res) => {
+  const { gameName } = req.params;
+  const userId = 1;
+
+  let data = await client.get(userId);
+
+  if (!data) {
+    res.status(500);
+    throw new Error("Could not retrieve game state");
+  }
+
+  let gameState = JSON.parse(data);
+
+  res.status(200).json(gameState[gameName]);
+});
