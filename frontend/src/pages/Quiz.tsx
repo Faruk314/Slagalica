@@ -111,22 +111,34 @@ const Quiz = () => {
   useEffect(() => {
     const initGame = async () => {
       try {
+        // const response = await axios.get(
+        //   "http://localhost:4000/api/quiz/getQuestions"
+        // );
+
+        // let answers = response.data.map((question: Question) => {
+        //   return {
+        //     answerOne: question.answerOne,
+        //     answersTwo: question.answerTwo,
+        //     answerThree: question.answerThree,
+        //     answerFour: question.correctAnswer,
+        //   };
+        // });
+
+        // setCurrentQuestionIndex(0);
+        // setQuestions(response.data);
+        // setCurrentAnswers(answers[0]);
+
         const response = await axios.get(
-          "http://localhost:4000/api/quiz/getQuestions"
+          "http://localhost:4000/api/game/getGameState/quiz"
         );
 
-        let answers = response.data.map((question: Question) => {
-          return {
-            answerOne: question.answerOne,
-            answersTwo: question.answerTwo,
-            answerThree: question.answerThree,
-            answerFour: question.correctAnswer,
-          };
-        });
+        console.log(response.data);
 
-        setCurrentQuestionIndex(0);
-        setQuestions(response.data);
-        setCurrentAnswers(answers[0]);
+        setCurrentQuestionIndex(response.data.currentQuestionIndex);
+        setPoints(response.data.points);
+        setQuestions(response.data.questions);
+        setSeconds(response.data.seconds);
+        setCurrentAnswers(response.data.currentAnswers);
       } catch (error) {
         console.log(error);
       }

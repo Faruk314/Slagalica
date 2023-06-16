@@ -115,6 +115,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       seconds: 60,
     },
     quiz: {
+      gameState: "",
       currentQuestionIndex: 0,
       currentAnswers: {},
       questions: [],
@@ -257,6 +258,35 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.matchingPairs.rightSide = rightSideData;
     gameState.matchingPairs.leftSide = leftSideData;
     gameState.matchingPairs.gameState = "playing";
+
+    await client.set(userId, JSON.stringify(gameState));
+  }
+
+  if (gameName === "quiz" && gameState.quiz.gameState === "") {
+    let q =
+      "SELECT `id`,`question`,`answerOne`,`answerTwo`,`answerThree`,`correctAnswer` FROM questions ORDER BY RAND() LIMIT 10";
+
+    let data = await query(q, []);
+
+    console.log("data", data);
+
+    if (!data) {
+      res.status(404);
+      throw new Error("Could not retrieve questions from database");
+    }
+
+    let answers = data.map((question) => {
+      return {
+        answerOne: question.answerOne,
+        answersTwo: question.answerTwo,
+        answerThree: question.answerThree,
+        answerFour: question.correctAnswer,
+      };
+    });
+
+    gameState.quiz.questions = data;
+    gameState.quiz.currentAnswers = answers[0];
+    gameState.quiz.gameState = "playing";
 
     await client.set(userId, JSON.stringify(gameState));
   }

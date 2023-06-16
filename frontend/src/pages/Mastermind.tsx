@@ -35,8 +35,6 @@ const Mastermind = () => {
           "http://localhost:4000/api/game/getGameState/mastermind"
         );
 
-        console.log(response.data);
-
         setGrid(response.data.grid);
         setWinCombination(response.data.winCombination);
         setRowsChecked(response.data.rowsChecked);
