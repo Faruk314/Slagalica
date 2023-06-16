@@ -77,6 +77,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       chosenLettersIndexes: [],
     },
     associations: {
+      gameState: "",
       ass: [],
       score: 0,
       fieldsOpenCount: {
@@ -287,6 +288,28 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.quiz.questions = data;
     gameState.quiz.currentAnswers = answers[0];
     gameState.quiz.gameState = "playing";
+
+    await client.set(userId, JSON.stringify(gameState));
+  }
+
+  if (gameName === "associations" && gameState.associations.gameState === "") {
+    const finalAnswers = ["MILEVA"];
+    const randomNum = Math.floor(Math.random() * finalAnswers.length);
+    const randomFinalAnswer = finalAnswers[randomNum];
+
+    let q =
+      "SELECT `id`,`first`,`second`,`third`,`fourth`,`answer`,`finalAnswer` FROM associations WHERE `finalAnswer` = ?";
+
+    let data = await query(q, [randomFinalAnswer]);
+
+    if (!data) {
+      res.status(400);
+      throw new Error("Could not get associations by final Answer");
+    }
+
+    gameState.associations.ass = data;
+    gameState.associations.finalAnswer = data[0].finalAnswer;
+    gameState.associations.gameState = "playing";
 
     await client.set(userId, JSON.stringify(gameState));
   }

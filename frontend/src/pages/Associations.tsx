@@ -59,11 +59,15 @@ const Associations = () => {
     const initGame = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/associations/getAssociations"
+          "http://localhost:4000/api/game/getGameState/associations"
         );
 
-        setFinalAnswer(response.data[0].finalAnswer);
-        setAss(response.data);
+        console.log(response.data);
+
+        setFieldsOpenCount(response.data.fieldsOpenCount);
+        setScore(response.data.score);
+        setFinalAnswer(response.data.finalAnswer);
+        setAss(response.data.ass);
       } catch (error) {
         console.log(error);
       }
