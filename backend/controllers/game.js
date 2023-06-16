@@ -34,6 +34,38 @@ const simbols = [
   "/images/star.png",
 ];
 
+function findTargetNumber(randomTargetNumber, randomNumbers) {
+  const target = randomTargetNumber;
+  const numbers = randomNumbers;
+
+  let closestNumber = Infinity;
+  let closestDifference = Infinity;
+
+  const generateExpressions = (currentNumber, currentIndex) => {
+    if (currentIndex === numbers.length) {
+      const difference = Math.abs(currentNumber - target);
+      if (difference < closestDifference) {
+        closestDifference = difference;
+        closestNumber = currentNumber;
+      }
+      return;
+    }
+
+    const nextNumber = numbers[currentIndex];
+
+    generateExpressions(currentNumber + nextNumber, currentIndex + 1);
+    generateExpressions(currentNumber - nextNumber, currentIndex + 1);
+    generateExpressions(currentNumber * nextNumber, currentIndex + 1);
+    if (nextNumber !== 0 && currentNumber % nextNumber === 0) {
+      generateExpressions(currentNumber / nextNumber, currentIndex + 1);
+    }
+  };
+
+  generateExpressions(0, 0);
+
+  return closestNumber !== Infinity ? closestNumber : -1;
+}
+
 export const createGameSession = asyncHandler(async (req, res) => {
   const userId = 1;
   const game = {
@@ -58,6 +90,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       answeredCorrectly: [],
     },
     mastermind: {
+      gameState: "",
       grid: [
         ["", "", "", ""],
         ["", "", "", ""],
@@ -88,6 +121,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       seconds: 120,
     },
     targetNumber: {
+      gameState: "",
       chars: [],
       targetNumber: 0,
       randomNumbers: [],
@@ -134,13 +168,58 @@ export const getGameState = asyncHandler(async (req, res) => {
   // winCombination: [],
 
   //init mastermind game
-  if (gameName === "mastermind") {
+  if (gameName === "mastermind" && gameState.mastermind.gameState === "") {
     const randomCombination = simbols
       .sort((a, b) => 0.5 - Math.random())
       .slice(0, 4);
 
     gameState.mastermind.winCombination = randomCombination;
+    gameState.mastermind.gameState = "playing";
+
+    await client.set(userId, JSON.stringify(gameState));
   }
 
-  res.status(200).json(gameState[gameName]);
+  if (gameName === "targetNumber" && gameState.targetNumber.gameState === "") {
+    let randomNumbers = [];
+    let nums = [10, 25, 50, 75, 100, 20];
+
+    let randomTargetNumber;
+    let expression;
+
+    while (true) {
+      randomNumbers = [];
+      nums = [10, 25, 50, 75, 100, 20];
+
+      for (let i = 0; i < 6; i++) {
+        let randomNum;
+
+        if (i < 4) {
+          randomNum = Math.floor(Math.random() * 9) + 1;
+          randomNumbers.push(randomNum);
+        } else {
+          randomNum = Math.floor(Math.random() * nums.length);
+          let randomSplice = nums.splice(randomNum, 1);
+          randomNumbers.push(...randomSplice);
+        }
+      }
+
+      randomTargetNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+      expression = findTargetNumber(randomTargetNumber, randomNumbers);
+
+      if (expression === randomTargetNumber) {
+        break;
+      }
+    }
+
+    gameState.targetNumber.targetNumber = expression;
+    gameState.targetNumber.randomNumbers = randomNumbers;
+    gameState.targetNumber.gameState = "playing";
+
+    await client.set(userId, JSON.stringify(gameState));
+  }
+
+  let updatedData = await client.get(userId);
+  let updatedGameState = JSON.parse(updatedData);
+
+  res.status(200).json(updatedGameState[gameName]);
 });

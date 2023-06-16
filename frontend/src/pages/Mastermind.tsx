@@ -26,6 +26,8 @@ const Mastermind = () => {
   const [seconds, setSeconds] = useState(90);
   const { updateScore, gameStates, updateGameState } = useContext(GameContext);
 
+  console.log(winCombination);
+
   useEffect(() => {
     const initGame = async () => {
       try {

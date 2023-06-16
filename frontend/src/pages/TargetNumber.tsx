@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { Parser } from "expr-eval";
 import { GameContext } from "../context/GameContext";
 import TargetNumberModal from "../modals/TargetNumberModal";
+import axios from "axios";
 
 const TargetNumber = () => {
   const [chars, setChars] = useState<Array<string | number>>([]);
@@ -105,78 +106,48 @@ const TargetNumber = () => {
   };
 
   useEffect(() => {
-    function findTargetNumber(
-      randomTargetNumber: number,
-      randomNumbers: number[]
-    ): number {
-      const target = randomTargetNumber;
-      const numbers = randomNumbers;
+    const initGame = async () => {
+      // let randomNumbers: number[] = [];
+      // let nums = [10, 25, 50, 75, 100, 20];
+      // let randomTargetNumber: number;
+      // let expression: number;
+      // while (true) {
+      //   randomNumbers = [];
+      //   nums = [10, 25, 50, 75, 100, 20];
+      //   for (let i = 0; i < 6; i++) {
+      //     let randomNum;
+      //     if (i < 4) {
+      //       randomNum = Math.floor(Math.random() * 9) + 1;
+      //       randomNumbers.push(randomNum);
+      //     } else {
+      //       randomNum = Math.floor(Math.random() * nums.length);
+      //       let randomSplice = nums.splice(randomNum, 1);
+      //       randomNumbers.push(...randomSplice);
+      //     }
+      //   }
+      //   randomTargetNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
+      //   expression = findTargetNumber(randomTargetNumber, randomNumbers);
+      //   if (expression === randomTargetNumber) {
+      //     break;
+      //   }
+      // }
+      // setTargetNumber(expression);
+      // setRandomNumbers(randomNumbers);
 
-      let closestNumber = Infinity;
-      let closestDifference = Infinity;
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/targetNumber"
+        );
 
-      const generateExpressions = (
-        currentNumber: number,
-        currentIndex: number
-      ) => {
-        if (currentIndex === numbers.length) {
-          const difference = Math.abs(currentNumber - target);
-          if (difference < closestDifference) {
-            closestDifference = difference;
-            closestNumber = currentNumber;
-          }
-          return;
-        }
-
-        const nextNumber = numbers[currentIndex];
-
-        generateExpressions(currentNumber + nextNumber, currentIndex + 1);
-        generateExpressions(currentNumber - nextNumber, currentIndex + 1);
-        generateExpressions(currentNumber * nextNumber, currentIndex + 1);
-        if (nextNumber !== 0 && currentNumber % nextNumber === 0) {
-          generateExpressions(currentNumber / nextNumber, currentIndex + 1);
-        }
-      };
-
-      generateExpressions(0, 0);
-
-      return closestNumber !== Infinity ? closestNumber : -1;
-    }
-
-    const initGame = () => {
-      let randomNumbers: number[] = [];
-      let nums = [10, 25, 50, 75, 100, 20];
-
-      let randomTargetNumber: number;
-      let expression: number;
-
-      while (true) {
-        randomNumbers = [];
-        nums = [10, 25, 50, 75, 100, 20];
-
-        for (let i = 0; i < 6; i++) {
-          let randomNum;
-
-          if (i < 4) {
-            randomNum = Math.floor(Math.random() * 9) + 1;
-            randomNumbers.push(randomNum);
-          } else {
-            randomNum = Math.floor(Math.random() * nums.length);
-            let randomSplice = nums.splice(randomNum, 1);
-            randomNumbers.push(...randomSplice);
-          }
-        }
-
-        randomTargetNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
-        expression = findTargetNumber(randomTargetNumber, randomNumbers);
-
-        if (expression === randomTargetNumber) {
-          break;
-        }
+        setTargetNumber(response.data.targetNumber);
+        setRandomNumbers(response.data.randomNumbers);
+        setChars(response.data.chars);
+        setSeconds(response.data.seconds);
+        setUsedNumbersIndexes(response.data.usedNumbersIndexes);
+        setResult(response.data.result);
+      } catch (error) {
+        console.log(error);
       }
-
-      setTargetNumber(expression);
-      setRandomNumbers(randomNumbers);
     };
 
     if (!isEffectExecutedRef.current) {
