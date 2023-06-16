@@ -89,29 +89,14 @@ const MatchingPairs = () => {
     const initGame = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/matchingPair/getMatchingPairs"
+          "http://localhost:4000/api/game/getGameState/matchingPairs"
         );
 
-        const leftSideData = response.data.map((object: Spojnica) => {
-          return {
-            id: object.id,
-            question: object.question,
-          };
-        });
-
-        const rightSideData = response.data.map((object: Spojnica) => {
-          return {
-            id: object.id,
-            answer: object.answer,
-          };
-        });
-
-        setLeftSide(
-          leftSideData.sort((a: Spojnica, b: Spojnica) => Math.random() - 0.5)
-        );
-        setRightSide(
-          rightSideData.sort((a: Spojnica, b: Spojnica) => Math.random() - 0.5)
-        );
+        setRightSide(response.data.rightSide);
+        setLeftSide(response.data.leftSide);
+        setSeconds(response.data.seconds);
+        setCorrects(response.data.corrects);
+        setIncorrects(response.data.incorrects);
       } catch (error) {
         console.log(error);
       }

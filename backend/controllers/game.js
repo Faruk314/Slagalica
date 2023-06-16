@@ -105,6 +105,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       seconds: 90,
     },
     matchingPairs: {
+      gameState: "",
       leftSide: [],
       rightSide: [],
       corrects: [],
@@ -214,6 +215,48 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.targetNumber.targetNumber = expression;
     gameState.targetNumber.randomNumbers = randomNumbers;
     gameState.targetNumber.gameState = "playing";
+
+    await client.set(userId, JSON.stringify(gameState));
+  }
+
+  if (
+    gameName === "matchingPairs" &&
+    gameState.matchingPairs.gameState === ""
+  ) {
+    const categories = ["Alcohol", "Players", "Actors"];
+    const randomNum = Math.floor(Math.random() * categories.length);
+    const randomCategorie = categories[randomNum];
+
+    let q = "SELECT `id`,`question`,`answer` FROM pairs WHERE `category` = ?";
+
+    let data = await query(q, [randomCategorie]);
+
+    if (!data) {
+      res.status(400);
+      throw new Error("Could not get matching pairs by category");
+    }
+
+    const leftSideData = data
+      .map((object) => {
+        return {
+          id: object.id,
+          question: object.question,
+        };
+      })
+      .sort((a, b) => Math.random() - 0.5);
+
+    const rightSideData = data
+      .map((object) => {
+        return {
+          id: object.id,
+          answer: object.answer,
+        };
+      })
+      .sort((a, b) => Math.random() - 0.5);
+
+    gameState.matchingPairs.rightSide = rightSideData;
+    gameState.matchingPairs.leftSide = leftSideData;
+    gameState.matchingPairs.gameState = "playing";
 
     await client.set(userId, JSON.stringify(gameState));
   }
