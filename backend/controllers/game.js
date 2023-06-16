@@ -7,6 +7,33 @@ const client = new Redis({
   port: 6379,
 });
 
+const simbols = [
+  "/images/skocko.png",
+  "/images/club.png",
+  "/images/spades.png",
+  "/images/heart.png",
+  "/images/diamond.png",
+  "/images/star.png",
+  "/images/skocko.png",
+  "/images/club.png",
+  "/images/spades.png",
+  "/images/heart.png",
+  "/images/diamond.png",
+  "/images/star.png",
+  "/images/skocko.png",
+  "/images/club.png",
+  "/images/spades.png",
+  "/images/heart.png",
+  "/images/diamond.png",
+  "/images/star.png",
+  "/images/skocko.png",
+  "/images/club.png",
+  "/images/spades.png",
+  "/images/heart.png",
+  "/images/diamond.png",
+  "/images/star.png",
+];
+
 export const createGameSession = asyncHandler(async (req, res) => {
   const userId = 1;
   const game = {
@@ -103,6 +130,17 @@ export const getGameState = asyncHandler(async (req, res) => {
   }
 
   let gameState = JSON.parse(data);
+
+  // winCombination: [],
+
+  //init mastermind game
+  if (gameName === "mastermind") {
+    const randomCombination = simbols
+      .sort((a, b) => 0.5 - Math.random())
+      .slice(0, 4);
+
+    gameState.mastermind.winCombination = randomCombination;
+  }
 
   res.status(200).json(gameState[gameName]);
 });

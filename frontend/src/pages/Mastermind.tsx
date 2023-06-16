@@ -12,25 +12,7 @@ const Mastermind = () => {
     ["", "", "", ""],
     ["", "", "", ""],
   ]);
-  const simbols: string[] = [
-    "/images/skocko.png",
-    "/images/club.png",
-    "/images/spades.png",
-    "/images/heart.png",
-    "/images/diamond.png",
-    "/images/star.png",
-    "/images/skocko.png",
-    "/images/club.png",
-    "/images/spades.png",
-    "/images/heart.png",
-    "/images/diamond.png",
-    "/images/star.png",
-    "/images/skocko.png",
-    "/images/club.png",
-    "/images/spades.png",
-    "/images/heart.png",
-    "/images/diamond.png",
-    "/images/star.png",
+  const simbols = [
     "/images/skocko.png",
     "/images/club.png",
     "/images/spades.png",
@@ -45,20 +27,7 @@ const Mastermind = () => {
   const { updateScore, gameStates, updateGameState } = useContext(GameContext);
 
   useEffect(() => {
-    const initGame = () => {
-      //generating win combination by shuffling simbols array and taking first 4 simbols
-      const randomCombination: string[] = simbols
-        .sort((a, b) => 0.5 - Math.random())
-        .slice(0, 4);
-
-      setWinCombination(randomCombination);
-    };
-
-    initGame();
-  }, []);
-
-  useEffect(() => {
-    const retrieveGameState = async () => {
+    const initGame = async () => {
       try {
         const response = await axios.get(
           "http://localhost:4000/api/game/getGameState/mastermind"
@@ -76,7 +45,7 @@ const Mastermind = () => {
       }
     };
 
-    retrieveGameState();
+    initGame();
   }, []);
 
   console.log(winCombination);
@@ -234,7 +203,7 @@ const Mastermind = () => {
       ))}
 
       <div className="grid grid-cols-6 m-1 space-x-1">
-        {simbols.slice(0, 6).map((simbol, index) => (
+        {simbols.map((simbol, index) => (
           <div
             onClick={() =>
               gameStates.mastermind === "playing" && handlePlayerMove(simbol)
