@@ -9,15 +9,12 @@ import query from "../db.js";
 // correctAnswer: "Mount Everest",
 
 export const getQuestions = asyncHandler(async (req, res) => {
-  let q =
-    "SELECT `id`,`question`,`answerOne`,`answerTwo`,`answerThree`,`correctAnswer` FROM questions ORDER BY RAND() LIMIT 10";
-
-  let data = await query(q, []);
-
-  if (!data) {
-    res.status(404);
-    throw new Error("Could not retrieve questions from database");
-  }
-
-  res.status(200).json(data);
+  // let q =
+  //   "SELECT `id`,`question`,`answerOne`,`answerTwo`,`answerThree`,`correctAnswer` FROM questions ORDER BY RAND() LIMIT 10";
+  // let data = await query(q, []);
+  // if (!data) {
+  //   res.status(404);
+  //   throw new Error("Could not retrieve questions from database");
+  // }
+  // res.status(200).json(data);
 });
