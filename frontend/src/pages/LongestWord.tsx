@@ -72,8 +72,6 @@ const LongestWord = () => {
     let chosenLettersCopy = [...chosenLetters];
     let chosenlettersIndexesCopy = [...chosenLettersIndexes];
 
-    console.log("chosen letters", chosenLettersCopy);
-
     chosenLettersCopy.splice(chosenLettersCopy.length - 1, 1);
     chosenlettersIndexesCopy.splice(chosenlettersIndexesCopy.length - 1, 1);
 
@@ -83,27 +81,19 @@ const LongestWord = () => {
 
   useEffect(() => {
     const initGame = async () => {
-      // Generate 12 random letters
-      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let generatedLetters = "";
-      for (let i = 0; i < 12; i++) {
-        const randomIndex = Math.floor(Math.random() * alphabet.length);
-        generatedLetters += alphabet.charAt(randomIndex);
-      }
-
       try {
-        const response = await axios.post(
-          "http://localhost:4000/api/wordgame/getLongestWord",
-          { letters: generatedLetters }
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/longestWord"
         );
 
-        console.log(response.data);
-        setLongestWord(response.data);
+        setChossenLetters(response.data.chosenLetters);
+        setChosenLettersIndexes(response.data.chosenLettersIndexes);
+        setLetters(response.data.letters);
+        setLongestWord(response.data.longestWord);
+        setSeconds(response.data.seconds);
       } catch (error) {
         console.log(error);
       }
-
-      setLetters(generatedLetters.split(""));
     };
 
     if (!isEffectExecutedRef.current) {

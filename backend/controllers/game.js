@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import query from "../db.js";
 import { Redis } from "ioredis";
+import wordList from "word-list-json";
 
 const client = new Redis({
   host: "localhost",
@@ -33,6 +34,44 @@ const simbols = [
   "/images/diamond.png",
   "/images/star.png",
 ];
+
+function findLongestWord(letters) {
+  let longestWord = "";
+
+  for (const word of wordList) {
+    const cleanedWord = cleanString(word);
+    const cleanedLetters = cleanString(letters);
+
+    if (
+      canFormWord(cleanedWord, cleanedLetters) &&
+      word.length > longestWord.length
+    ) {
+      longestWord = word;
+    }
+  }
+
+  return longestWord;
+}
+
+function canFormWord(word, letters) {
+  const lettersCopy = [...letters];
+
+  for (const letter of word) {
+    const letterIndex = lettersCopy.indexOf(letter);
+
+    if (letterIndex === -1) {
+      return false;
+    }
+
+    lettersCopy.splice(letterIndex, 1);
+  }
+
+  return true;
+}
+
+function cleanString(str) {
+  return str.toLowerCase().replace(/[^a-z]/g, "");
+}
 
 function findTargetNumber(randomTargetNumber, randomNumbers) {
   const target = randomTargetNumber;
@@ -70,6 +109,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
   const userId = 1;
   const game = {
     longestWord: {
+      gameState: "",
       seconds: 60,
       longestWord: "",
       letters: [],
@@ -167,8 +207,6 @@ export const getGameState = asyncHandler(async (req, res) => {
   }
 
   let gameState = JSON.parse(data);
-
-  // winCombination: [],
 
   //init mastermind game
   if (gameName === "mastermind" && gameState.mastermind.gameState === "") {
@@ -314,8 +352,35 @@ export const getGameState = asyncHandler(async (req, res) => {
     await client.set(userId, JSON.stringify(gameState));
   }
 
+  if (gameName === "longestWord" && gameState.longestWord.gameState === "") {
+    // Generate 12 random letters
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let generatedLetters = "";
+    for (let i = 0; i < 12; i++) {
+      const randomIndex = Math.floor(Math.random() * alphabet.length);
+      generatedLetters += alphabet.charAt(randomIndex);
+    }
+
+    const longestWord = findLongestWord(generatedLetters);
+
+    console.log("Longest Word:", longestWord);
+
+    gameState.longestWord.letters = generatedLetters.split("");
+    gameState.longestWord.longestWord = longestWord;
+    gameState.longestWord.gameState = "playing";
+
+    await client.set(userId, JSON.stringify(gameState));
+  }
+
   let updatedData = await client.get(userId);
   let updatedGameState = JSON.parse(updatedData);
 
   res.status(200).json(updatedGameState[gameName]);
 });
+
+// gameState: "",
+// seconds: 60,
+// longestWord: "",
+// letters: [],
+// chosenLetters: [],
+// chosenLettersIndexes: [],
