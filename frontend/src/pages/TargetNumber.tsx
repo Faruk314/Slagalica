@@ -12,7 +12,7 @@ const TargetNumber = () => {
   const isEffectExecutedRef = useRef(false);
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
   const [result, setResult] = useState<number | null>(null);
-  const { updateScore, updateGameState, gameStates, updateGame } =
+  const { updateScore, updateGameState, gameStates, updateGame, playerScore } =
     useContext(GameContext);
   const [seconds, setSeconds] = useState(90);
 
@@ -138,10 +138,20 @@ const TargetNumber = () => {
       seconds,
       usedNumbersIndexes,
       result,
+      gameState: gameStates.targetNumber,
+      score: playerScore.targetNumber,
     };
 
     updateGame(gameState, "targetNumber");
-  }, [chars, randomNumbers, usedNumbersIndexes, result, targetNumber]);
+  }, [
+    chars,
+    randomNumbers,
+    usedNumbersIndexes,
+    result,
+    targetNumber,
+    gameStates.targetNumber,
+    playerScore.targetNumber,
+  ]);
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">

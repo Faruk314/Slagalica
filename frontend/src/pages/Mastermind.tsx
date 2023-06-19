@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { GameContext } from "../context/GameContext";
 import GameOver from "../modals/GameOver";
 
@@ -24,7 +24,9 @@ const Mastermind = () => {
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
   const [seconds, setSeconds] = useState(90);
-  const { updateScore, gameStates, updateGameState } = useContext(GameContext);
+  const { updateScore, gameStates, updateGameState, updateGame } =
+    useContext(GameContext);
+  const isEffectExecutedRef = useRef(false);
 
   console.log(winCombination);
 
@@ -45,10 +47,24 @@ const Mastermind = () => {
       }
     };
 
-    initGame();
+    if (!isEffectExecutedRef.current) {
+      initGame();
+    }
   }, []);
 
   console.log(winCombination);
+
+  useEffect(() => {
+    const gameState = {
+      grid,
+      winCombination,
+      rowsChecked,
+      hints,
+      seconds,
+    };
+
+    updateGame(gameState, "mastermind");
+  }, [grid, hints, rowsChecked, winCombination]);
 
   useEffect(() => {
     const countdown = setInterval(() => {

@@ -13,7 +13,8 @@ const LongestWord = () => {
     []
   );
   const { updateGameState } = useContext(GameContext);
-  const { updateScore, gameStates, updateGame } = useContext(GameContext);
+  const { updateScore, gameStates, updateGame, playerScore } =
+    useContext(GameContext);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -115,10 +116,19 @@ const LongestWord = () => {
       chosenLettersIndexes,
       letters,
       seconds,
+      gameState: gameStates.longestWord,
+      score: playerScore.longestWord,
     };
 
     updateGame(updatedGameState, "longestWord");
-  }, [chosenLetters, chosenLettersIndexes, letters, longestWord]);
+  }, [
+    chosenLetters,
+    chosenLettersIndexes,
+    letters,
+    longestWord,
+    gameStates.longestWord,
+    playerScore.longestWord,
+  ]);
 
   return (
     <section className="flex flex-col justify-center h-[100vh] mx-2 mt-2 space-y-5  max-w-5xl md:mx-auto">

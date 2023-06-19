@@ -33,7 +33,7 @@ const Associations = () => {
     2: [],
     3: [],
   });
-  const { updateScore, updateGameState, gameStates, updateGame } =
+  const { updateScore, updateGameState, gameStates, updateGame, playerScore } =
     useContext(GameContext);
 
   useEffect(() => {
@@ -85,15 +85,23 @@ const Associations = () => {
   useEffect(() => {
     const gameState = {
       fieldsOpenCount,
-      score,
+      score: playerScore.associations,
       finalAnswer,
       ass,
       seconds,
       answeredCorrectly,
+      gameState: gameStates.associations,
     };
 
     updateGame(gameState, "associations");
-  }, [fieldsOpenCount, ass, score, finalAnswer, answeredCorrectly]);
+  }, [
+    fieldsOpenCount,
+    ass,
+    playerScore.associations,
+    finalAnswer,
+    answeredCorrectly,
+    gameStates.associations,
+  ]);
 
   const checkCorrectHandler = () => {
     if (guessFinal && answer.toLowerCase() === finalAnswer.toLowerCase()) {

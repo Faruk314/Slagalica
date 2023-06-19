@@ -20,7 +20,7 @@ const MatchingPairs = () => {
     null
   );
   const [score, setScore] = useState(0);
-  const { updateScore, gameStates, updateGameState, updateGame } =
+  const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
     useContext(GameContext);
   const [seconds, setSeconds] = useState(60);
 
@@ -113,10 +113,19 @@ const MatchingPairs = () => {
       seconds,
       corrects,
       incorrects,
+      gameState: gameStates.matchingPairs,
+      score: playerScore.matchingPairs,
     };
 
     updateGame(gameState, "matchingPairs");
-  }, [rightSide, leftSide, incorrects, corrects]);
+  }, [
+    rightSide,
+    leftSide,
+    incorrects,
+    corrects,
+    gameStates.matchingPairs,
+    playerScore.matchingPairs,
+  ]);
 
   return (
     <section className="flex items-center justify-center h-[100vh] font-bold">

@@ -22,7 +22,7 @@ const Quiz = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [points, setPoints] = useState(0);
   const [isTimeOut, setIsTimeOut] = useState(false);
-  const { updateScore, gameStates, updateGameState, updateGame } =
+  const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
     useContext(GameContext);
   const [seconds, setSeconds] = useState(120);
 
@@ -119,7 +119,7 @@ const Quiz = () => {
         console.log(response.data);
 
         setCurrentQuestionIndex(response.data.currentQuestionIndex);
-        setPoints(response.data.points);
+        setPoints(response.data.score);
         setQuestions(response.data.questions);
         setSeconds(response.data.seconds);
         setCurrentAnswers(response.data.currentAnswers);
@@ -137,14 +137,22 @@ const Quiz = () => {
   useEffect(() => {
     const gameState = {
       currentQuestionIndex,
-      points,
+      score: playerScore.quiz,
+      gameState: gameStates.quiz,
       questions,
       seconds,
       currentAnswers,
     };
 
     updateGame(gameState, "quiz");
-  }, [currentAnswers, questions, currentQuestionIndex, points]);
+  }, [
+    currentAnswers,
+    questions,
+    currentQuestionIndex,
+    points,
+    gameStates.quiz,
+    playerScore.quiz,
+  ]);
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">

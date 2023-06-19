@@ -115,6 +115,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       letters: [],
       chosenLetters: [],
       chosenLettersIndexes: [],
+      score: 0,
     },
     associations: {
       gameState: "",
@@ -129,6 +130,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       finalAnswer: "",
       seconds: 100,
       answeredCorrectly: [],
+      score: 0,
     },
     mastermind: {
       gameState: "",
@@ -160,7 +162,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       currentQuestionIndex: 0,
       currentAnswers: {},
       questions: [],
-      points: 0,
+      score: 0,
       seconds: 120,
     },
     targetNumber: {
@@ -171,6 +173,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       usedNumbersIndexes: [],
       result: null,
       seconds: 90,
+      score: 0,
     },
   };
 
