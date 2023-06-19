@@ -22,7 +22,8 @@ const Quiz = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [points, setPoints] = useState(0);
   const [isTimeOut, setIsTimeOut] = useState(false);
-  const { updateScore, gameStates, updateGameState } = useContext(GameContext);
+  const { updateScore, gameStates, updateGameState, updateGame } =
+    useContext(GameContext);
   const [seconds, setSeconds] = useState(120);
 
   useEffect(() => {
@@ -111,23 +112,6 @@ const Quiz = () => {
   useEffect(() => {
     const initGame = async () => {
       try {
-        // const response = await axios.get(
-        //   "http://localhost:4000/api/quiz/getQuestions"
-        // );
-
-        // let answers = response.data.map((question: Question) => {
-        //   return {
-        //     answerOne: question.answerOne,
-        //     answersTwo: question.answerTwo,
-        //     answerThree: question.answerThree,
-        //     answerFour: question.correctAnswer,
-        //   };
-        // });
-
-        // setCurrentQuestionIndex(0);
-        // setQuestions(response.data);
-        // setCurrentAnswers(answers[0]);
-
         const response = await axios.get(
           "http://localhost:4000/api/game/getGameState/quiz"
         );
@@ -149,6 +133,18 @@ const Quiz = () => {
       isEffectExecutedRef.current = true;
     }
   }, []);
+
+  useEffect(() => {
+    const gameState = {
+      currentQuestionIndex,
+      points,
+      questions,
+      seconds,
+      currentAnswers,
+    };
+
+    updateGame(gameState, "quiz");
+  }, [currentAnswers, questions, currentQuestionIndex, points]);
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">

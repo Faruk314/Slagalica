@@ -20,7 +20,8 @@ const MatchingPairs = () => {
     null
   );
   const [score, setScore] = useState(0);
-  const { updateScore, gameStates, updateGameState } = useContext(GameContext);
+  const { updateScore, gameStates, updateGameState, updateGame } =
+    useContext(GameContext);
   const [seconds, setSeconds] = useState(60);
 
   const handleLeftSideClick = (id: number) => {
@@ -104,6 +105,18 @@ const MatchingPairs = () => {
 
     initGame();
   }, []);
+
+  useEffect(() => {
+    const gameState = {
+      rightSide,
+      leftSide,
+      seconds,
+      corrects,
+      incorrects,
+    };
+
+    updateGame(gameState, "matchingPairs");
+  }, [rightSide, leftSide, incorrects, corrects]);
 
   return (
     <section className="flex items-center justify-center h-[100vh] font-bold">

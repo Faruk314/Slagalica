@@ -12,7 +12,8 @@ const TargetNumber = () => {
   const isEffectExecutedRef = useRef(false);
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
   const [result, setResult] = useState<number | null>(null);
-  const { updateScore, updateGameState, gameStates } = useContext(GameContext);
+  const { updateScore, updateGameState, gameStates, updateGame } =
+    useContext(GameContext);
   const [seconds, setSeconds] = useState(90);
 
   useEffect(() => {
@@ -107,33 +108,6 @@ const TargetNumber = () => {
 
   useEffect(() => {
     const initGame = async () => {
-      // let randomNumbers: number[] = [];
-      // let nums = [10, 25, 50, 75, 100, 20];
-      // let randomTargetNumber: number;
-      // let expression: number;
-      // while (true) {
-      //   randomNumbers = [];
-      //   nums = [10, 25, 50, 75, 100, 20];
-      //   for (let i = 0; i < 6; i++) {
-      //     let randomNum;
-      //     if (i < 4) {
-      //       randomNum = Math.floor(Math.random() * 9) + 1;
-      //       randomNumbers.push(randomNum);
-      //     } else {
-      //       randomNum = Math.floor(Math.random() * nums.length);
-      //       let randomSplice = nums.splice(randomNum, 1);
-      //       randomNumbers.push(...randomSplice);
-      //     }
-      //   }
-      //   randomTargetNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
-      //   expression = findTargetNumber(randomTargetNumber, randomNumbers);
-      //   if (expression === randomTargetNumber) {
-      //     break;
-      //   }
-      // }
-      // setTargetNumber(expression);
-      // setRandomNumbers(randomNumbers);
-
       try {
         const response = await axios.get(
           "http://localhost:4000/api/game/getGameState/targetNumber"
@@ -155,6 +129,19 @@ const TargetNumber = () => {
       isEffectExecutedRef.current = true;
     }
   }, []);
+
+  useEffect(() => {
+    const gameState = {
+      targetNumber,
+      randomNumbers,
+      chars,
+      seconds,
+      usedNumbersIndexes,
+      result,
+    };
+
+    updateGame(gameState, "targetNumber");
+  }, [chars, randomNumbers, usedNumbersIndexes, result, targetNumber]);
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">
