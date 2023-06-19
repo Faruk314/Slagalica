@@ -368,6 +368,7 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.longestWord.letters = generatedLetters.split("");
     gameState.longestWord.longestWord = longestWord;
     gameState.longestWord.gameState = "playing";
+    gameState.longestWord.seconds = Math.floor(Date.now() / 1000);
 
     await client.set(userId, JSON.stringify(gameState));
   }
@@ -378,9 +379,33 @@ export const getGameState = asyncHandler(async (req, res) => {
   res.status(200).json(updatedGameState[gameName]);
 });
 
-// gameState: "",
-// seconds: 60,
-// longestWord: "",
-// letters: [],
-// chosenLetters: [],
-// chosenLettersIndexes: [],
+export const updateGameState = asyncHandler(async (req, res) => {
+  const { updatedGameState, gameName } = req.body;
+  const userId = 1;
+
+  console.log("updateGameState", updatedGameState);
+
+  console.log("gameName", gameName);
+
+  let data = await client.get(userId);
+
+  if (!data) {
+    res.status(500);
+    throw new Error(
+      "Could not retrieve game state in updateGameState controller"
+    );
+  }
+
+  let gameState = JSON.parse(data);
+
+  if (!gameName) {
+    res.status(400);
+    throw new Error("Game name not provided");
+  }
+
+  gameState[gameName] = updatedGameState;
+
+  await client.set(userId, JSON.stringify(gameState));
+
+  res.status(200).json("Game state updated successfully");
+});

@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { createContext, useState } from "react";
 
 interface PlayerScore {
@@ -24,6 +25,7 @@ interface GameContextProps {
   totalScore: number;
   updateGameState: (name: string, state: string) => void;
   gameStates: GameStates;
+  updateGame: (updatedGameState: any, gameName: string) => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -46,6 +48,7 @@ export const GameContext = createContext<GameContextProps>({
   updateScore: () => {},
   totalScore: 0,
   updateGameState: () => {},
+  updateGame: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -83,6 +86,17 @@ export const GameContextProvider = ({ children }: any) => {
     setTotalScore((prev) => prev + score);
   };
 
+  const updateGame = async (updatedGameState: any, gameName: string) => {
+    try {
+      await axios.put("http://localhost:4000/api/game/updateGameState", {
+        updatedGameState,
+        gameName,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -91,6 +105,7 @@ export const GameContextProvider = ({ children }: any) => {
         totalScore,
         updateGameState,
         gameStates,
+        updateGame,
       }}
     >
       {children}
