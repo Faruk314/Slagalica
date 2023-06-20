@@ -25,6 +25,7 @@ const Quiz = () => {
   const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
     useContext(GameContext);
   const [seconds, setSeconds] = useState(120);
+  const [gameStateFetched, setGameStateFetched] = useState(false);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -124,6 +125,7 @@ const Quiz = () => {
         setQuestions(response.data.questions);
         setSeconds(response.data.seconds);
         setCurrentAnswers(response.data.currentAnswers);
+        setGameStateFetched(true);
       } catch (error) {
         console.log(error);
       }
@@ -145,7 +147,9 @@ const Quiz = () => {
       currentAnswers,
     };
 
-    updateGame(gameState, "quiz");
+    if (gameStateFetched) {
+      updateGame(gameState, "quiz");
+    }
   }, [
     currentAnswers,
     questions,
@@ -196,7 +200,7 @@ const Quiz = () => {
         </div>
       )}
 
-      {gameStates.quiz !== "playing" && <QuizModal />}
+      {gameStates.quiz !== "playing" && gameStateFetched && <QuizModal />}
     </section>
   );
 };

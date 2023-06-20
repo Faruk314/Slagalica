@@ -27,7 +27,7 @@ const Mastermind = () => {
   const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
     useContext(GameContext);
   const isEffectExecutedRef = useRef(false);
-
+  const [gameStateFetched, setGameStateFetched] = useState(false);
   console.log(winCombination);
 
   useEffect(() => {
@@ -45,6 +45,7 @@ const Mastermind = () => {
         setRowsChecked(response.data.rowsChecked);
         setHints(response.data.hints);
         setSeconds(response.data.seconds);
+        setGameStateFetched(true);
       } catch (error) {
         console.log(error);
       }
@@ -69,7 +70,9 @@ const Mastermind = () => {
       score: playerScore.mastermind,
     };
 
-    updateGame(gameState, "mastermind");
+    if (gameStateFetched) {
+      updateGame(gameState, "mastermind");
+    }
   }, [
     grid,
     hints,
@@ -245,12 +248,14 @@ const Mastermind = () => {
         ))}
       </div>
 
-      {gameStates && gameStates.mastermind !== "playing" && (
-        <GameOver
-          winCombination={winCombination}
-          gameState={gameStates.mastermind}
-        />
-      )}
+      {gameStates &&
+        gameStateFetched &&
+        gameStates.mastermind !== "playing" && (
+          <GameOver
+            winCombination={winCombination}
+            gameState={gameStates.mastermind}
+          />
+        )}
     </section>
   );
 };

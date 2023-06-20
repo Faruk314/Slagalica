@@ -23,6 +23,7 @@ const MatchingPairs = () => {
   const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
     useContext(GameContext);
   const [seconds, setSeconds] = useState(60);
+  const [gameStateFetched, setGameStateFetched] = useState(false);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -99,6 +100,7 @@ const MatchingPairs = () => {
         setSeconds(response.data.seconds);
         setCorrects(response.data.corrects);
         setIncorrects(response.data.incorrects);
+        setGameStateFetched(true);
       } catch (error) {
         console.log(error);
       }
@@ -118,7 +120,9 @@ const MatchingPairs = () => {
       score: playerScore.matchingPairs,
     };
 
-    updateGame(gameState, "matchingPairs");
+    if (gameStateFetched) {
+      updateGame(gameState, "matchingPairs");
+    }
   }, [
     rightSide,
     leftSide,
@@ -178,7 +182,9 @@ const MatchingPairs = () => {
         </div>
       </div>
 
-      {gameStates.matchingPairs !== "playing" && <MatchingPairsModal />}
+      {gameStates.matchingPairs !== "playing" && gameStateFetched && (
+        <MatchingPairsModal />
+      )}
     </section>
   );
 };

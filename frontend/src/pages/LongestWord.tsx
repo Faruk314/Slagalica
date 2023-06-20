@@ -15,6 +15,17 @@ const LongestWord = () => {
   const { updateGameState } = useContext(GameContext);
   const { updateScore, gameStates, updateGame, playerScore } =
     useContext(GameContext);
+  const [gameStateFetched, setGameStateFetched] = useState(false);
+
+  const updatedGameState = {
+    longestWord,
+    chosenLetters,
+    chosenLettersIndexes,
+    letters,
+    seconds,
+    gameState: gameStates.longestWord,
+    score: playerScore.longestWord,
+  };
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -92,6 +103,7 @@ const LongestWord = () => {
         setChosenLettersIndexes(response.data.chosenLettersIndexes);
         setLetters(response.data.letters);
         setLongestWord(response.data.longestWord);
+        setGameStateFetched(true);
 
         const currentTime = Math.floor(Date.now() / 1000);
         const timeLeft = 60 - (currentTime - response.data.seconds);
@@ -111,17 +123,9 @@ const LongestWord = () => {
   }, []);
 
   useEffect(() => {
-    const updatedGameState = {
-      longestWord,
-      chosenLetters,
-      chosenLettersIndexes,
-      letters,
-      seconds,
-      gameState: gameStates.longestWord,
-      score: playerScore.longestWord,
-    };
-
-    updateGame(updatedGameState, "longestWord");
+    if (gameStateFetched) {
+      updateGame(updatedGameState, "longestWord");
+    }
   }, [
     chosenLetters,
     chosenLettersIndexes,
@@ -167,7 +171,7 @@ const LongestWord = () => {
         SUBMIT
       </button>
 
-      {gameStates.longestWord !== "playing" && (
+      {gameStateFetched && gameStates.longestWord !== "playing" && (
         <LongestWordModal
           gameState={gameStates.longestWord}
           word={chosenLetters.join("")}

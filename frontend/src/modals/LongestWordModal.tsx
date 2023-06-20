@@ -65,6 +65,21 @@ const LongestWordModal = ({ gameState, word, computerWord }: Props) => {
           </div>
         )}
 
+        {gameState === "gameLeave" && (
+          <div className="text-center">
+            <h2>You lost</h2>
+            <h2>
+              Our word is{" "}
+              <span className="font-bold">{computerWord.toUpperCase()}</span>
+            </h2>
+
+            <span>
+              Number of points you earned:{" "}
+              <span className="font-bold">{playerScore.longestWord}</span>
+            </span>
+          </div>
+        )}
+
         <button
           onClick={() => navigate("/singlePlayer")}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
