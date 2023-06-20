@@ -87,6 +87,7 @@ const LongestWord = () => {
           "http://localhost:4000/api/game/getGameState/longestWord"
         );
 
+        updateGameState("longestWord", response.data.gameState);
         setChossenLetters(response.data.chosenLetters);
         setChosenLettersIndexes(response.data.chosenLettersIndexes);
         setLetters(response.data.letters);

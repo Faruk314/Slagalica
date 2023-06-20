@@ -93,6 +93,7 @@ const MatchingPairs = () => {
           "http://localhost:4000/api/game/getGameState/matchingPairs"
         );
 
+        updateGameState("matchingPairs", response.data.gameState);
         setRightSide(response.data.rightSide);
         setLeftSide(response.data.leftSide);
         setSeconds(response.data.seconds);

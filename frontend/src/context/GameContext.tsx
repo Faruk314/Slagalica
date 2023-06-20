@@ -89,9 +89,22 @@ export const GameContextProvider = ({ children }: any) => {
       ...prevScore,
       [name]: score,
     }));
-
-    setTotalScore((prev) => prev + score);
   };
+
+  useEffect(() => {
+    const calcTotal = () => {
+      const totalScore = Object.values(playerScore).reduce(
+        (acc, score) => acc + score,
+        0
+      );
+
+      setTotalScore(totalScore);
+    };
+
+    if (playerScore) {
+      calcTotal();
+    }
+  }, [playerScore]);
 
   const updateGame = async (updatedGameState: any, gameName: string) => {
     try {

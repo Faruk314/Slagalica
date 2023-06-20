@@ -113,6 +113,7 @@ const TargetNumber = () => {
           "http://localhost:4000/api/game/getGameState/targetNumber"
         );
 
+        updateGameState("targetNumber", response.data.gameState);
         setTargetNumber(response.data.targetNumber);
         setRandomNumbers(response.data.randomNumbers);
         setChars(response.data.chars);

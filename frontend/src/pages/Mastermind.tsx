@@ -24,7 +24,7 @@ const Mastermind = () => {
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
   const [seconds, setSeconds] = useState(90);
-  const { updateScore, gameStates, updateGameState, updateGame } =
+  const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
     useContext(GameContext);
   const isEffectExecutedRef = useRef(false);
 
@@ -37,6 +37,9 @@ const Mastermind = () => {
           "http://localhost:4000/api/game/getGameState/mastermind"
         );
 
+        console.log(response.data);
+
+        updateGameState("mastermind", response.data.gameState);
         setGrid(response.data.grid);
         setWinCombination(response.data.winCombination);
         setRowsChecked(response.data.rowsChecked);
@@ -49,6 +52,7 @@ const Mastermind = () => {
 
     if (!isEffectExecutedRef.current) {
       initGame();
+      isEffectExecutedRef.current = true;
     }
   }, []);
 
@@ -61,10 +65,19 @@ const Mastermind = () => {
       rowsChecked,
       hints,
       seconds,
+      gameState: gameStates.mastermind,
+      score: playerScore.mastermind,
     };
 
     updateGame(gameState, "mastermind");
-  }, [grid, hints, rowsChecked, winCombination]);
+  }, [
+    grid,
+    hints,
+    rowsChecked,
+    winCombination,
+    gameStates.mastermind,
+    playerScore.mastermind,
+  ]);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -221,9 +234,9 @@ const Mastermind = () => {
       <div className="grid grid-cols-6 m-1 space-x-1">
         {simbols.map((simbol, index) => (
           <div
-            onClick={() =>
-              gameStates.mastermind === "playing" && handlePlayerMove(simbol)
-            }
+            onClick={() => {
+              handlePlayerMove(simbol);
+            }}
             key={index}
             className="bg-blue-600 rounded-md flex items-center justify-center h-[5rem] md:h-[6rem] cursor-pointer"
           >
@@ -232,7 +245,7 @@ const Mastermind = () => {
         ))}
       </div>
 
-      {gameStates.mastermind !== "playing" && (
+      {gameStates && gameStates.mastermind !== "playing" && (
         <GameOver
           winCombination={winCombination}
           gameState={gameStates.mastermind}

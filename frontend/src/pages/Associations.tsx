@@ -65,6 +65,7 @@ const Associations = () => {
 
         console.log(response.data);
 
+        updateGameState("associations", response.data.gameState);
         setAnsweredCorrectly(response.data.answeredCorrectly);
         setScore(response.data.seconds);
         setFieldsOpenCount(response.data.fieldsOpenCount);

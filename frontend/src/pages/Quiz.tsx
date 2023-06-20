@@ -118,6 +118,7 @@ const Quiz = () => {
 
         console.log(response.data);
 
+        updateGameState("quiz", response.data.gameState);
         setCurrentQuestionIndex(response.data.currentQuestionIndex);
         setPoints(response.data.score);
         setQuestions(response.data.questions);
