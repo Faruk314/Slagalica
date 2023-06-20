@@ -15,6 +15,8 @@ const TargetNumber = () => {
   const { updateScore, updateGameState, gameStates, updateGame, playerScore } =
     useContext(GameContext);
   const [seconds, setSeconds] = useState(90);
+  const [gameStateFetched, setGameStateFetched] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -113,13 +115,20 @@ const TargetNumber = () => {
           "http://localhost:4000/api/game/getGameState/targetNumber"
         );
 
+        console.log(response.data);
+
+        setGameStartTime(response.data.seconds);
+        setGameStateFetched(true);
         updateGameState("targetNumber", response.data.gameState);
         setTargetNumber(response.data.targetNumber);
         setRandomNumbers(response.data.randomNumbers);
         setChars(response.data.chars);
-        setSeconds(response.data.seconds);
         setUsedNumbersIndexes(response.data.usedNumbersIndexes);
         setResult(response.data.result);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 90 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
       } catch (error) {
         console.log(error);
       }
@@ -136,14 +145,16 @@ const TargetNumber = () => {
       targetNumber,
       randomNumbers,
       chars,
-      seconds,
+      seconds: gameStartTime,
       usedNumbersIndexes,
       result,
       gameState: gameStates.targetNumber,
       score: playerScore.targetNumber,
     };
 
-    updateGame(gameState, "targetNumber");
+    if (gameStateFetched) {
+      updateGame(gameState, "targetNumber");
+    }
   }, [
     chars,
     randomNumbers,

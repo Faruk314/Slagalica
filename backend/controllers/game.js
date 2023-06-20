@@ -224,6 +224,7 @@ export const getGameState = asyncHandler(async (req, res) => {
 
     gameState.mastermind.winCombination = randomCombination;
     gameState.mastermind.gameState = "playing";
+    gameState.mastermind.seconds = Math.floor(Date.now() / 1000);
 
     await client.set(userId, JSON.stringify(gameState));
   }
@@ -263,6 +264,7 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.targetNumber.targetNumber = expression;
     gameState.targetNumber.randomNumbers = randomNumbers;
     gameState.targetNumber.gameState = "playing";
+    gameState.targetNumber.seconds = Math.floor(Date.now() / 1000);
 
     await client.set(userId, JSON.stringify(gameState));
   }
@@ -305,6 +307,7 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.matchingPairs.rightSide = rightSideData;
     gameState.matchingPairs.leftSide = leftSideData;
     gameState.matchingPairs.gameState = "playing";
+    gameState.matchingPairs.seconds = Math.floor(Date.now() / 1000);
 
     await client.set(userId, JSON.stringify(gameState));
   }
@@ -334,6 +337,7 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.quiz.questions = data;
     gameState.quiz.currentAnswers = answers[0];
     gameState.quiz.gameState = "playing";
+    gameState.quiz.seconds = Math.floor(Date.now() / 1000);
 
     await client.set(userId, JSON.stringify(gameState));
   }
@@ -356,6 +360,7 @@ export const getGameState = asyncHandler(async (req, res) => {
     gameState.associations.ass = data;
     gameState.associations.finalAnswer = data[0].finalAnswer;
     gameState.associations.gameState = "playing";
+    gameState.associations.seconds = Math.floor(Date.now() / 1000);
 
     await client.set(userId, JSON.stringify(gameState));
   }

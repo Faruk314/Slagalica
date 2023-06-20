@@ -16,13 +16,14 @@ const LongestWord = () => {
   const { updateScore, gameStates, updateGame, playerScore } =
     useContext(GameContext);
   const [gameStateFetched, setGameStateFetched] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
 
   const updatedGameState = {
     longestWord,
     chosenLetters,
     chosenLettersIndexes,
     letters,
-    seconds,
+    seconds: gameStartTime,
     gameState: gameStates.longestWord,
     score: playerScore.longestWord,
   };
@@ -104,12 +105,10 @@ const LongestWord = () => {
         setLetters(response.data.letters);
         setLongestWord(response.data.longestWord);
         setGameStateFetched(true);
-
+        setGameStartTime(response.data.seconds);
         const currentTime = Math.floor(Date.now() / 1000);
-        const timeLeft = 60 - (currentTime - response.data.seconds);
-
-        console.log(timeLeft);
-
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
         setSeconds(timeLeft);
       } catch (error) {
         console.log(error);

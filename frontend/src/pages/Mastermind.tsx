@@ -28,6 +28,8 @@ const Mastermind = () => {
     useContext(GameContext);
   const isEffectExecutedRef = useRef(false);
   const [gameStateFetched, setGameStateFetched] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+
   console.log(winCombination);
 
   useEffect(() => {
@@ -46,6 +48,11 @@ const Mastermind = () => {
         setHints(response.data.hints);
         setSeconds(response.data.seconds);
         setGameStateFetched(true);
+        setGameStartTime(response.data.seconds);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
       } catch (error) {
         console.log(error);
       }
@@ -65,7 +72,7 @@ const Mastermind = () => {
       winCombination,
       rowsChecked,
       hints,
-      seconds,
+      seconds: gameStartTime,
       gameState: gameStates.mastermind,
       score: playerScore.mastermind,
     };
@@ -191,7 +198,9 @@ const Mastermind = () => {
 
   return (
     <section className="w-full flex flex-col justify-center h-[100vh] max-w-3xl mx-auto">
-      <span className="absolute text-2xl top-2 left-2">{seconds}</span>
+      {gameStateFetched && (
+        <span className="absolute text-2xl top-2 left-2">{seconds}</span>
+      )}
       {grid.map((row, rowIndex) => (
         <div key={rowIndex} className="grid grid-cols-5 mx-1 space-x-1">
           {row.map((col, colIndex) => (

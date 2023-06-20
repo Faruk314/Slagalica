@@ -26,6 +26,7 @@ const Quiz = () => {
     useContext(GameContext);
   const [seconds, setSeconds] = useState(120);
   const [gameStateFetched, setGameStateFetched] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -126,6 +127,11 @@ const Quiz = () => {
         setSeconds(response.data.seconds);
         setCurrentAnswers(response.data.currentAnswers);
         setGameStateFetched(true);
+        setGameStartTime(response.data.seconds);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
       } catch (error) {
         console.log(error);
       }
@@ -143,7 +149,7 @@ const Quiz = () => {
       score: playerScore.quiz,
       gameState: gameStates.quiz,
       questions,
-      seconds,
+      seconds: gameStartTime,
       currentAnswers,
     };
 
@@ -162,7 +168,7 @@ const Quiz = () => {
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">
       <div className="absolute top-0 left-0">
-        <span className="text-black">{seconds}</span>
+        {gameStateFetched && <span className="text-black">{seconds}</span>}
       </div>
       {questions.length > 0 && (
         <div className="w-full max-w-4xl mx-2 md:mx-auto">

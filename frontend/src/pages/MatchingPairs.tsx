@@ -24,6 +24,7 @@ const MatchingPairs = () => {
     useContext(GameContext);
   const [seconds, setSeconds] = useState(60);
   const [gameStateFetched, setGameStateFetched] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -95,12 +96,18 @@ const MatchingPairs = () => {
         );
 
         updateGameState("matchingPairs", response.data.gameState);
+        setGameStartTime(response.data.seconds);
         setRightSide(response.data.rightSide);
         setLeftSide(response.data.leftSide);
         setSeconds(response.data.seconds);
         setCorrects(response.data.corrects);
         setIncorrects(response.data.incorrects);
         setGameStateFetched(true);
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
       } catch (error) {
         console.log(error);
       }
@@ -113,7 +120,7 @@ const MatchingPairs = () => {
     const gameState = {
       rightSide,
       leftSide,
-      seconds,
+      seconds: gameStartTime,
       corrects,
       incorrects,
       gameState: gameStates.matchingPairs,

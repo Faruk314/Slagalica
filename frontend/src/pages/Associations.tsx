@@ -35,6 +35,8 @@ const Associations = () => {
   });
   const { updateScore, updateGameState, gameStates, updateGame, playerScore } =
     useContext(GameContext);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const [gameStateFetched, setGameStateFetched] = useState(false);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -67,11 +69,16 @@ const Associations = () => {
 
         updateGameState("associations", response.data.gameState);
         setAnsweredCorrectly(response.data.answeredCorrectly);
-        setScore(response.data.seconds);
         setFieldsOpenCount(response.data.fieldsOpenCount);
         setScore(response.data.score);
         setFinalAnswer(response.data.finalAnswer);
         setAss(response.data.ass);
+        setGameStartTime(response.data.seconds);
+        setGameStateFetched(true);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
       } catch (error) {
         console.log(error);
       }
@@ -89,12 +96,14 @@ const Associations = () => {
       score: playerScore.associations,
       finalAnswer,
       ass,
-      seconds,
+      seconds: gameStartTime,
       answeredCorrectly,
       gameState: gameStates.associations,
     };
 
-    updateGame(gameState, "associations");
+    if (gameStateFetched) {
+      updateGame(gameState, "associations");
+    }
   }, [
     fieldsOpenCount,
     ass,
@@ -147,7 +156,9 @@ const Associations = () => {
 
   return (
     <section className="flex flex-col items-center justify-center h-[100vh] text-white text-center font-bold">
-      <span className="absolute text-black top-2">{seconds}</span>
+      {gameStateFetched && (
+        <span className="absolute text-black top-2">{seconds}</span>
+      )}
 
       <div className="grid grid-cols-2 gap-x-5 gap-y-20">
         {ass.map((association, row) => (
