@@ -31,7 +31,7 @@ const SinglePlayer = () => {
       <div className="flex flex-col items-center justify-center space-y-4 text-2xl">
         <div className="flex space-x-2">
           <button
-            disabled={gameStates.longestWord !== "playing" ? true : false}
+            disabled={gameStates.longestWord !== "" ? true : false}
             className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
             onClick={() => navigate("/longestWord")}
           >
@@ -45,7 +45,7 @@ const SinglePlayer = () => {
 
         <div className="flex space-x-2">
           <button
-            disabled={gameStates.targetNumber !== "playing" ? true : false}
+            disabled={gameStates.targetNumber !== "" ? true : false}
             className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
             onClick={() => navigate("/targetNumber")}
           >
@@ -59,7 +59,7 @@ const SinglePlayer = () => {
 
         <div className="flex space-x-2">
           <button
-            disabled={gameStates.matchingPairs !== "playing" ? true : false}
+            disabled={gameStates.matchingPairs !== "" ? true : false}
             className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
             onClick={() => navigate("/matchingPairs")}
           >
@@ -73,7 +73,7 @@ const SinglePlayer = () => {
 
         <div className="flex space-x-2">
           <button
-            disabled={gameStates.quiz !== "playing" ? true : false}
+            disabled={gameStates.quiz !== "" ? true : false}
             className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
             onClick={() => navigate("/quiz")}
           >
@@ -87,7 +87,7 @@ const SinglePlayer = () => {
 
         <div className="flex space-x-2">
           <button
-            disabled={gameStates.mastermind !== "playing" ? true : false}
+            disabled={gameStates.mastermind !== "" ? true : false}
             className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
             onClick={() => navigate("/mastermind")}
           >
@@ -101,7 +101,7 @@ const SinglePlayer = () => {
 
         <div className="flex space-x-2">
           <button
-            disabled={gameStates.associations !== "playing" ? true : false}
+            disabled={gameStates.associations !== "" ? true : false}
             className="w-[15rem] flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
             onClick={() => navigate("/associations")}
           >

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState, useRef } from "react";
 
 interface PlayerScore {
   associations: number;
@@ -8,6 +8,12 @@ interface PlayerScore {
   matchingPairs: number;
   quiz: number;
   targetNumber: number;
+}
+
+interface GameStats {
+  gameName: string;
+  score: number;
+  gameState: string;
 }
 
 interface GameStates {
@@ -52,14 +58,15 @@ export const GameContext = createContext<GameContextProps>({
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const isEffectExecutedRef = useRef(false);
   const [totalScore, setTotalScore] = useState(0);
   const [gameStates, setGameStates] = useState<GameStates>({
-    associations: "playing",
-    longestWord: "playing",
-    mastermind: "playing",
-    matchingPairs: "playing",
-    quiz: "playing",
-    targetNumber: "playing",
+    associations: "",
+    longestWord: "",
+    mastermind: "",
+    matchingPairs: "",
+    quiz: "",
+    targetNumber: "",
   });
   const [playerScore, setPlayerScore] = useState<PlayerScore>({
     associations: 0,
@@ -96,6 +103,46 @@ export const GameContextProvider = ({ children }: any) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const retrieveGameStats = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameStats"
+        );
+
+        let playerScoreCopy: any = { ...playerScore };
+        let gameStatesCopy: any = { ...gameStates };
+
+        response.data.forEach((game: GameStats, index: number) => {
+          let playerScoreKey = Object.keys(playerScoreCopy).find(
+            (key) => key === game.gameName
+          );
+          let gameStatesKey = Object.keys(gameStatesCopy).find(
+            (key) => key === game.gameName
+          );
+
+          if (playerScoreKey) {
+            playerScoreCopy[playerScoreKey] = game.score;
+          }
+
+          if (gameStatesKey) {
+            gameStatesCopy[gameStatesKey] = game.gameState;
+          }
+        });
+
+        setGameStates(gameStatesCopy);
+        setPlayerScore(playerScoreCopy);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (!isEffectExecutedRef.current) {
+      retrieveGameStats();
+      isEffectExecutedRef.current = true;
+    }
+  }, []);
 
   return (
     <GameContext.Provider

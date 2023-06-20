@@ -3,6 +3,7 @@ import {
   createGameSession,
   deleteGameSession,
   getGameState,
+  getGameStats,
   updateGameState,
 } from "../controllers/game.js";
 
@@ -15,5 +16,7 @@ router.delete("/deleteGameSession", deleteGameSession);
 router.put("/updateGameState", updateGameState);
 
 router.get("/getGameState/:gameName", getGameState);
+
+router.get("/getGameStats", getGameStats);
 
 export default router;

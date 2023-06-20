@@ -146,6 +146,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
       rowsChecked: [],
       hints: [],
       seconds: 90,
+      score: 0,
     },
     matchingPairs: {
       gameState: "",
@@ -176,6 +177,10 @@ export const createGameSession = asyncHandler(async (req, res) => {
       score: 0,
     },
   };
+
+  let gameState = await client.get(userId);
+
+  if (gameState) return;
 
   try {
     await client.set(userId, JSON.stringify(game));
@@ -386,10 +391,6 @@ export const updateGameState = asyncHandler(async (req, res) => {
   const { updatedGameState, gameName } = req.body;
   const userId = 1;
 
-  console.log("updateGameState", updatedGameState);
-
-  console.log("gameName", gameName);
-
   let data = await client.get(userId);
 
   if (!data) {
@@ -411,4 +412,31 @@ export const updateGameState = asyncHandler(async (req, res) => {
   await client.set(userId, JSON.stringify(gameState));
 
   res.status(200).json("Game state updated successfully");
+});
+
+export const getGameStats = asyncHandler(async (req, res) => {
+  let userId = 1;
+
+  let data = await client.get(userId);
+
+  if (!data) {
+    res.status(500);
+    throw new Error(
+      "Could not retrieve game state from getGameStats controller"
+    );
+  }
+  let gameStates = JSON.parse(data);
+  console.log(gameStates);
+
+  let gameStats = Object.entries(gameStates).map(([key, value]) => {
+    console.log(value);
+
+    return {
+      gameName: key,
+      score: value.score,
+      gameState: value.gameState,
+    };
+  });
+
+  res.status(200).json(gameStats);
 });
