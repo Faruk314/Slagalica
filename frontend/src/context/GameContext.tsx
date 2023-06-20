@@ -32,6 +32,7 @@ interface GameContextProps {
   updateGameState: (name: string, state: string) => void;
   gameStates: GameStates;
   updateGame: (updatedGameState: any, gameName: string) => void;
+  statsFetched: boolean;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -55,6 +56,7 @@ export const GameContext = createContext<GameContextProps>({
   totalScore: 0,
   updateGameState: () => {},
   updateGame: () => {},
+  statsFetched: false,
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -76,6 +78,7 @@ export const GameContextProvider = ({ children }: any) => {
     quiz: 0,
     targetNumber: 0,
   });
+  const [statsFetched, setStatsFetched] = useState(false);
 
   const updateGameState = (name: string, state: string) => {
     setGameStates((prevState) => ({
@@ -144,6 +147,7 @@ export const GameContextProvider = ({ children }: any) => {
           }
         });
 
+        setStatsFetched(true);
         setGameStates(gameStatesCopy);
         setPlayerScore(playerScoreCopy);
       } catch (error) {
@@ -160,6 +164,7 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        statsFetched,
         playerScore,
         updateScore,
         totalScore,
