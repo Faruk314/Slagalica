@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, BrowserRouter, Route } from "react-router-dom";
 import { GameContextProvider } from "./context/GameContext";
 import Associations from "./pages/Associations";
+import Login from "./pages/Auth/Login";
 import LongestWord from "./pages/LongestWord";
 import MainMenu from "./pages/MainMenu";
 import Mastermind from "./pages/Mastermind";
@@ -16,6 +17,7 @@ function App() {
     <GameContextProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/menu" element={<MainMenu />} />
           <Route path="/multiplayer" element={<TwoPlayers />} />
           <Route path="/singlePlayer" element={<SinglePlayer />} />

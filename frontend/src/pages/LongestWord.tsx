@@ -137,18 +137,20 @@ const LongestWord = () => {
   return (
     <section className="flex flex-col justify-center h-[100vh] mx-2 mt-2 space-y-5  max-w-5xl md:mx-auto">
       <span className="absolute top-0">{seconds}</span>
-      <div className="grid grid-cols-6 gap-2 text-xl font-bold text-white rounded-md">
-        {letters.map((letter, index) => (
-          <button
-            disabled={chosenLettersIndexes.includes(index) ? true : false}
-            onClick={() => handleClick(letter, index)}
-            className="h-[3rem] bg-blue-600 rounded-md disabled:text-gray-400"
-            key={index}
-          >
-            {letter}
-          </button>
-        ))}
-      </div>
+      {gameStateFetched && (
+        <div className="grid grid-cols-6 gap-2 text-xl font-bold text-white rounded-md">
+          {letters.map((letter, index) => (
+            <button
+              disabled={chosenLettersIndexes.includes(index) ? true : false}
+              onClick={() => handleClick(letter, index)}
+              className="h-[3rem] bg-blue-600 rounded-md disabled:text-gray-400"
+              key={index}
+            >
+              {letter}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="flex space-x-2">
         <div className="flex items-center justify-center w-full h-10 text-black border border-black rounded-md">

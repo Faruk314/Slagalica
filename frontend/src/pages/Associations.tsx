@@ -285,7 +285,7 @@ const Associations = () => {
         />
       )}
 
-      {gameStates.associations !== "playing" && (
+      {gameStates.associations !== "playing" && gameStateFetched && (
         <AssociationsModal
           gameState={gameStates.associations}
           finalAnswer={finalAnswer}

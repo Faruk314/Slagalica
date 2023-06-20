@@ -81,7 +81,7 @@ const Quiz = () => {
   };
 
   useEffect(() => {
-    if (currentQuestionIndex && currentQuestionIndex < 10) {
+    if (currentQuestionIndex && currentQuestionIndex < 10 && gameStateFetched) {
       setCurrentAnswers({
         answerOne: questions[currentQuestionIndex].answerOne,
         answersTwo: questions[currentQuestionIndex].answerTwo,
@@ -181,7 +181,7 @@ const Quiz = () => {
               onClick={() => !isTimeOut && dontKnowAnswerHandler()}
               className="absolute right-0 top-[-2.2rem] px-2 rounded-md py-1 bg-blue-600 hover:bg-blue-500"
             >
-              Ne znam
+              skip
             </button>
           </div>
 

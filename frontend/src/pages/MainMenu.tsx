@@ -1,34 +1,40 @@
 import React from "react";
+import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const MainMenu = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="flex items-center justify-center h-[100vh] font-bold text-white">
-      <div className="flex flex-col space-y-4">
+    <section className="flex flex-col space-y-10 items-center justify-center h-[100vh] font-bold text-white">
+      <div className="flex items-center space-x-1 text-4xl">
+        <FaPuzzlePiece size={70} className="text-blue-600" />
+        <h1 className="text-gray-500">GAME</h1>
+      </div>
+
+      <div className="flex flex-col space-y-4 text-2xl">
         <button
-          className="w-[15rem] text-2xl flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
+          className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600 disabled:text-gray-400 disabled:pointer-events-none"
           onClick={() => navigate("/singlePlayer")}
         >
           Singleplayer
         </button>
 
         <button
-          className="w-[15rem] text-2xl flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
+          className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600"
           onClick={() => navigate("/multiplayer")}
         >
           Multiplayer
         </button>
 
         <button
-          className="w-[15rem] text-2xl flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none"
+          className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600"
           onClick={() => navigate("/leaderboard")}
         >
           Leaderboard
         </button>
 
-        <button className="w-[15rem] text-2xl flex justify-center items-center py-1 bg-blue-600 rounded-full hover:bg-blue-500 disabled:text-gray-400 disabled:pointer-events-none">
+        <button className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600">
           Logout
         </button>
       </div>

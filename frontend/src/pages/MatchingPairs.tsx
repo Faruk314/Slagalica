@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { GameContext } from "../context/GameContext";
 import MatchingPairsModal from "../modals/MatchingPairsModal";
 
@@ -25,6 +25,7 @@ const MatchingPairs = () => {
   const [seconds, setSeconds] = useState(60);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const isEffectExecutedRef = useRef(false);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -113,7 +114,10 @@ const MatchingPairs = () => {
       }
     };
 
-    initGame();
+    if (!isEffectExecutedRef.current) {
+      initGame();
+      isEffectExecutedRef.current = true;
+    }
   }, []);
 
   useEffect(() => {
