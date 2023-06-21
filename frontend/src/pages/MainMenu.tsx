@@ -1,9 +1,19 @@
+import axios from "axios";
 import React from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const MainMenu = () => {
   const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    try {
+      await axios.get("http://localhost:4000/api/auth/logout");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh] font-bold text-white">
@@ -34,7 +44,10 @@ const MainMenu = () => {
           Leaderboard
         </button>
 
-        <button className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600">
+        <button
+          onClick={logoutHandler}
+          className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600"
+        >
           Logout
         </button>
       </div>
