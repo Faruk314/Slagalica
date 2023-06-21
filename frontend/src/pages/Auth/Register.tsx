@@ -1,31 +1,29 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Register = () => {
+  const [email, setEmail] = useState("farukspahictz@gmail.com");
+  const [password, setPassword] = useState("ispitivac");
+  const [userName, setUsername] = useState("faruk");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
 
-  const loginHandler = async (e: React.FormEvent) => {
+  const registerHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password) {
+    if (!userName || !email || !password) {
       setMessage("All fields must be filled");
       return;
     }
 
     try {
-      await axios.post(`http://localhost:4000/api/auth/login`, {
+      await axios.post(`http://localhost:4000/api/auth/register`, {
+        userName,
         email,
         password,
       });
-      navigate("/menu");
     } catch (error: any) {
-      console.log(error);
-      console.log(error.response.data.message);
       setMessage(error.response.data.message);
     }
   };
@@ -37,9 +35,15 @@ const Login = () => {
         <h1 className="text-gray-500">GAME</h1>
       </div>
       <form
-        onSubmit={loginHandler}
+        onSubmit={registerHandler}
         className="flex flex-col p-4 text-gray-500 shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-md "
       >
+        <label className="text-blue-600">Username</label>
+        <input
+          value={userName}
+          onChange={(e) => setUsername(e.target.value)}
+          className="p-1 bg-transparent border-b rounded-sm shadow-sm focus:outline-none"
+        />
         <label className="mt-5 text-blue-600">Email</label>
         <input
           value={email}
@@ -55,12 +59,15 @@ const Login = () => {
           className="p-1 bg-transparent border-b rounded-md shadow-sm focus:outline-none"
         />
 
-        <button className="px-2 py-2 mt-5 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500">
-          LOGIN
+        <button
+          type="submit"
+          className="px-2 py-2 mt-5 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500"
+        >
+          REGISTER
         </button>
 
-        <Link to="/register" className="mt-5 text-center text-gray-400">
-          Create an account
+        <Link to="/" className="mt-5 text-center text-gray-400">
+          already have an account?
         </Link>
       </form>
 
@@ -69,4 +76,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

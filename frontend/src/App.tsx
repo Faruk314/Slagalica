@@ -3,6 +3,7 @@ import { Routes, BrowserRouter, Route } from "react-router-dom";
 import { GameContextProvider } from "./context/GameContext";
 import Associations from "./pages/Associations";
 import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
 import LongestWord from "./pages/LongestWord";
 import MainMenu from "./pages/MainMenu";
 import Mastermind from "./pages/Mastermind";
@@ -11,6 +12,8 @@ import Quiz from "./pages/Quiz";
 import SinglePlayer from "./pages/SinglePlayer";
 import TargetNumber from "./pages/TargetNumber";
 import TwoPlayers from "./pages/TwoPlayers";
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
@@ -18,6 +21,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/menu" element={<MainMenu />} />
           <Route path="/multiplayer" element={<TwoPlayers />} />
           <Route path="/singlePlayer" element={<SinglePlayer />} />
