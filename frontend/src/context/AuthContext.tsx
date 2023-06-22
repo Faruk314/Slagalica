@@ -8,7 +8,7 @@ interface AuthContextProps {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface UserInfo {
+export interface UserInfo {
   userId: number;
   userName: string;
   email: string;

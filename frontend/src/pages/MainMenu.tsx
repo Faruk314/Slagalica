@@ -1,10 +1,12 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Search from "../modals/Search";
 
 const MainMenu = () => {
   const navigate = useNavigate();
+  const [openSearch, setOpenSearch] = useState(false);
 
   const logoutHandler = async () => {
     try {
@@ -30,11 +32,15 @@ const MainMenu = () => {
           Singleplayer
         </button>
 
+        <button className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600">
+          Find Match
+        </button>
+
         <button
+          onClick={() => setOpenSearch(true)}
           className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600"
-          onClick={() => navigate("/multiplayer")}
         >
-          Multiplayer
+          Invite
         </button>
 
         <button
@@ -51,6 +57,8 @@ const MainMenu = () => {
           Logout
         </button>
       </div>
+
+      {openSearch && <Search setOpenSearch={setOpenSearch} />}
     </section>
   );
 };

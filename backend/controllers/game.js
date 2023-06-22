@@ -445,3 +445,19 @@ export const getGameStats = asyncHandler(async (req, res) => {
 
   res.status(200).json(gameStats);
 });
+
+export const searchPlayers = asyncHandler(async (req, res) => {
+  const { search } = req.query;
+  const loggedUser = 1;
+
+  console.log(search);
+
+  const searchTerm = `%${search}%`;
+
+  let q =
+    "SELECT `userId`, `userName`, `image` FROM users WHERE (`userName` LIKE ? OR `userId` LIKE ?) AND `userId` <> ?";
+
+  let data = await query(q, [searchTerm, searchTerm, loggedUser]);
+
+  res.status(200).json(data);
+});
