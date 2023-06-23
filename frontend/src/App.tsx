@@ -10,13 +10,13 @@ import MatchingPairs from "./pages/MatchingPairs";
 import Quiz from "./pages/Quiz";
 import SinglePlayer from "./pages/SinglePlayer";
 import TargetNumber from "./pages/TargetNumber";
-import TwoPlayers from "./pages/TwoPlayers";
 import axios from "axios";
 import { AuthContext } from "./context/AuthContext";
 import { SocketContext } from "./context/SocketContext";
 import { GameContext } from "./context/GameContext";
 import GameInvite from "./modals/multiplayer/GameInvite";
 import GameInvitePending from "./modals/multiplayer/GameInvitePending";
+import Multiplayer from "./pages/Multiplayer";
 
 axios.defaults.withCredentials = true;
 
@@ -77,7 +77,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<MainMenu />} />
-        <Route path="/multiplayer" element={<TwoPlayers />} />
+        <Route path="/multiplayer" element={<Multiplayer />} />
         <Route path="/singlePlayer" element={<SinglePlayer />} />
         <Route path="/longestWord" element={<LongestWord />} />
         <Route path="/targetNumber" element={<TargetNumber />} />
