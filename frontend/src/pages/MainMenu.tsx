@@ -24,7 +24,7 @@ const MainMenu = () => {
 
   useEffect(() => {
     socket?.on("gameStart", () => {
-      navigate("/singleplayer");
+      navigate("/multiplayer");
       setOpenGameInvite(false);
       setOpenGameInvitePending(false);
     });

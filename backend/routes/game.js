@@ -7,19 +7,20 @@ import {
   searchPlayers,
   updateGameState,
 } from "../controllers/game.js";
+import { protect } from "../utils/protect.js";
 
 const router = Router();
 
-router.post("/createGameSession", createGameSession);
+router.post("/createGameSession", protect, createGameSession);
 
-router.delete("/deleteGameSession", deleteGameSession);
+router.delete("/deleteGameSession", protect, deleteGameSession);
 
-router.put("/updateGameState", updateGameState);
+router.put("/updateGameState", protect, updateGameState);
 
-router.get("/getGameState/:gameName", getGameState);
+router.get("/getGameState/:gameName", protect, getGameState);
 
-router.get("/getGameStats", getGameStats);
+router.get("/getGameStats", protect, getGameStats);
 
-router.get("/searchPlayers", searchPlayers);
+router.get("/searchPlayers", protect, searchPlayers);
 
 export default router;

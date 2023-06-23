@@ -106,7 +106,8 @@ function findTargetNumber(randomTargetNumber, randomNumbers) {
 }
 
 export const createGameSession = asyncHandler(async (req, res) => {
-  const userId = 1;
+  const userId = req.user.userId;
+
   const game = {
     longestWord: {
       gameState: "",
@@ -192,7 +193,7 @@ export const createGameSession = asyncHandler(async (req, res) => {
 });
 
 export const deleteGameSession = asyncHandler(async (req, res) => {
-  const userId = 1;
+  const userId = req.user.userId;
 
   try {
     await client.del(userId);
@@ -205,7 +206,7 @@ export const deleteGameSession = asyncHandler(async (req, res) => {
 
 export const getGameState = asyncHandler(async (req, res) => {
   const { gameName } = req.params;
-  const userId = 1;
+  const userId = req.user.userId;
 
   let data = await client.get(userId);
 
@@ -390,7 +391,7 @@ export const getGameState = asyncHandler(async (req, res) => {
 
 export const updateGameState = asyncHandler(async (req, res) => {
   const { updatedGameState, gameName } = req.body;
-  const userId = 1;
+  const userId = req.user.userId;
 
   let data = await client.get(userId);
 
@@ -416,7 +417,7 @@ export const updateGameState = asyncHandler(async (req, res) => {
 });
 
 export const getGameStats = asyncHandler(async (req, res) => {
-  let userId = 1;
+  const userId = req.user.userId;
 
   let data = await client.get(userId);
 
@@ -441,7 +442,7 @@ export const getGameStats = asyncHandler(async (req, res) => {
 
 export const searchPlayers = asyncHandler(async (req, res) => {
   const { search } = req.query;
-  const loggedUser = 1;
+  const loggedUser = req.user.userId;
 
   const searchTerm = `%${search}%`;
 
