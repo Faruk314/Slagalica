@@ -1,12 +1,14 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/SocketContext";
 import Search from "../modals/Search";
 
 const MainMenu = () => {
   const navigate = useNavigate();
   const [openSearch, setOpenSearch] = useState(false);
+  const { socket } = useContext(SocketContext);
 
   const logoutHandler = async () => {
     try {

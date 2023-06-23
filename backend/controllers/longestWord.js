@@ -14,8 +14,6 @@ export const checkWordValidity = asyncHandler(async (req, res) => {
 
   let wordValid = wordList.findIndex((string) => string === word.toLowerCase());
 
-  console.log(wordValid);
-
   if (wordValid !== -1) {
     return res.json(true);
   } else {

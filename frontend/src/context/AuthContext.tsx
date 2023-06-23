@@ -36,6 +36,8 @@ export const AuthContextProvider = ({ children }: any) => {
     image: "",
   });
 
+  console.log("isLoggedIn auth context", isLoggedIn);
+
   return (
     <AuthContext.Provider
       value={{ loggedUserInfo, setLoggedUserInfo, isLoggedIn, setIsLoggedIn }}

@@ -318,8 +318,6 @@ export const getGameState = asyncHandler(async (req, res) => {
 
     let data = await query(q, []);
 
-    console.log("data", data);
-
     if (!data) {
       res.status(404);
       throw new Error("Could not retrieve questions from database");
@@ -376,8 +374,6 @@ export const getGameState = asyncHandler(async (req, res) => {
 
     const longestWord = findLongestWord(generatedLetters);
 
-    console.log("Longest Word:", longestWord);
-
     gameState.longestWord.letters = generatedLetters.split("");
     gameState.longestWord.longestWord = longestWord;
     gameState.longestWord.gameState = "playing";
@@ -431,11 +427,8 @@ export const getGameStats = asyncHandler(async (req, res) => {
     );
   }
   let gameStates = JSON.parse(data);
-  console.log(gameStates);
 
   let gameStats = Object.entries(gameStates).map(([key, value]) => {
-    console.log(value);
-
     return {
       gameName: key,
       score: value.score,
@@ -449,8 +442,6 @@ export const getGameStats = asyncHandler(async (req, res) => {
 export const searchPlayers = asyncHandler(async (req, res) => {
   const { search } = req.query;
   const loggedUser = 1;
-
-  console.log(search);
 
   const searchTerm = `%${search}%`;
 

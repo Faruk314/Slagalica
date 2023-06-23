@@ -9,11 +9,16 @@ import errorHandler from "./utils/error.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import setupSocket from "./socket.js";
+import http from "http";
 dotenv.config();
 
 const port = process.env.PORT;
 
 const app = express();
+
+const server = http.createServer(app);
+setupSocket();
 
 app.use(
   cors({

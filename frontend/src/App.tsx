@@ -27,6 +27,7 @@ function App() {
           "http://localhost:4000/api/auth/getLoginStatus"
         );
         console.log(response.data);
+
         setIsLoggedIn(response.data.status);
         setLoggedUserInfo(response.data.userInfo);
       } catch (error) {
