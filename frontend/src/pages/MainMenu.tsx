@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
 import Search from "../modals/Search";
 
@@ -9,6 +10,8 @@ const MainMenu = () => {
   const navigate = useNavigate();
   const [openSearch, setOpenSearch] = useState(false);
   const { socket } = useContext(SocketContext);
+  const { setOpenGameInvite, setOpenGameInvitePending } =
+    useContext(GameContext);
 
   const logoutHandler = async () => {
     try {
@@ -18,6 +21,18 @@ const MainMenu = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    socket?.on("gameStart", () => {
+      navigate("/singleplayer");
+      setOpenGameInvite(false);
+      setOpenGameInvitePending(false);
+    });
+
+    return () => {
+      socket?.off("gameStart");
+    };
+  }, [socket, navigate]);
 
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh] font-bold text-white">

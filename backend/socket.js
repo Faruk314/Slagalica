@@ -3,6 +3,35 @@ import http from "http";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import query from "./db.js";
+import { Redis } from "ioredis";
+
+const client = new Redis({
+  host: "localhost",
+  port: 6379,
+});
+
+const createNewGame = (playerOneId, playerTwoId) => {
+  return {
+    playerOne: {
+      userId: playerOneId,
+      longestWord: 0,
+      targetNumber: 0,
+      matchingPairs: 0,
+      quiz: 0,
+      associations: 0,
+      matermind: 0,
+    },
+    playerTwo: {
+      userId: playerTwoId,
+      longestWord: 0,
+      targetNumber: 0,
+      matchingPairs: 0,
+      quiz: 0,
+      associations: 0,
+      matermind: 0,
+    },
+  };
+};
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -67,39 +96,41 @@ export default function setupSocket() {
       if (!senderSocketId) return;
 
       let q = "SELECT `userName` FROM users WHERE `userId`= ?";
-      let data = await query(q, [socket.userId]);
+      let userInfo = await query(q, [socket.userId]);
 
-      io.to(receiverSocketId).emit("gameInvite", data[0].userName);
+      let gameId = uuidv4();
+      q = "INSERT INTO games (`gameId`,`senderId`,`receiverId`) VALUES (?,?,?)";
+      let data = await query(q, [gameId, socket.userId, receiverId]);
+
+      io.to(receiverSocketId).emit("gameInvite", userInfo[0].userName);
       io.to(senderSocketId).emit("gameInvitePending");
+    });
 
-      //   let gameInfo = {
-      //     playerOne: {
-      //       userId: 0,
-      //       userName: "",
-      //       image: "",
-      //       scores: {
-      //         longestWord: 0,
-      //         targetNumber: 0,
-      //         matchingPairs: 0,
-      //         quiz: 0,
-      //         associations: 0,
-      //         matermind: 0,
-      //       },
-      //     },
-      //     playerTwo: {
-      //       userId: 0,
-      //       userName: "",
-      //       image: "",
-      //       scores: {
-      //         longestWord: 0,
-      //         targetNumber: 0,
-      //         matchingPairs: 0,
-      //         quiz: 0,
-      //         associations: 0,
-      //         matermind: 0,
-      //       },
-      //     },
-      //   };
+    socket.on("acceptInvite", async () => {
+      let q = "SELECT `gameId`,`senderId` FROM games WHERE `receiverId`= ?";
+      let data = await query(q, [socket.userId]);
+      let gameId = data[0].gameId;
+
+      const receiverSocketId = getUser(socket.userId);
+      const senderSocketId = getUser(data[0].senderId);
+
+      if (!receiverSocketId || !senderSocketId) return;
+
+      const senderSocket = io.sockets.sockets.get(senderSocketId);
+      const receiverSocket = io.sockets.sockets.get(receiverSocketId);
+
+      if (senderSocket && receiverSocket) {
+        senderSocket.join(gameId);
+        receiverSocket.join(gameId);
+
+        const gameState = createNewGame(socket.userId, data[0].senderId);
+
+        console.log(gameState);
+
+        await client.set(gameId, gameState);
+
+        io.to(gameId).emit("gameStart", gameId);
+      }
     });
   });
 

@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { GameContext } from "../../context/GameContext";
+import { SocketContext } from "../../context/SocketContext";
 
 const GameInvite = () => {
   const { senderUsername } = useContext(GameContext);
+  const { socket } = useContext(SocketContext);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 z-20 flex flex-col items-center justify-center text-center bg-[rgb(0,0,0,0.5)]">
@@ -25,7 +27,12 @@ const GameInvite = () => {
           <button className="px-2 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500">
             CANCEL
           </button>
-          <button className="px-2 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500">
+          <button
+            onClick={() => {
+              socket?.emit("acceptInvite");
+            }}
+            className="px-2 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500"
+          >
             ACCEPT
           </button>
         </div>
