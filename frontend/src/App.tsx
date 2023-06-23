@@ -13,12 +13,45 @@ import TargetNumber from "./pages/TargetNumber";
 import TwoPlayers from "./pages/TwoPlayers";
 import axios from "axios";
 import { AuthContext } from "./context/AuthContext";
+import { SocketContext } from "./context/SocketContext";
+import { GameContext } from "./context/GameContext";
+import GameInvite from "./modals/multiplayer/GameInvite";
+import GameInvitePending from "./modals/multiplayer/GameInvitePending";
 
 axios.defaults.withCredentials = true;
 
 function App() {
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo } =
     useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
+  const {
+    setOpenGameInvite,
+    openGameInvite,
+    setSenderUsername,
+    setOpenGameInvitePending,
+    gameInvitePendingOpen,
+  } = useContext(GameContext);
+
+  useEffect(() => {
+    socket?.on("gameInvite", (senderUsername) => {
+      setSenderUsername(senderUsername);
+      setOpenGameInvite(true);
+    });
+
+    return () => {
+      socket?.off("gameInvite");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on("gameInvitePending", () => {
+      setOpenGameInvitePending(true);
+    });
+
+    return () => {
+      socket?.off("gameInvitePending");
+    };
+  }, [socket]);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -53,6 +86,8 @@ function App() {
         <Route path="/mastermind" element={<Mastermind />} />
         <Route path="/associations" element={<Associations />} />
       </Routes>
+      {openGameInvite && <GameInvite />}
+      {gameInvitePendingOpen && <GameInvitePending />}
     </BrowserRouter>
   );
 }

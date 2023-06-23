@@ -33,6 +33,12 @@ interface GameContextProps {
   gameStates: GameStates;
   updateGame: (updatedGameState: any, gameName: string) => void;
   statsFetched: boolean;
+  senderUsername: string;
+  setSenderUsername: React.Dispatch<React.SetStateAction<string>>;
+  openGameInvite: boolean;
+  setOpenGameInvite: React.Dispatch<React.SetStateAction<boolean>>;
+  gameInvitePendingOpen: boolean;
+  setOpenGameInvitePending: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -57,9 +63,18 @@ export const GameContext = createContext<GameContextProps>({
   updateGameState: () => {},
   updateGame: () => {},
   statsFetched: false,
+  senderUsername: "",
+  setSenderUsername: () => {},
+  openGameInvite: false,
+  setOpenGameInvite: () => {},
+  gameInvitePendingOpen: false,
+  setOpenGameInvitePending: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [gameInvitePendingOpen, setOpenGameInvitePending] = useState(false);
+  const [openGameInvite, setOpenGameInvite] = useState(false);
+  const [senderUsername, setSenderUsername] = useState("");
   const isEffectExecutedRef = useRef(false);
   const [totalScore, setTotalScore] = useState(0);
   const [gameStates, setGameStates] = useState<GameStates>({
@@ -164,6 +179,12 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        gameInvitePendingOpen,
+        setOpenGameInvitePending,
+        openGameInvite,
+        setOpenGameInvite,
+        setSenderUsername,
+        senderUsername,
         statsFetched,
         playerScore,
         updateScore,

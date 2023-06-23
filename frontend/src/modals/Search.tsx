@@ -1,16 +1,18 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { UserInfo } from "../context/AuthContext";
+import { SocketContext } from "../context/SocketContext";
 
 interface Props {
   setOpenSearch: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Search = ({ setOpenSearch }: Props) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("mule");
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [clicked, setClicked] = useState(false);
+  const { socket } = useContext(SocketContext);
 
   const searchHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +86,10 @@ const Search = ({ setOpenSearch }: Props) => {
                 </div>
               </div>
 
-              <button className="px-2 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500 mr-2">
+              <button
+                onClick={() => socket?.emit("sendInvite", player.userId)}
+                className="px-2 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500 mr-2"
+              >
                 INVITE
               </button>
             </div>

@@ -12,11 +12,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <SocketContextProvider>
-        <GameContextProvider>
+      <GameContextProvider>
+        <SocketContextProvider>
           <App />
-        </GameContextProvider>
-      </SocketContextProvider>
+        </SocketContextProvider>
+      </GameContextProvider>
     </AuthContextProvider>
   </React.StrictMode>
 );

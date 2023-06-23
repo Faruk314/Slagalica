@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import query from "./db.js";
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -57,11 +58,19 @@ export default function setupSocket() {
       removeUser(socket.id);
     });
 
-    socket.on("sendInvite", (receiverId) => {
+    socket.on("sendInvite", async (receiverId) => {
       const receiverSocketId = getUser(receiverId);
       const senderSocketId = getUser(socket.userId);
 
+      console.log("receiverId and senderId", receiverSocketId, senderSocketId);
+
       if (!senderSocketId) return;
+
+      let q = "SELECT `userName` FROM users WHERE `userId`= ?";
+      let data = await query(q, [socket.userId]);
+
+      io.to(receiverSocketId).emit("gameInvite", data[0].userName);
+      io.to(senderSocketId).emit("gameInvitePending");
 
       //   let gameInfo = {
       //     playerOne: {
