@@ -1,6 +1,11 @@
 import React from "react";
+import { UserInfo } from "../context/AuthContext";
 
-const Player = () => {
+interface Props {
+  userInfo: UserInfo;
+}
+
+const Player = ({ userInfo }: Props) => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <img
@@ -10,7 +15,7 @@ const Player = () => {
       />
 
       <div className="px-5 font-bold text-center text-white bg-blue-600 rounded-lg">
-        <p>Faruk</p>
+        <p>{userInfo.userName}</p>
       </div>
 
       <span className="text-3xl">0</span>

@@ -453,3 +453,21 @@ export const searchPlayers = asyncHandler(async (req, res) => {
 
   res.status(200).json(data);
 });
+
+export const getGameInfo = asyncHandler(async (req, res) => {
+  const loggedUserId = req.user.userId;
+
+  let q = `SELECT g.gameId, u.userId, u.userName, u.image
+   FROM games g
+   JOIN users u ON (g.receiverId = u.userId OR g.senderId = u.userId)
+   WHERE (g.senderId = ? OR g.receiverId = ?) AND u.userId != ?`;
+
+  let data = await query(q, [loggedUserId, loggedUserId, loggedUserId]);
+
+  if (!data) {
+    res.status(404);
+    throw new Error("Could not find opponent info");
+  }
+
+  res.status(200).json(data[0]);
+});

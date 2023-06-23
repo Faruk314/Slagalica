@@ -1,13 +1,26 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { GameContext } from "../context/GameContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaPuzzlePiece } from "react-icons/fa";
 import Player from "../cards/Player";
+import { AuthContext } from "../context/AuthContext";
+import { UserInfo } from "../context/AuthContext";
+
+interface GameInfo extends UserInfo {
+  gameId?: string;
+}
 
 const Multiplayer = () => {
+  const { loggedUserInfo } = useContext(AuthContext);
   const { playerScore, gameStates, statsFetched } = useContext(GameContext);
   const navigate = useNavigate();
+  const [gameInfo, setGameInfo] = useState<GameInfo>({
+    userId: 0,
+    gameId: "",
+    userName: "",
+    image: "",
+  });
 
   useEffect(() => {
     const createGameSession = async () => {
@@ -21,6 +34,23 @@ const Multiplayer = () => {
     createGameSession();
   }, []);
 
+  useEffect(() => {
+    const getGameInfo = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameInfo"
+        );
+
+        console.log(response.data);
+
+        setGameInfo(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getGameInfo();
+  }, []);
+
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
       <div className="flex items-center space-x-1 text-4xl">
@@ -28,9 +58,9 @@ const Multiplayer = () => {
         <h1 className="text-gray-500">GAME</h1>
       </div>
       <div className="flex justify-between w-full px-2">
-        <Player />
+        <Player userInfo={loggedUserInfo} />
 
-        <Player />
+        <Player userInfo={gameInfo} />
       </div>
 
       {statsFetched && (

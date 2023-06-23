@@ -11,7 +11,7 @@ interface AuthContextProps {
 export interface UserInfo {
   userId: number;
   userName: string;
-  email: string;
+  email?: string;
   image: string;
 }
 
