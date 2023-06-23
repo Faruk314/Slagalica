@@ -4,8 +4,8 @@ import { FaPuzzlePiece } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("farukspahictz@gmail.com");
+  const [password, setPassword] = useState("ispitivac");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 

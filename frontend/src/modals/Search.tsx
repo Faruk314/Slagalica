@@ -12,7 +12,8 @@ const Search = ({ setOpenSearch }: Props) => {
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [clicked, setClicked] = useState(false);
 
-  const searchHandler = async () => {
+  const searchHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const response = await axios.get(
         `http://localhost:4000/api/game/searchPlayers?search=${searchTerm}`
@@ -35,9 +36,17 @@ const Search = ({ setOpenSearch }: Props) => {
           X
         </button>
         <h3 className="text-2xl">Search players</h3>
-        <div className="flex items-center">
+        <form
+          onKeyDownCapture={(e) => {
+            if (e.key === "Enter") {
+              searchHandler(e);
+            }
+          }}
+          onSubmit={searchHandler}
+          className="flex items-center"
+        >
           <button
-            onClick={searchHandler}
+            type="submit"
             className="h-[2.4rem] px-2 text-white bg-blue-600 border-black rounded-l-xl"
           >
             <AiOutlineSearch size={25} />
@@ -47,7 +56,7 @@ const Search = ({ setOpenSearch }: Props) => {
             className="py-[0.4rem] border border-black focus:outline-blue-600 rounded-r-xl px-1"
             placeholder="Search by username or id"
           />
-        </div>
+        </form>
 
         <div className="flex flex-col w-full space-y-2 overflow-auto max-h-[15rem] py-5 px-2">
           {clicked && players.length === 0 && (
