@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.5",
     "socket.io": "^4.7.0",
+    "uuid": "^9.0.0",
     "word-exists": "^1.0.0",
     "word-list-json": "^0.2.0",
     "words": "^0.2.1"

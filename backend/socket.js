@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
 export default function setupSocket() {
   const server = http.createServer();
@@ -49,6 +50,48 @@ export default function setupSocket() {
 
   io.on("connection", (socket) => {
     console.log("new socket connection", socket.userId);
+
+    addUser(socket.userId, socket.id);
+
+    socket.on("disconnect", () => {
+      removeUser(socket.id);
+    });
+
+    socket.on("sendInvite", (receiverId) => {
+      const receiverSocketId = getUser(receiverId);
+      const senderSocketId = getUser(socket.userId);
+
+      if (!senderSocketId) return;
+
+      //   let gameInfo = {
+      //     playerOne: {
+      //       userId: 0,
+      //       userName: "",
+      //       image: "",
+      //       scores: {
+      //         longestWord: 0,
+      //         targetNumber: 0,
+      //         matchingPairs: 0,
+      //         quiz: 0,
+      //         associations: 0,
+      //         matermind: 0,
+      //       },
+      //     },
+      //     playerTwo: {
+      //       userId: 0,
+      //       userName: "",
+      //       image: "",
+      //       scores: {
+      //         longestWord: 0,
+      //         targetNumber: 0,
+      //         matchingPairs: 0,
+      //         quiz: 0,
+      //         associations: 0,
+      //         matermind: 0,
+      //       },
+      //     },
+      //   };
+    });
   });
 
   io.listen(5001);
