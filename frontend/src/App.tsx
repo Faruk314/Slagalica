@@ -84,14 +84,10 @@ function App() {
   useEffect(() => {
     socket?.on("gameUpdate", (data) => {
       if (data.playerOne.userId === loggedUserInfo.userId) {
-        console.log(loggedUserInfo.userId);
-        console.log(data.playerTwo, "playerTwoData");
         setOpponentScore(data.playerTwo);
       }
 
       if (data.playerTwo.userId === loggedUserInfo.userId) {
-        console.log(loggedUserInfo.userId);
-        console.log(data.playerOne, "playerOneData");
         setOpponentScore(data.playerOne);
       }
     });

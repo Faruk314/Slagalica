@@ -12,8 +12,13 @@ interface GameInfo extends UserInfo {
 }
 
 const Multiplayer = () => {
-  const { setGameId, opponentScore, setOpponentScore } =
-    useContext(GameContext);
+  const {
+    setGameId,
+    opponentScore,
+    setOpponentScore,
+    totalScore,
+    opponentTotal,
+  } = useContext(GameContext);
   const { loggedUserInfo } = useContext(AuthContext);
   const { playerScore, gameStates } = useContext(GameContext);
   const navigate = useNavigate();
@@ -67,9 +72,9 @@ const Multiplayer = () => {
         <h1 className="text-gray-500">GAME</h1>
       </div>
       <div className="flex justify-between w-full px-2">
-        <Player userInfo={loggedUserInfo} />
+        <Player totalScore={totalScore} userInfo={loggedUserInfo} />
 
-        <Player userInfo={gameInfo} />
+        <Player totalScore={opponentTotal} userInfo={gameInfo} />
       </div>
 
       {gameInfo && (

@@ -44,6 +44,8 @@ interface GameContextProps {
   gameId: string;
   setGameId: React.Dispatch<React.SetStateAction<string>>;
   setOpponentScore: React.Dispatch<React.SetStateAction<PlayerScore>>;
+  setOpponentTotal: React.Dispatch<React.SetStateAction<number>>;
+  opponentTotal: number;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -85,9 +87,12 @@ export const GameContext = createContext<GameContextProps>({
   setOpenGameInvitePending: () => {},
   gameId: "",
   setGameId: () => {},
+  setOpponentTotal: () => {},
+  opponentTotal: 0,
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [opponentTotal, setOpponentTotal] = useState(0);
   const [gameId, setGameId] = useState("");
   const [gameInvitePendingOpen, setOpenGameInvitePending] = useState(false);
   const [openGameInvite, setOpenGameInvite] = useState(false);
@@ -141,13 +146,23 @@ export const GameContextProvider = ({ children }: any) => {
         0
       );
 
+      console.log(opponentScore);
+
+      const { userId, ...scores } = opponentScore;
+
+      const opponentTotal = Object.values(scores).reduce(
+        (sum, score) => sum + score,
+        0
+      );
+
+      setOpponentTotal(opponentTotal);
       setTotalScore(totalScore);
     };
 
     if (playerScore) {
       calcTotal();
     }
-  }, [playerScore]);
+  }, [playerScore, opponentScore]);
 
   const updateGame = async (updatedGameState: any, gameName: string) => {
     try {
@@ -204,6 +219,8 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        opponentTotal,
+        setOpponentTotal,
         opponentScore,
         setOpponentScore,
         gameId,

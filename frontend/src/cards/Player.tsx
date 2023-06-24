@@ -3,9 +3,10 @@ import { UserInfo } from "../context/AuthContext";
 
 interface Props {
   userInfo: UserInfo;
+  totalScore: number;
 }
 
-const Player = ({ userInfo }: Props) => {
+const Player = ({ userInfo, totalScore }: Props) => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <img
@@ -18,7 +19,7 @@ const Player = ({ userInfo }: Props) => {
         <p>{userInfo.userName}</p>
       </div>
 
-      <span className="text-3xl">0</span>
+      <span className="text-3xl">{totalScore}</span>
     </div>
   );
 };
