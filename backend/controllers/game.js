@@ -469,5 +469,8 @@ export const getGameInfo = asyncHandler(async (req, res) => {
     throw new Error("Could not find opponent info");
   }
 
-  res.status(200).json(data[0]);
+  let result = await client.get(data[0].gameId);
+  let scores = JSON.parse(result);
+
+  res.status(200).json({ gameData: data[0], scores });
 });

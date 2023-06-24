@@ -12,8 +12,10 @@ interface GameInfo extends UserInfo {
 }
 
 const Multiplayer = () => {
+  const { setGameId, opponentScore, setOpponentScore } =
+    useContext(GameContext);
   const { loggedUserInfo } = useContext(AuthContext);
-  const { playerScore, gameStates, statsFetched } = useContext(GameContext);
+  const { playerScore, gameStates } = useContext(GameContext);
   const navigate = useNavigate();
   const [gameInfo, setGameInfo] = useState<GameInfo>({
     userId: 0,
@@ -41,15 +43,22 @@ const Multiplayer = () => {
           "http://localhost:4000/api/game/getGameInfo"
         );
 
-        console.log(response.data);
+        setGameId(response.data.gameData.gameId);
+        setGameInfo(response.data.gameData);
 
-        setGameInfo(response.data);
+        if (response.data.scores.playerOne.userId === loggedUserInfo.userId) {
+          setOpponentScore(response.data.scores.playerTwo);
+        }
+
+        if (response.data.scores.playerTwo.userId === loggedUserInfo.userId) {
+          setOpponentScore(response.data.scores.playerOne);
+        }
       } catch (error) {
         console.log(error);
       }
     };
     getGameInfo();
-  }, []);
+  }, [loggedUserInfo.userId]);
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
@@ -63,7 +72,7 @@ const Multiplayer = () => {
         <Player userInfo={gameInfo} />
       </div>
 
-      {statsFetched && (
+      {gameInfo && (
         <div className="flex flex-col items-center justify-center space-y-4 text-2xl">
           <div className="flex space-x-2">
             <span className="flex items-center justify-center w-10 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
@@ -78,7 +87,7 @@ const Multiplayer = () => {
             </button>
 
             <span className="flex items-center justify-center w-10 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
-              {playerScore.longestWord}
+              {opponentScore.longestWord}
             </span>
           </div>
 
@@ -95,7 +104,7 @@ const Multiplayer = () => {
             </button>
 
             <span className="flex items-center justify-center w-10 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
-              {playerScore.targetNumber}
+              {opponentScore.targetNumber}
             </span>
           </div>
 
@@ -112,7 +121,7 @@ const Multiplayer = () => {
             </button>
 
             <span className="flex items-center justify-center w-10 text-center  shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
-              {playerScore.matchingPairs}
+              {opponentScore.matchingPairs}
             </span>
           </div>
 
@@ -129,7 +138,7 @@ const Multiplayer = () => {
             </button>
 
             <span className="flex items-center justify-center w-10 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
-              {playerScore.quiz}
+              {opponentScore.quiz}
             </span>
           </div>
 
@@ -146,7 +155,7 @@ const Multiplayer = () => {
             </button>
 
             <span className="flex items-center justify-center w-10 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
-              {playerScore.mastermind}
+              {opponentScore.mastermind}
             </span>
           </div>
 
@@ -163,7 +172,7 @@ const Multiplayer = () => {
             </button>
 
             <span className="flex items-center justify-center w-10 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
-              {playerScore.associations}
+              {opponentScore.associations}
             </span>
           </div>
         </div>

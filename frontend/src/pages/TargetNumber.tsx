@@ -3,6 +3,7 @@ import { Parser } from "expr-eval";
 import { GameContext } from "../context/GameContext";
 import TargetNumberModal from "../modals/TargetNumberModal";
 import axios from "axios";
+import { SocketContext } from "../context/SocketContext";
 
 const TargetNumber = () => {
   const [chars, setChars] = useState<Array<string | number>>([]);
@@ -12,11 +13,18 @@ const TargetNumber = () => {
   const isEffectExecutedRef = useRef(false);
   const [usedNumbersIndexes, setUsedNumbersIndexes] = useState<number[]>([]);
   const [result, setResult] = useState<number | null>(null);
-  const { updateScore, updateGameState, gameStates, updateGame, playerScore } =
-    useContext(GameContext);
+  const {
+    updateScore,
+    updateGameState,
+    gameStates,
+    updateGame,
+    playerScore,
+    gameId,
+  } = useContext(GameContext);
   const [seconds, setSeconds] = useState(90);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -32,11 +40,19 @@ const TargetNumber = () => {
       updateGameState("targetNumber", "lose");
       updateScore("targetNumber", 0);
 
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "targetNumber",
+          score: 0,
+        });
+      }
+
       clearInterval(countdown);
     }
 
     return () => clearInterval(countdown);
-  }, [seconds, gameStates.targetNumber]);
+  }, [seconds, gameStates.targetNumber, gameId, socket]);
 
   const submitHandler = () => {
     const parser = new Parser();
@@ -45,19 +61,30 @@ const TargetNumber = () => {
     try {
       const result = parser.evaluate(resultString);
       console.log("Result:", result);
-
+      let score = 0;
       const difference = targetNumber - result;
 
       if (difference === 0) {
-        updateScore("targetNumber", 30);
+        score = 30;
+        updateScore("targetNumber", score);
       }
 
       if (difference === 1) {
-        updateScore("targetNumber", 20);
+        score = 20;
+        updateScore("targetNumber", score);
       }
 
       if (difference > 1 && difference <= 5) {
-        updateScore("targetNumber", 10);
+        score = 10;
+        updateScore("targetNumber", score);
+      }
+
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "targetNumber",
+          score,
+        });
       }
 
       updateGameState("targetNumber", "win");

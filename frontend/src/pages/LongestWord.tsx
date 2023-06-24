@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import axios from "axios";
 import { GameContext } from "../context/GameContext";
 import LongestWordModal from "../modals/LongestWordModal";
+import { SocketContext } from "../context/SocketContext";
 
 const LongestWord = () => {
-  const [seconds, setSeconds] = useState(60);
+  const [seconds, setSeconds] = useState(5);
   const [longestWord, setLongestWord] = useState("");
   const [letters, setLetters] = useState<string[]>([]);
   const [chosenLetters, setChossenLetters] = useState<string[]>([]);
@@ -13,10 +14,11 @@ const LongestWord = () => {
     []
   );
   const { updateGameState } = useContext(GameContext);
-  const { updateScore, gameStates, updateGame, playerScore } =
+  const { updateScore, gameStates, updateGame, playerScore, gameId } =
     useContext(GameContext);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const { socket } = useContext(SocketContext);
 
   const updatedGameState = {
     longestWord,
@@ -40,16 +42,24 @@ const LongestWord = () => {
     if (seconds === 0 && gameStates.longestWord === "playing") {
       updateGameState("longestWord", "timeLose");
       updateScore("longestWord", 0);
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "longestWord",
+          score: 0,
+        });
+      }
       clearInterval(countdown);
     }
 
     return () => {
       clearInterval(countdown);
     };
-  }, [seconds, gameStates.longestWord]);
+  }, [seconds, gameStates.longestWord, gameId, socket]);
 
   const submitHandler = async () => {
     const word: string = chosenLetters.join("");
+    let score = 0;
 
     try {
       const validity = await axios.post(
@@ -58,17 +68,27 @@ const LongestWord = () => {
       );
 
       if (validity.data && word.length === longestWord.length) {
-        updateScore("longestWord", 20);
+        score = 20;
+        updateScore("longestWord", score);
         updateGameState("longestWord", "win");
       }
 
       if (validity.data && word.length !== longestWord.length) {
+        score = word.length;
         updateScore("longestWord", word.length);
         updateGameState("longestWord", "win");
       }
 
       if (validity.data === false) {
         updateGameState("longestWord", "lose");
+      }
+
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "longestWord",
+          score,
+        });
       }
     } catch (error) {
       console.log(error);

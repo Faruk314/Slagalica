@@ -83,15 +83,24 @@ export default function setupSocket() {
 
     addUser(socket.userId, socket.id);
 
+    socket.on("reconnectToRoom", (gameRoomId) => {
+      const userSocketId = getUser(socket.userId);
+
+      if (userSocketId) {
+        const userSocket = io.sockets.sockets.get(userSocketId);
+
+        userSocket.join(gameRoomId);
+      }
+    });
+
     socket.on("disconnect", () => {
       removeUser(socket.id);
+      console.log("disconnected");
     });
 
     socket.on("sendInvite", async (receiverId) => {
       const receiverSocketId = getUser(receiverId);
       const senderSocketId = getUser(socket.userId);
-
-      console.log("receiverId and senderId", receiverSocketId, senderSocketId);
 
       if (!senderSocketId) return;
 
@@ -125,12 +134,34 @@ export default function setupSocket() {
 
         const gameState = createNewGame(socket.userId, data[0].senderId);
 
-        console.log(gameState);
-
-        await client.set(gameId, gameState);
+        await client.set(gameId, JSON.stringify(gameState));
 
         io.to(gameId).emit("gameStart", gameId);
       }
+    });
+
+    socket.on("updateGameState", async (data) => {
+      console.log(data);
+      let result = await client.get(data.gameId);
+      let receiverSocketId;
+
+      let gameState = JSON.parse(result);
+
+      if (gameState.playerOne.userId === socket.userId) {
+        receiverSocketId = getUser(gameState.playerTwo.userId);
+        gameState.playerOne[data.gameName] = data.score;
+      }
+
+      if (gameState.playerTwo.userId === socket.userId) {
+        receiverSocketId = getUser(gameState.playerOne.userId);
+        gameState.playerTwo[data.gameName] = data.score;
+      }
+
+      await client.set(data.gameId, JSON.stringify(gameState));
+
+      console.log(gameState);
+
+      io.to(receiverSocketId).emit("gameUpdate", gameState);
     });
   });
 

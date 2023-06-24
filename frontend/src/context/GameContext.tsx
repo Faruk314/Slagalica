@@ -8,6 +8,7 @@ interface PlayerScore {
   matchingPairs: number;
   quiz: number;
   targetNumber: number;
+  userId?: number;
 }
 
 interface GameStats {
@@ -27,6 +28,7 @@ interface GameStates {
 
 interface GameContextProps {
   playerScore: PlayerScore;
+  opponentScore: PlayerScore;
   updateScore: (name: string, score: number) => void;
   totalScore: number;
   updateGameState: (name: string, state: string) => void;
@@ -39,10 +41,21 @@ interface GameContextProps {
   setOpenGameInvite: React.Dispatch<React.SetStateAction<boolean>>;
   gameInvitePendingOpen: boolean;
   setOpenGameInvitePending: React.Dispatch<React.SetStateAction<boolean>>;
+  gameId: string;
+  setGameId: React.Dispatch<React.SetStateAction<string>>;
+  setOpponentScore: React.Dispatch<React.SetStateAction<PlayerScore>>;
 }
 
 export const GameContext = createContext<GameContextProps>({
   playerScore: {
+    associations: 0,
+    longestWord: 0,
+    mastermind: 0,
+    matchingPairs: 0,
+    quiz: 0,
+    targetNumber: 0,
+  },
+  opponentScore: {
     associations: 0,
     longestWord: 0,
     mastermind: 0,
@@ -59,6 +72,7 @@ export const GameContext = createContext<GameContextProps>({
     targetNumber: "playing",
   },
   updateScore: () => {},
+  setOpponentScore: () => {},
   totalScore: 0,
   updateGameState: () => {},
   updateGame: () => {},
@@ -69,9 +83,12 @@ export const GameContext = createContext<GameContextProps>({
   setOpenGameInvite: () => {},
   gameInvitePendingOpen: false,
   setOpenGameInvitePending: () => {},
+  gameId: "",
+  setGameId: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [gameId, setGameId] = useState("");
   const [gameInvitePendingOpen, setOpenGameInvitePending] = useState(false);
   const [openGameInvite, setOpenGameInvite] = useState(false);
   const [senderUsername, setSenderUsername] = useState("");
@@ -92,6 +109,14 @@ export const GameContextProvider = ({ children }: any) => {
     matchingPairs: 0,
     quiz: 0,
     targetNumber: 0,
+  });
+  const [opponentScore, setOpponentScore] = useState<PlayerScore>({
+    associations: 0,
+    longestWord: 0,
+    matchingPairs: 0,
+    mastermind: 0,
+    targetNumber: 0,
+    quiz: 0,
   });
   const [statsFetched, setStatsFetched] = useState(false);
 
@@ -179,6 +204,10 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        opponentScore,
+        setOpponentScore,
+        gameId,
+        setGameId,
         gameInvitePendingOpen,
         setOpenGameInvitePending,
         openGameInvite,

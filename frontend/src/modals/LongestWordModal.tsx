@@ -9,7 +9,7 @@ interface Props {
 }
 
 const LongestWordModal = ({ gameState, word, computerWord }: Props) => {
-  const { playerScore } = useContext(GameContext);
+  const { playerScore, gameId } = useContext(GameContext);
   const navigate = useNavigate();
 
   return (
@@ -81,7 +81,14 @@ const LongestWordModal = ({ gameState, word, computerWord }: Props) => {
         )}
 
         <button
-          onClick={() => navigate("/singlePlayer")}
+          onClick={() => {
+            if (gameId !== "") {
+              navigate("/multiplayer");
+              return;
+            }
+
+            navigate("/singlePlayer");
+          }}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
         >
           Continiue

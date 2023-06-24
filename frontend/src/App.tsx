@@ -21,7 +21,7 @@ import Multiplayer from "./pages/Multiplayer";
 axios.defaults.withCredentials = true;
 
 function App() {
-  const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo } =
+  const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo, loggedUserInfo } =
     useContext(AuthContext);
   const { socket } = useContext(SocketContext);
   const {
@@ -30,7 +30,17 @@ function App() {
     setSenderUsername,
     setOpenGameInvitePending,
     gameInvitePendingOpen,
+    gameId,
+    setOpponentScore,
   } = useContext(GameContext);
+
+  useEffect(() => {
+    socket?.on("connect", () => {
+      if (gameId) {
+        socket?.emit("reconnectToRoom", gameId);
+      }
+    });
+  }, [socket, gameId, isLoggedIn]);
 
   useEffect(() => {
     socket?.on("gameInvite", (senderUsername) => {
@@ -70,6 +80,26 @@ function App() {
 
     getLoginStatus();
   }, []);
+
+  useEffect(() => {
+    socket?.on("gameUpdate", (data) => {
+      if (data.playerOne.userId === loggedUserInfo.userId) {
+        console.log(loggedUserInfo.userId);
+        console.log(data.playerTwo, "playerTwoData");
+        setOpponentScore(data.playerTwo);
+      }
+
+      if (data.playerTwo.userId === loggedUserInfo.userId) {
+        console.log(loggedUserInfo.userId);
+        console.log(data.playerOne, "playerOneData");
+        setOpponentScore(data.playerOne);
+      }
+    });
+
+    return () => {
+      socket?.off("gameUpdate");
+    };
+  }, [socket, loggedUserInfo.userId]);
 
   return (
     <BrowserRouter>
