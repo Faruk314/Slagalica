@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { GameContext } from "../context/GameContext";
+import { SocketContext } from "../context/SocketContext";
 import QuizModal from "../modals/QuizModal";
 import TargetNumber from "./TargetNumber";
 
@@ -22,11 +23,18 @@ const Quiz = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [points, setPoints] = useState(0);
   const [isTimeOut, setIsTimeOut] = useState(false);
-  const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
-    useContext(GameContext);
+  const {
+    updateScore,
+    gameStates,
+    updateGameState,
+    updateGame,
+    playerScore,
+    gameId,
+  } = useContext(GameContext);
   const [seconds, setSeconds] = useState(120);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -39,7 +47,15 @@ const Quiz = () => {
 
     if (seconds === 0 && gameStates.quiz === "playing") {
       updateGameState("quiz", "lose");
-      updateScore("quiz", points);
+      updateScore("quiz", 0);
+
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "quiz",
+          score: 0,
+        });
+      }
       clearInterval(countdown);
     }
 
@@ -104,6 +120,13 @@ const Quiz = () => {
         } else {
           updateGameState("quiz", "win");
           updateScore("quiz", points);
+          if (gameId !== "" && socket) {
+            socket.emit("updateGameState", {
+              gameId,
+              gameName: "quiz",
+              score: points,
+            });
+          }
         }
 
         setIsTimeOut(false);

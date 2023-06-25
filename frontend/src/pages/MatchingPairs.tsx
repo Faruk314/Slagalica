@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { GameContext } from "../context/GameContext";
+import { SocketContext } from "../context/SocketContext";
 import MatchingPairsModal from "../modals/MatchingPairsModal";
 
 interface Spojnica {
@@ -20,12 +21,19 @@ const MatchingPairs = () => {
     null
   );
   const [score, setScore] = useState(0);
-  const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
-    useContext(GameContext);
+  const {
+    updateScore,
+    gameStates,
+    updateGameState,
+    updateGame,
+    playerScore,
+    gameId,
+  } = useContext(GameContext);
   const [seconds, setSeconds] = useState(60);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const isEffectExecutedRef = useRef(false);
+  const { socket } = useContext(SocketContext);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -47,6 +55,14 @@ const MatchingPairs = () => {
     if (seconds === 0 && gameStates.matchingPairs === "playing") {
       updateGameState("matchingPairs", "timeLose");
       updateScore("matchingPairs", score);
+
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "matchingPairs",
+          score: 0,
+        });
+      }
       clearInterval(countdown);
     }
 
@@ -62,6 +78,14 @@ const MatchingPairs = () => {
         setRightSide((prev) => prev.sort((a, b) => a.id - b.id));
         setLeftSide((prev) => prev.sort((a, b) => a.id - b.id));
         updateGameState("matchingPairs", "win");
+
+        if (gameId !== "" && socket) {
+          socket.emit("updateGameState", {
+            gameId,
+            gameName: "matchingPairs",
+            score,
+          });
+        }
       }
     };
 
@@ -70,16 +94,25 @@ const MatchingPairs = () => {
 
   useEffect(() => {
     const checkCorrect = () => {
-      if (rightClickedIndex && rightClickedIndex === leftClickedIndex) {
+      if (
+        rightClickedIndex &&
+        rightClickedIndex === leftClickedIndex &&
+        !corrects.includes(rightClickedIndex)
+      ) {
         setCorrects((prev) => [...prev, rightClickedIndex]);
         setScore((prev) => prev + 4);
+        setTotalAnswered((prev) => prev + 1);
       }
 
-      if (leftClickedIndex && rightClickedIndex !== leftClickedIndex) {
+      if (
+        leftClickedIndex &&
+        rightClickedIndex !== leftClickedIndex &&
+        !incorrects.includes(leftClickedIndex)
+      ) {
         setIncorrects((prev) => [...prev, leftClickedIndex]);
+        setTotalAnswered((prev) => prev + 1);
       }
 
-      setTotalAnswered((prev) => prev + 1);
       setRightClickedIndex(null);
       setLeftClickedIndex(null);
     };

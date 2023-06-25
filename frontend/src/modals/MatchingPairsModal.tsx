@@ -4,7 +4,7 @@ import { GameContext } from "../context/GameContext";
 
 const MatchingPairsModal = () => {
   const navigate = useNavigate();
-  const { playerScore } = useContext(GameContext);
+  const { playerScore, gameId } = useContext(GameContext);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)] font-normal">
@@ -16,7 +16,14 @@ const MatchingPairsModal = () => {
         </div>
 
         <button
-          onClick={() => navigate("/singlePlayer")}
+          onClick={() => {
+            if (gameId !== "") {
+              navigate("/multiplayer");
+              return;
+            }
+
+            navigate("/singlePlayer");
+          }}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
         >
           Continiue

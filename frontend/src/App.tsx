@@ -95,7 +95,7 @@ function App() {
     return () => {
       socket?.off("gameUpdate");
     };
-  }, [socket, loggedUserInfo.userId]);
+  }, [socket]);
 
   return (
     <BrowserRouter>

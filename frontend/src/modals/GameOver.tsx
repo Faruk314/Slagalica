@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { GameContext } from "../context/GameContext";
 
 interface Props {
   winCombination: string[];
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const GameOver = ({ winCombination, gameState }: Props) => {
+  const { gameId } = useContext(GameContext);
   const navigate = useNavigate();
 
   return (
@@ -25,7 +27,13 @@ const GameOver = ({ winCombination, gameState }: Props) => {
         </div>
 
         <button
-          onClick={() => navigate("/singlePlayer")}
+          onClick={() => {
+            if (gameId !== "") {
+              navigate("/multiplayer");
+              return;
+            }
+            navigate("/singlePlayer");
+          }}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
         >
           Nastavi

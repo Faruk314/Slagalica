@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { GameContext } from "../context/GameContext";
+import { SocketContext } from "../context/SocketContext";
 import AssociationsModal from "../modals/AssociationsModal";
 import TypeAnswer from "../modals/TypeAnswer";
 
@@ -33,10 +34,17 @@ const Associations = () => {
     2: [],
     3: [],
   });
-  const { updateScore, updateGameState, gameStates, updateGame, playerScore } =
-    useContext(GameContext);
+  const {
+    updateScore,
+    updateGameState,
+    gameStates,
+    updateGame,
+    playerScore,
+    gameId,
+  } = useContext(GameContext);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const [gameStateFetched, setGameStateFetched] = useState(false);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -50,6 +58,13 @@ const Associations = () => {
     if (seconds === 0 && gameStates.associations === "playing") {
       updateGameState("associations", "lose");
       updateScore("associations", score);
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "associations",
+          score,
+        });
+      }
       clearInterval(countdown);
     }
 
@@ -127,6 +142,13 @@ const Associations = () => {
           fieldsOpenCount[3].length) +
         4 * 3;
       updateScore("associations", numberOfClosedFields + 8);
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "associations",
+          score: numberOfClosedFields + 8,
+        });
+      }
       return;
     }
 

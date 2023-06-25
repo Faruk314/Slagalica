@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { GameContext } from "../context/GameContext";
+import { SocketContext } from "../context/SocketContext";
 import GameOver from "../modals/GameOver";
 
 const Mastermind = () => {
@@ -24,11 +25,18 @@ const Mastermind = () => {
   const [rowsChecked, setRowsChecked] = useState<number[]>([]);
   const [hints, setHints] = useState<string[][]>([]);
   const [seconds, setSeconds] = useState(90);
-  const { updateScore, gameStates, updateGameState, updateGame, playerScore } =
-    useContext(GameContext);
+  const {
+    updateScore,
+    gameStates,
+    updateGameState,
+    updateGame,
+    playerScore,
+    gameId,
+  } = useContext(GameContext);
   const isEffectExecutedRef = useRef(false);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const { socket } = useContext(SocketContext);
 
   console.log(winCombination);
 
@@ -100,6 +108,13 @@ const Mastermind = () => {
 
     if (seconds === 0 && gameStates.mastermind === "playing") {
       updateGameState("mastermind", "lose");
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "mastermind",
+          score: 0,
+        });
+      }
       clearInterval(countdown);
     }
 
@@ -118,11 +133,25 @@ const Mastermind = () => {
     if (count === 4) {
       updateGameState("mastermind", "win");
       updateScore("mastermind", 30);
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "mastermind",
+          score: 30,
+        });
+      }
       return;
     }
 
     if ([...hints, currentHints].length === 6) {
       updateGameState("mastermind", "lose");
+      if (gameId !== "" && socket) {
+        socket.emit("updateGameState", {
+          gameId,
+          gameName: "mastermind",
+          score: 0,
+        });
+      }
     }
   };
 
