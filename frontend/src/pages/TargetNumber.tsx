@@ -190,71 +190,74 @@ const TargetNumber = () => {
     targetNumber,
     gameStates.targetNumber,
     playerScore.targetNumber,
+    gameStateFetched,
   ]);
 
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">
       <span className="absolute top-0 text-black">{seconds}</span>
-      <div className="flex flex-col w-full max-w-4xl mx-auto space-y-5">
-        <div className="mx-2">
-          <div className="h-[3rem] bg-blue-600 w-[10rem] mx-auto flex justify-center items-center rounded-md">
-            <span className="text-2xl"> {targetNumber}</span>
+      {gameStateFetched && (
+        <div className="flex flex-col w-full max-w-4xl mx-auto space-y-5">
+          <div className="mx-2">
+            <div className="h-[3rem] bg-blue-600 w-[10rem] mx-auto flex justify-center items-center rounded-md">
+              <span className="text-2xl"> {targetNumber}</span>
+            </div>
+
+            <div className="grid grid-cols-6 gap-1 mt-2 rounded-md">
+              {randomNumbers.map((number, index) => (
+                <button
+                  disabled={usedNumbersIndexes.includes(index) ? true : false}
+                  onClick={() => {
+                    handleClick(number, index);
+                  }}
+                  key={index}
+                  className="flex items-center justify-center h-10 bg-blue-600 rounded-md disabled:text-gray-400"
+                >
+                  {number}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-6 gap-1 mt-2 rounded-md">
-            {randomNumbers.map((number, index) => (
-              <button
-                disabled={usedNumbersIndexes.includes(index) ? true : false}
-                onClick={() => {
-                  handleClick(number, index);
-                }}
-                key={index}
-                className="flex items-center justify-center h-10 bg-blue-600 rounded-md disabled:text-gray-400"
-              >
-                {number}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="border border-black h-[2rem] rounded-md mx-2 text-black flex justify-center items-center">
-          {chars.map((char, index) => (
-            <span key={index}>{char}</span>
-          ))}
-        </div>
-
-        <div className="mx-2">
-          <div className="grid grid-cols-6 gap-1">
-            {operands.map((operand, index) => (
-              <button
-                onClick={() => {
-                  handleClick(operand, null);
-                }}
-                key={index}
-                className="flex items-center justify-center py-1 text-xl bg-blue-600 border rounded-md"
-              >
-                <span>{operand}</span>
-              </button>
+          <div className="border border-black h-[2rem] rounded-md mx-2 text-black flex justify-center items-center">
+            {chars.map((char, index) => (
+              <span key={index}>{char}</span>
             ))}
           </div>
 
-          <div className="flex justify-center mx-auto mt-5 space-x-2">
-            <button
-              onClick={deleteCharHandler}
-              className="px-2 py-1 text-white bg-red-600 rounded-md hover:bg-red-500"
-            >
-              DELETE
-            </button>
+          <div className="mx-2">
+            <div className="grid grid-cols-6 gap-1">
+              {operands.map((operand, index) => (
+                <button
+                  onClick={() => {
+                    handleClick(operand, null);
+                  }}
+                  key={index}
+                  className="flex items-center justify-center py-1 text-xl bg-blue-600 border rounded-md"
+                >
+                  <span>{operand}</span>
+                </button>
+              ))}
+            </div>
 
-            <button
-              onClick={submitHandler}
-              className="px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500"
-            >
-              SUBMIT
-            </button>
+            <div className="flex justify-center mx-auto mt-5 space-x-2">
+              <button
+                onClick={deleteCharHandler}
+                className="px-2 py-1 text-white bg-red-600 rounded-md hover:bg-red-500"
+              >
+                DELETE
+              </button>
+
+              <button
+                onClick={submitHandler}
+                className="px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500"
+              >
+                SUBMIT
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {gameStates.targetNumber !== "playing" && result !== null && (
         <TargetNumberModal

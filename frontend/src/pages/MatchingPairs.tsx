@@ -1,4 +1,5 @@
 import axios from "axios";
+import classNames from "classnames";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
@@ -174,6 +175,7 @@ const MatchingPairs = () => {
     corrects,
     gameStates.matchingPairs,
     playerScore.matchingPairs,
+    gameStateFetched,
   ]);
 
   return (
@@ -181,50 +183,58 @@ const MatchingPairs = () => {
       <div className="absolute top-0 left-0">
         <span>{seconds}</span>
       </div>
-      <div className="flex space-x-10 text-white">
-        <div className="flex flex-col space-y-1">
-          {leftSide.map((item) => (
-            <button
-              style={
-                corrects.includes(item.id)
-                  ? { backgroundColor: "green" }
-                  : incorrects.includes(item.id)
-                  ? { backgroundColor: "red" }
-                  : {}
-              }
-              onClick={() => handleLeftSideClick(item.id)}
-              key={item.id}
-              className="h-[3.2rem] bg-blue-600 rounded-md border w-[10rem] block focus:bg-blue-500"
-            >
-              <span className="">{item.question}</span>
-            </button>
-          ))}
-        </div>
+      {gameStateFetched && (
+        <div className="flex space-x-10 text-white">
+          <div className="flex flex-col space-y-1">
+            {leftSide.map((item) => (
+              <button
+                onClick={() => handleLeftSideClick(item.id)}
+                key={item.id}
+                className={classNames(
+                  "h-[3.2rem] bg-blue-600 rounded-md border w-[10rem] block",
+                  {
+                    "bg-green-600 focus:ring-transparent": corrects.includes(
+                      item.id
+                    ),
+                    "bg-red-600 focus:ring-transparent": incorrects.includes(
+                      item.id
+                    ),
+                    "focus:bg-blue-500":
+                      !corrects.includes(item.id) &&
+                      !incorrects.includes(item.id),
+                  }
+                )}
+              >
+                <span className="">{item.question}</span>
+              </button>
+            ))}
+          </div>
 
-        <div className="flex flex-col space-y-1">
-          {rightSide.map((item) => (
-            <button
-              style={
-                corrects.includes(item.id)
-                  ? { backgroundColor: "green" }
-                  : incorrects.includes(item.id) &&
-                    gameStates.matchingPairs !== "playing"
-                  ? { backgroundColor: "red" }
-                  : {}
-              }
-              onClick={() => {
-                if (leftClickedIndex) {
-                  handleRightSideClick(item.id);
-                }
-              }}
-              key={item.id}
-              className="h-[3.2rem] bg-blue-600 rounded-md border w-[10rem] block"
-            >
-              <span className="">{item.answer}</span>
-            </button>
-          ))}
+          <div className="flex flex-col space-y-1">
+            {rightSide.map((item) => (
+              <button
+                onClick={() => {
+                  if (leftClickedIndex) {
+                    handleRightSideClick(item.id);
+                  }
+                }}
+                key={item.id}
+                className={classNames(
+                  "h-[3.2rem] bg-blue-600 rounded-md border w-[10rem] block",
+                  {
+                    "bg-green-600": corrects.includes(item.id),
+                    "bg-red-600":
+                      incorrects.includes(item.id) &&
+                      gameStates.matchingPairs !== "playing",
+                  }
+                )}
+              >
+                <span className="">{item.answer}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {gameStates.matchingPairs !== "playing" && gameStateFetched && (
         <MatchingPairsModal />

@@ -10,6 +10,8 @@ const client = new Redis({
   port: 6379,
 });
 
+let usersLookingForMatch = [];
+
 const createNewGame = (playerOneId, playerTwoId) => {
   return {
     playerOne: {
@@ -96,6 +98,53 @@ export default function setupSocket() {
     socket.on("disconnect", () => {
       removeUser(socket.id);
       console.log("disconnected");
+    });
+
+    socket.on("findMatch", async () => {
+      if (!usersLookingForMatch.includes(socket.userId)) {
+        usersLookingForMatch.push(socket.userId);
+      }
+
+      if (usersLookingForMatch.length > 1) {
+        const playerOneId = usersLookingForMatch[0];
+        const playerTwoId = usersLookingForMatch[1];
+
+        usersLookingForMatch = usersLookingForMatch.filter(
+          (playerId) => playerId !== playerOneId && playerId !== playerTwoId
+        );
+
+        const playerOnesocketId = getUser(playerOneId);
+        const playerTwoSocketId = getUser(playerTwoId);
+
+        if (!playerOnesocketId || !playerTwoSocketId) return;
+
+        const playerOneSocket = io.sockets.sockets.get(playerOnesocketId);
+        const playerTwoSocket = io.sockets.sockets.get(playerTwoSocketId);
+
+        if (playerOneSocket && playerTwoSocket) {
+          let gameId = uuidv4();
+
+          let q =
+            "INSERT INTO games (`gameId`,`senderId`,`receiverId`) VALUES (?,?,?)";
+
+          let data = await query(q, [gameId, playerOneId, playerTwoId]);
+
+          playerOneSocket.join(gameId);
+          playerTwoSocket.join(gameId);
+
+          const gameState = createNewGame(playerOneId, playerTwoId);
+
+          await client.set(gameId, JSON.stringify(gameState));
+
+          io.to(gameId).emit("gameStart", gameId);
+        }
+      }
+    });
+
+    socket.on("cancelFindMatch", () => {
+      usersLookingForMatch = usersLookingForMatch.filter(
+        (userId) => userId !== socket.userId
+      );
     });
 
     socket.on("sendInvite", async (receiverId) => {

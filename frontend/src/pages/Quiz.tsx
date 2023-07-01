@@ -1,4 +1,5 @@
 import axios from "axios";
+import classNames from "classnames";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
@@ -186,6 +187,7 @@ const Quiz = () => {
     points,
     gameStates.quiz,
     playerScore.quiz,
+    gameStateFetched,
   ]);
 
   return (
@@ -193,7 +195,7 @@ const Quiz = () => {
       <div className="absolute top-0 left-0">
         {gameStateFetched && <span className="text-black">{seconds}</span>}
       </div>
-      {questions.length > 0 && (
+      {questions.length > 0 && gameStateFetched && (
         <div className="w-full max-w-4xl mx-2 md:mx-auto">
           <div className="relative h-[5rem] flex justify-center items-center text-center bg-blue-600 rounded-md">
             <p>
@@ -211,16 +213,13 @@ const Quiz = () => {
           <div className="grid grid-cols-2 gap-1 my-5 text-center">
             {Object.entries(currentAnswers).map(([key, value], index) => (
               <button
-                style={
-                  correct === index
-                    ? { backgroundColor: "green" }
-                    : incorrect === index
-                    ? { backgroundColor: "red" }
-                    : {}
-                }
                 onClick={() => !isTimeOut && checkCorrectHandler(value)}
                 key={key}
-                className="py-2 bg-blue-600 rounded-md hover:bg-blue-500"
+                className={classNames("py-2 bg-blue-600 rounded-md", {
+                  "bg-green-600": correct === index,
+                  "bg-red-600": incorrect === index,
+                  "hover:bg-blue-500": !isTimeOut,
+                })}
               >
                 {value}
               </button>

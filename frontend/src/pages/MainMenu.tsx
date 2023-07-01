@@ -4,16 +4,17 @@ import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
-import GameFinished from "../modals/GameFinished";
 import LeaderBoard from "../modals/LeaderBoard";
+import FindMatch from "../modals/multiplayer/FindMatch";
 import Search from "../modals/Search";
 
 const MainMenu = () => {
   const navigate = useNavigate();
+  const [openFindMatch, setOpenFindMatch] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { socket } = useContext(SocketContext);
-  const { setOpenGameInvite, setOpenGameInvitePending, gameFinished } =
+  const { setOpenGameInvite, setOpenGameInvitePending } =
     useContext(GameContext);
 
   const logoutHandler = async () => {
@@ -52,7 +53,10 @@ const MainMenu = () => {
           Singleplayer
         </button>
 
-        <button className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600">
+        <button
+          onClick={() => setOpenFindMatch(true)}
+          className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600"
+        >
           Find Match
         </button>
 
@@ -80,7 +84,7 @@ const MainMenu = () => {
 
       {openSearch && <Search setOpenSearch={setOpenSearch} />}
       {openLeaderboard && <LeaderBoard />}
-      {gameFinished && <GameFinished />}
+      {openFindMatch && <FindMatch setOpenFindMatch={setOpenFindMatch} />}
     </section>
   );
 };
