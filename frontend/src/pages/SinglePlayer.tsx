@@ -1,12 +1,20 @@
 import axios from "axios";
 import React, { useContext, useEffect } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
 
 const SinglePlayer = () => {
-  const { playerScore, totalScore, gameStates, statsFetched } =
-    useContext(GameContext);
+  const {
+    playerScore,
+    totalScore,
+    gameStates,
+    statsFetched,
+    setTotalScore,
+    setGameStates,
+    setPlayerScore,
+    setGameFinished,
+  } = useContext(GameContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +28,59 @@ const SinglePlayer = () => {
 
     createGameSession();
   }, []);
+
+  useEffect(() => {
+    const checkGameOver = (): boolean => {
+      let numberOfFinishedGames = 0;
+
+      console.log(Object.values(gameStates));
+
+      Object.values(gameStates).forEach((value) => {
+        if (value !== "" && value !== "playing") {
+          numberOfFinishedGames++;
+        }
+      });
+
+      console.log(numberOfFinishedGames);
+
+      if (numberOfFinishedGames === 6) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const updateLeaderboard = async () => {
+      try {
+        await axios.delete("http://localhost:4000/api/game/deleteGameSession");
+        setTotalScore(0);
+        setGameStates({
+          associations: "",
+          longestWord: "",
+          mastermind: "",
+          matchingPairs: "",
+          quiz: "",
+          targetNumber: "",
+        });
+        setPlayerScore({
+          associations: 0,
+          longestWord: 0,
+          mastermind: 0,
+          matchingPairs: 0,
+          quiz: 0,
+          targetNumber: 0,
+        });
+        setGameFinished(true);
+        navigate("/menu");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (checkGameOver()) {
+      updateLeaderboard();
+    }
+  }, [gameStates, navigate]);
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">

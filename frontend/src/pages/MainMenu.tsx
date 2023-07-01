@@ -4,13 +4,16 @@ import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
+import GameFinished from "../modals/GameFinished";
+import LeaderBoard from "../modals/LeaderBoard";
 import Search from "../modals/Search";
 
 const MainMenu = () => {
   const navigate = useNavigate();
   const [openSearch, setOpenSearch] = useState(false);
+  const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { socket } = useContext(SocketContext);
-  const { setOpenGameInvite, setOpenGameInvitePending } =
+  const { setOpenGameInvite, setOpenGameInvitePending, gameFinished } =
     useContext(GameContext);
 
   const logoutHandler = async () => {
@@ -62,7 +65,7 @@ const MainMenu = () => {
 
         <button
           className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600"
-          onClick={() => navigate("/leaderboard")}
+          onClick={() => setOpenLeaderboard(true)}
         >
           Leaderboard
         </button>
@@ -76,6 +79,8 @@ const MainMenu = () => {
       </div>
 
       {openSearch && <Search setOpenSearch={setOpenSearch} />}
+      {openLeaderboard && <LeaderBoard />}
+      {gameFinished && <GameFinished />}
     </section>
   );
 };

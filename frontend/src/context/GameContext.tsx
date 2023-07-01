@@ -46,6 +46,11 @@ interface GameContextProps {
   setOpponentScore: React.Dispatch<React.SetStateAction<PlayerScore>>;
   setOpponentTotal: React.Dispatch<React.SetStateAction<number>>;
   opponentTotal: number;
+  setTotalScore: React.Dispatch<React.SetStateAction<number>>;
+  setPlayerScore: React.Dispatch<React.SetStateAction<PlayerScore>>;
+  setGameStates: React.Dispatch<React.SetStateAction<GameStates>>;
+  gameFinished: boolean;
+  setGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -89,6 +94,11 @@ export const GameContext = createContext<GameContextProps>({
   setGameId: () => {},
   setOpponentTotal: () => {},
   opponentTotal: 0,
+  setTotalScore: () => {},
+  setPlayerScore: () => {},
+  setGameStates: () => {},
+  gameFinished: false,
+  setGameFinished: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -124,6 +134,7 @@ export const GameContextProvider = ({ children }: any) => {
     quiz: 0,
   });
   const [statsFetched, setStatsFetched] = useState(false);
+  const [gameFinished, setGameFinished] = useState(false);
 
   const updateGameState = (name: string, state: string) => {
     setGameStates((prevState) => ({
@@ -238,6 +249,11 @@ export const GameContextProvider = ({ children }: any) => {
         updateGameState,
         gameStates,
         updateGame,
+        setTotalScore,
+        setPlayerScore,
+        setGameStates,
+        gameFinished,
+        setGameFinished,
       }}
     >
       {children}

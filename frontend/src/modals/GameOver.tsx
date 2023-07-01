@@ -36,7 +36,7 @@ const GameOver = ({ winCombination, gameState }: Props) => {
           }}
           className="px-2 py-1 text-white bg-blue-600 rounded-md hover:bg-blue-500"
         >
-          Nastavi
+          Continiue
         </button>
       </div>
     </div>
