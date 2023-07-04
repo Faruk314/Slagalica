@@ -5,6 +5,7 @@ import {
   getGameInfo,
   getGameState,
   getGameStats,
+  getLeaderboard,
   searchPlayers,
   updateGameState,
 } from "../controllers/game.js";
@@ -25,5 +26,7 @@ router.get("/getGameStats", protect, getGameStats);
 router.get("/searchPlayers", protect, searchPlayers);
 
 router.get("/getGameInfo", protect, getGameInfo);
+
+router.get("/getLeaderboard", protect, getLeaderboard);
 
 export default router;

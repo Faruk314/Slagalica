@@ -84,7 +84,9 @@ const MainMenu = () => {
       </div>
 
       {openSearch && <Search setOpenSearch={setOpenSearch} />}
-      {openLeaderboard && <LeaderBoard />}
+      {openLeaderboard && (
+        <LeaderBoard setOpenLeaderboard={setOpenLeaderboard} />
+      )}
       {openFindMatch && <FindMatch setOpenFindMatch={setOpenFindMatch} />}
     </section>
   );

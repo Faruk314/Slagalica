@@ -1,7 +1,6 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import { GameContext } from "../context/GameContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaPuzzlePiece } from "react-icons/fa";
 import Player from "../cards/Player";
 import { AuthContext } from "../context/AuthContext";
@@ -29,16 +28,8 @@ const Multiplayer = () => {
   }, []);
 
   useEffect(() => {
-    if (gameInfo.gameId !== "") {
-      createGameSession();
-    }
-  }, [gameInfo.gameId]);
-
-  useEffect(() => {
-    if (gameInfo.gameId === "") {
-      navigate("/menu");
-    }
-  }, [gameInfo, navigate]);
+    createGameSession();
+  }, []);
 
   useEffect(() => {
     socket?.on("gameOver", (data) => {
@@ -48,13 +39,13 @@ const Multiplayer = () => {
     });
   }, [socket, loggedUserInfo.userId, navigate]);
 
-  if (!gameInfo.gameId) {
-    return (
-      <div className="flex items-center justify-center h-[100vh]">
-        <div className="loader"></div>
-      </div>
-    );
-  }
+  // if (gameInfo.gameId === "") {
+  //   return (
+  //     <div className="flex items-center justify-center h-[100vh]">
+  //       <div className="loader"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
@@ -65,7 +56,7 @@ const Multiplayer = () => {
 
       <div className="flex items-center justify-between w-full px-2">
         <Player totalScore={totalScore} userInfo={loggedUserInfo} />
-        {waitMessage && <p className="text-black">{waitMessage}</p>}
+
         <Player totalScore={opponentTotal} userInfo={gameInfo} />
       </div>
 
@@ -172,6 +163,7 @@ const Multiplayer = () => {
           </span>
         </div>
       </div>
+      {waitMessage && <p className="text-black">{waitMessage}</p>}
     </div>
   );
 };

@@ -213,6 +213,9 @@ export default function setupSocket() {
         playerTwo.gamesPlayed++;
       }
 
+      await client.set(data.gameId, JSON.stringify(gameState));
+      io.to(receiverSocketId).emit("gameUpdate", gameState);
+
       if (playerOne.gamesPlayed === 6 && playerTwo.gamesPlayed === 6) {
         const {
           userId: playerOneId,
@@ -254,16 +257,21 @@ export default function setupSocket() {
           winnerId,
         });
 
+        let q = "DELETE FROM games WHERE `gameId` = ?";
+
+        await query(q, [data.gameId]);
+
+        q =
+          "INSERT INTO leaderboard (`userId`, `score`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `score` = `score` + ?";
+
+        await query(q, [winnerId, 5, 5]);
+
         await client.del(playerOneId);
         await client.del(playerTwoId);
         await client.del(data.gameId);
 
         return;
       }
-
-      await client.set(data.gameId, JSON.stringify(gameState));
-
-      io.to(receiverSocketId).emit("gameUpdate", gameState);
     });
   });
 

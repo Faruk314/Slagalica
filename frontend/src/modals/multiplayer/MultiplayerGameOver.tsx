@@ -20,6 +20,8 @@ const MultiplayerGameOver = () => {
           <span>YOU LOST</span>
         )}
 
+        {winnerId === null && <span>DRAW</span>}
+
         <div className="flex space-x-2">
           <span>Your Score:</span>
           <span className="font-bold">{totalScore}</span>
@@ -32,6 +34,7 @@ const MultiplayerGameOver = () => {
 
         <button
           onClick={() => {
+            setMultiplayerGameOver(false);
             navigate("/menu");
           }}
           className="p-2 mt-5 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500"
