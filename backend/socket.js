@@ -195,21 +195,70 @@ export default function setupSocket() {
       console.log(data, "dataSocket");
       let result = await client.get(data.gameId);
       let receiverSocketId;
-
       let gameState = JSON.parse(result);
+      const playerOne = gameState.playerOne;
+      const playerTwo = gameState.playerTwo;
 
       console.log(gameState, "gameStateSocket");
 
-      if (gameState.playerOne.userId === socket.userId) {
-        receiverSocketId = getUser(gameState.playerTwo.userId);
-        gameState.playerOne[data.gameName] = data.score;
-        gameState.playerOne.gamesPlayed++;
+      if (playerOne.userId === socket.userId) {
+        receiverSocketId = getUser(playerTwo.userId);
+        playerOne[data.gameName] = data.score;
+        playerOne.gamesPlayed++;
       }
 
-      if (gameState.playerTwo.userId === socket.userId) {
-        receiverSocketId = getUser(gameState.playerOne.userId);
-        gameState.playerTwo[data.gameName] = data.score;
-        gameState.playerTwo.gamesPlayed++;
+      if (playerTwo.userId === socket.userId) {
+        receiverSocketId = getUser(playerOne.userId);
+        playerTwo[data.gameName] = data.score;
+        playerTwo.gamesPlayed++;
+      }
+
+      if (playerOne.gamesPlayed === 6 && playerTwo.gamesPlayed === 6) {
+        const {
+          userId: playerOneId,
+          gamesPlayed: playerOneGamesPlayed,
+          ...playerOneScores
+        } = playerOne;
+
+        const playerOneTotalScore = Object.values(playerOneScores).reduce(
+          (acc, score) => acc + score,
+          0
+        );
+
+        const {
+          userId: playerTwoId,
+          gamesPlayed: playerTwoGamesPlayed,
+          ...playerTwoScores
+        } = playerTwo;
+
+        const playerTwoTotalScore = Object.values(playerTwoScores).reduce(
+          (sum, score) => sum + score,
+          0
+        );
+
+        let winnerId;
+
+        if (playerOneTotalScore > playerTwoTotalScore) {
+          winnerId = playerOneId;
+        }
+
+        if (playerTwoTotalScore > playerOneTotalScore) {
+          winnerId = playerTwoId;
+        }
+
+        if (playerOneTotalScore === playerTwoTotalScore) {
+          winnerId = null;
+        }
+
+        io.to(data.gameId).emit("gameOver", {
+          winnerId,
+        });
+
+        await client.del(playerOneId);
+        await client.del(playerTwoId);
+        await client.del(data.gameId);
+
+        return;
       }
 
       await client.set(data.gameId, JSON.stringify(gameState));

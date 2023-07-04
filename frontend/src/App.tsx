@@ -18,6 +18,7 @@ import GameInvite from "./modals/multiplayer/GameInvite";
 import GameInvitePending from "./modals/multiplayer/GameInvitePending";
 import Multiplayer from "./pages/Multiplayer";
 import GameFinished from "./modals/GameFinished";
+import MultiplayerGameOver from "./modals/multiplayer/MultiplayerGameOver";
 
 axios.defaults.withCredentials = true;
 
@@ -35,9 +36,8 @@ function App() {
     setOpponentScore,
     gameFinished,
     getGameInfo,
+    multiplayerGameOver,
   } = useContext(GameContext);
-
-  console.log("gameFinished", gameFinished);
 
   useEffect(() => {
     socket?.on("connect", () => {
@@ -124,6 +124,7 @@ function App() {
       {openGameInvite && <GameInvite />}
       {gameInvitePendingOpen && <GameInvitePending />}
       {gameFinished && <GameFinished />}
+      {multiplayerGameOver && <MultiplayerGameOver />}
     </BrowserRouter>
   );
 }

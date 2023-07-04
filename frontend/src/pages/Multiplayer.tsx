@@ -5,6 +5,7 @@ import axios from "axios";
 import { FaPuzzlePiece } from "react-icons/fa";
 import Player from "../cards/Player";
 import { AuthContext } from "../context/AuthContext";
+import { SocketContext } from "../context/SocketContext";
 
 const Multiplayer = () => {
   const {
@@ -15,18 +16,45 @@ const Multiplayer = () => {
     gameInfo,
     getGameInfo,
     createGameSession,
+    setWinnerId,
   } = useContext(GameContext);
   const { loggedUserInfo } = useContext(AuthContext);
-  const { playerScore, gameStates } = useContext(GameContext);
+  const { playerScore, gameStates, setMultiplayerGameOver } =
+    useContext(GameContext);
+  const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    createGameSession();
-  }, []);
 
   useEffect(() => {
     getGameInfo();
   }, []);
+
+  useEffect(() => {
+    if (gameInfo.gameId !== "") {
+      createGameSession();
+    }
+  }, [gameInfo.gameId]);
+
+  useEffect(() => {
+    if (gameInfo.gameId === "") {
+      navigate("/menu");
+    }
+  }, [gameInfo, navigate]);
+
+  useEffect(() => {
+    socket?.on("gameOver", (data) => {
+      setMultiplayerGameOver(true);
+      setWinnerId(data.winnerId);
+      navigate("/menu");
+    });
+  }, [socket, loggedUserInfo.userId, navigate]);
+
+  if (!gameInfo.gameId) {
+    return (
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">

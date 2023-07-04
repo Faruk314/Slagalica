@@ -69,6 +69,10 @@ interface GameContextProps {
   gameInfo: GameInfo;
   getGameInfo: () => void;
   createGameSession: () => void;
+  setMultiplayerGameOver: React.Dispatch<React.SetStateAction<boolean>>;
+  multiplayerGameOver: boolean;
+  setWinnerId: React.Dispatch<React.SetStateAction<number | null>>;
+  winnerId: number | null;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -128,9 +132,15 @@ export const GameContext = createContext<GameContextProps>({
   },
   getGameInfo: () => {},
   createGameSession: () => {},
+  setMultiplayerGameOver: () => {},
+  multiplayerGameOver: false,
+  setWinnerId: () => {},
+  winnerId: null,
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [winnerId, setWinnerId] = useState<null | number>(null);
+  const [multiplayerGameOver, setMultiplayerGameOver] = useState(false);
   const { loggedUserInfo } = useContext(AuthContext);
   const [waitMessage, setWaitMessage] = useState("");
   const [opponentTotal, setOpponentTotal] = useState(0);
@@ -237,8 +247,6 @@ export const GameContextProvider = ({ children }: any) => {
         0
       );
 
-      console.log("opponentScore", opponentScore);
-
       const { userId, gamesPlayed, ...opponentScores } = opponentScore;
 
       const opponentTotal = Object.values(opponentScores).reduce(
@@ -310,6 +318,10 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        setWinnerId,
+        winnerId,
+        setMultiplayerGameOver,
+        multiplayerGameOver,
         getGameInfo,
         createGameSession,
         waitMessage,
