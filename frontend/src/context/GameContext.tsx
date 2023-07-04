@@ -1,5 +1,16 @@
 import axios from "axios";
-import React, { createContext, useEffect, useState, useRef } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+} from "react";
+import { AuthContext, UserInfo } from "../context/AuthContext";
+
+interface GameInfo extends UserInfo {
+  gameId?: string;
+}
 
 interface PlayerScore {
   associations: number;
@@ -9,6 +20,7 @@ interface PlayerScore {
   quiz: number;
   targetNumber: number;
   userId?: number;
+  gamesPlayed?: number;
 }
 
 interface GameStats {
@@ -51,6 +63,12 @@ interface GameContextProps {
   setGameStates: React.Dispatch<React.SetStateAction<GameStates>>;
   gameFinished: boolean;
   setGameFinished: React.Dispatch<React.SetStateAction<boolean>>;
+  setGameInfo: React.Dispatch<React.SetStateAction<GameInfo>>;
+  setWaitMessage: React.Dispatch<React.SetStateAction<string>>;
+  waitMessage: string;
+  gameInfo: GameInfo;
+  getGameInfo: () => void;
+  createGameSession: () => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -99,9 +117,22 @@ export const GameContext = createContext<GameContextProps>({
   setGameStates: () => {},
   gameFinished: false,
   setGameFinished: () => {},
+  setGameInfo: () => {},
+  setWaitMessage: () => {},
+  waitMessage: "",
+  gameInfo: {
+    userId: 0,
+    gameId: "",
+    userName: "",
+    image: "",
+  },
+  getGameInfo: () => {},
+  createGameSession: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const { loggedUserInfo } = useContext(AuthContext);
+  const [waitMessage, setWaitMessage] = useState("");
   const [opponentTotal, setOpponentTotal] = useState(0);
   const [gameId, setGameId] = useState("");
   const [gameInvitePendingOpen, setOpenGameInvitePending] = useState(false);
@@ -135,6 +166,12 @@ export const GameContextProvider = ({ children }: any) => {
   });
   const [statsFetched, setStatsFetched] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
+  const [gameInfo, setGameInfo] = useState<GameInfo>({
+    userId: 0,
+    gameId: "",
+    userName: "",
+    image: "",
+  });
 
   const updateGameState = (name: string, state: string) => {
     setGameStates((prevState) => ({
@@ -150,18 +187,61 @@ export const GameContextProvider = ({ children }: any) => {
     }));
   };
 
+  const createGameSession = async () => {
+    try {
+      await axios.post("http://localhost:4000/api/game/createGameSession");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getGameInfo = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/api/game/getGameInfo"
+      );
+
+      setGameId(response.data.gameData.gameId);
+      setGameInfo(response.data.gameData);
+
+      const scores = response.data.scores;
+
+      if (scores.playerOne.userId === loggedUserInfo.userId) {
+        setOpponentScore(scores.playerTwo);
+        setPlayerScore(scores.playerOne);
+
+        if (scores.playerOne.gamesPlayed === 6) {
+          setWaitMessage("Waiting for opponent to finish all the games");
+        }
+      }
+
+      if (scores.playerTwo.userId === loggedUserInfo.userId) {
+        setOpponentScore(scores.playerOne);
+        setPlayerScore(scores.playerTwo);
+
+        if (scores.playerTwo.gamesPlayed === 6) {
+          setWaitMessage("Waiting for opponent to finish all the games");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    const { userId, gamesPlayed, ...playerScores } = playerScore;
+
     const calcTotal = () => {
-      const totalScore = Object.values(playerScore).reduce(
+      const totalScore = Object.values(playerScores).reduce(
         (acc, score) => acc + score,
         0
       );
 
-      console.log(opponentScore);
+      console.log("opponentScore", opponentScore);
 
-      const { userId, ...scores } = opponentScore;
+      const { userId, gamesPlayed, ...opponentScores } = opponentScore;
 
-      const opponentTotal = Object.values(scores).reduce(
+      const opponentTotal = Object.values(opponentScores).reduce(
         (sum, score) => sum + score,
         0
       );
@@ -230,6 +310,12 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        getGameInfo,
+        createGameSession,
+        waitMessage,
+        setWaitMessage,
+        setGameInfo,
+        gameInfo,
         opponentTotal,
         setOpponentTotal,
         opponentScore,

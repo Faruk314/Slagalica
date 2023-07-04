@@ -15,22 +15,24 @@ let usersLookingForMatch = [];
 const createNewGame = (playerOneId, playerTwoId) => {
   return {
     playerOne: {
+      gamesPlayed: 0,
       userId: playerOneId,
       longestWord: 0,
       targetNumber: 0,
       matchingPairs: 0,
       quiz: 0,
       associations: 0,
-      matermind: 0,
+      mastermind: 0,
     },
     playerTwo: {
+      gamesPlayed: 0,
       userId: playerTwoId,
       longestWord: 0,
       targetNumber: 0,
       matchingPairs: 0,
       quiz: 0,
       associations: 0,
-      matermind: 0,
+      mastermind: 0,
     },
   };
 };
@@ -190,25 +192,27 @@ export default function setupSocket() {
     });
 
     socket.on("updateGameState", async (data) => {
-      console.log(data);
+      console.log(data, "dataSocket");
       let result = await client.get(data.gameId);
       let receiverSocketId;
 
       let gameState = JSON.parse(result);
 
+      console.log(gameState, "gameStateSocket");
+
       if (gameState.playerOne.userId === socket.userId) {
         receiverSocketId = getUser(gameState.playerTwo.userId);
         gameState.playerOne[data.gameName] = data.score;
+        gameState.playerOne.gamesPlayed++;
       }
 
       if (gameState.playerTwo.userId === socket.userId) {
         receiverSocketId = getUser(gameState.playerOne.userId);
         gameState.playerTwo[data.gameName] = data.score;
+        gameState.playerTwo.gamesPlayed++;
       }
 
       await client.set(data.gameId, JSON.stringify(gameState));
-
-      console.log(gameState);
 
       io.to(receiverSocketId).emit("gameUpdate", gameState);
     });

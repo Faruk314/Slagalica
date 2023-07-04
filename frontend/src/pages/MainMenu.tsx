@@ -31,6 +31,7 @@ const MainMenu = () => {
       navigate("/multiplayer");
       setOpenGameInvite(false);
       setOpenGameInvitePending(false);
+      setOpenFindMatch(false);
     });
 
     return () => {

@@ -34,6 +34,7 @@ function App() {
     gameId,
     setOpponentScore,
     gameFinished,
+    getGameInfo,
   } = useContext(GameContext);
 
   console.log("gameFinished", gameFinished);
@@ -83,6 +84,10 @@ function App() {
     };
 
     getLoginStatus();
+  }, []);
+
+  useEffect(() => {
+    getGameInfo();
   }, []);
 
   useEffect(() => {

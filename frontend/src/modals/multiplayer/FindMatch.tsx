@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../context/SocketContext";
 
 interface Props {
@@ -8,22 +7,10 @@ interface Props {
 
 const FindMatch = ({ setOpenFindMatch }: Props) => {
   const { socket } = useContext(SocketContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     socket?.emit("findMatch");
   }, [socket]);
-
-  useEffect(() => {
-    socket?.on("gameStart", () => {
-      navigate("/multiplayer");
-      setOpenFindMatch(false);
-    });
-
-    return () => {
-      socket?.off("gameStart");
-    };
-  }, [socket, navigate]);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)]">
