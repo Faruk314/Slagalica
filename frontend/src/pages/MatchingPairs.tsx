@@ -33,7 +33,6 @@ const MatchingPairs = () => {
   const [seconds, setSeconds] = useState(60);
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
-  const isEffectExecutedRef = useRef(false);
   const { socket } = useContext(SocketContext);
 
   const handleLeftSideClick = (id: number) => {
@@ -70,7 +69,15 @@ const MatchingPairs = () => {
     return () => {
       clearInterval(countdown);
     };
-  }, [seconds, gameStates.matchingPairs]);
+  }, [
+    seconds,
+    gameStates.matchingPairs,
+    gameId,
+    socket,
+    score,
+    updateGameState,
+    updateScore,
+  ]);
 
   useEffect(() => {
     const checkGameStatus = () => {
@@ -91,7 +98,7 @@ const MatchingPairs = () => {
     };
 
     checkGameStatus();
-  }, [totalAnswered, score]);
+  }, [totalAnswered, score, gameId, socket, updateScore, updateGameState]);
 
   useEffect(() => {
     const checkCorrect = () => {
@@ -121,7 +128,7 @@ const MatchingPairs = () => {
     if (rightClickedIndex && leftClickedIndex) {
       checkCorrect();
     }
-  }, [rightClickedIndex, leftClickedIndex]);
+  }, [rightClickedIndex, leftClickedIndex, corrects, incorrects]);
 
   useEffect(() => {
     const initGame = async () => {
@@ -148,11 +155,8 @@ const MatchingPairs = () => {
       }
     };
 
-    if (!isEffectExecutedRef.current) {
-      initGame();
-      isEffectExecutedRef.current = true;
-    }
-  }, []);
+    initGame();
+  }, [updateGameState]);
 
   useEffect(() => {
     const gameState = {
@@ -176,6 +180,8 @@ const MatchingPairs = () => {
     gameStates.matchingPairs,
     playerScore.matchingPairs,
     gameStateFetched,
+    updateGame,
+    gameStartTime,
   ]);
 
   return (

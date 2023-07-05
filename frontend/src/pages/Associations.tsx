@@ -71,7 +71,15 @@ const Associations = () => {
     return () => {
       clearInterval(countdown);
     };
-  }, [seconds, gameStates.associations]);
+  }, [
+    seconds,
+    gameStates.associations,
+    updateScore,
+    gameId,
+    score,
+    updateGameState,
+    socket,
+  ]);
 
   useEffect(() => {
     const initGame = async () => {
@@ -103,7 +111,7 @@ const Associations = () => {
       initGame();
       isEffectExecutedRef.current = true;
     }
-  }, []);
+  }, [updateGameState]);
 
   useEffect(() => {
     const gameState = {
@@ -126,6 +134,9 @@ const Associations = () => {
     finalAnswer,
     answeredCorrectly,
     gameStates.associations,
+    updateGame,
+    gameStateFetched,
+    gameStartTime,
   ]);
 
   const checkCorrectHandler = () => {

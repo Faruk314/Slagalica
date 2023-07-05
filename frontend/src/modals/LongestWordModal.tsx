@@ -12,6 +12,8 @@ const LongestWordModal = ({ gameState, word, computerWord }: Props) => {
   const { playerScore, gameId } = useContext(GameContext);
   const navigate = useNavigate();
 
+  console.log(gameId);
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)]">
       <div className="flex flex-col items-center px-3 py-2 mx-2 space-y-2 bg-white rounded-md">

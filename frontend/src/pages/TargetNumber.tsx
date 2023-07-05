@@ -52,7 +52,14 @@ const TargetNumber = () => {
     }
 
     return () => clearInterval(countdown);
-  }, [seconds, gameStates.targetNumber, gameId, socket]);
+  }, [
+    seconds,
+    gameStates.targetNumber,
+    gameId,
+    socket,
+    updateGameState,
+    updateScore,
+  ]);
 
   const submitHandler = () => {
     const parser = new Parser();
@@ -165,7 +172,7 @@ const TargetNumber = () => {
       initGame();
       isEffectExecutedRef.current = true;
     }
-  }, []);
+  }, [updateGameState]);
 
   useEffect(() => {
     const gameState = {
@@ -191,6 +198,8 @@ const TargetNumber = () => {
     gameStates.targetNumber,
     playerScore.targetNumber,
     gameStateFetched,
+    gameStartTime,
+    updateGame,
   ]);
 
   return (

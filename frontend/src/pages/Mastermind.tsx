@@ -33,7 +33,7 @@ const Mastermind = () => {
     playerScore,
     gameId,
   } = useContext(GameContext);
-  const isEffectExecutedRef = useRef(false);
+
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const { socket } = useContext(SocketContext);
@@ -66,11 +66,8 @@ const Mastermind = () => {
       }
     };
 
-    if (!isEffectExecutedRef.current) {
-      initGame();
-      isEffectExecutedRef.current = true;
-    }
-  }, []);
+    initGame();
+  }, [updateGameState]);
 
   console.log(winCombination);
 
@@ -95,6 +92,9 @@ const Mastermind = () => {
     winCombination,
     gameStates.mastermind,
     playerScore.mastermind,
+    updateGame,
+    gameStartTime,
+    gameStateFetched,
   ]);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ const Mastermind = () => {
     }
 
     return () => clearInterval(countdown);
-  }, [seconds, gameStates.mastermind]);
+  }, [seconds, gameStates.mastermind, gameId, socket, updateGameState]);
 
   const checkGameStatus = (currentHints: string[]) => {
     let count = 0;

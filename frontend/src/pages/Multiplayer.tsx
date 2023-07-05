@@ -24,11 +24,11 @@ const Multiplayer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getGameInfo();
+    createGameSession();
   }, []);
 
   useEffect(() => {
-    createGameSession();
+    getGameInfo();
   }, []);
 
   useEffect(() => {
@@ -37,7 +37,13 @@ const Multiplayer = () => {
       setWinnerId(data.winnerId);
       navigate("/menu");
     });
-  }, [socket, loggedUserInfo.userId, navigate]);
+  }, [
+    socket,
+    loggedUserInfo.userId,
+    navigate,
+    setWinnerId,
+    setMultiplayerGameOver,
+  ]);
 
   // if (gameInfo.gameId === "") {
   //   return (
@@ -163,6 +169,7 @@ const Multiplayer = () => {
           </span>
         </div>
       </div>
+
       {waitMessage && <p className="text-black">{waitMessage}</p>}
     </div>
   );

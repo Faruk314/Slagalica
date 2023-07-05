@@ -1,10 +1,9 @@
 import axios from "axios";
 import classNames from "classnames";
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
 import QuizModal from "../modals/QuizModal";
-import TargetNumber from "./TargetNumber";
 
 interface Question {
   id: number;
@@ -18,7 +17,6 @@ interface Question {
 const Quiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentAnswers, setCurrentAnswers] = useState<Question | {}>({});
-  const isEffectExecutedRef = useRef(false);
   const [correct, setCorrect] = useState<number | null>(null);
   const [incorrect, setIncorrect] = useState<number | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -61,7 +59,7 @@ const Quiz = () => {
     }
 
     return () => clearInterval(countdown);
-  }, [seconds, gameStates.quiz]);
+  }, [seconds, gameStates.quiz, gameId, socket, updateScore, updateGameState]);
 
   const dontKnowAnswerHandler = () => {
     let correctAnswerIndex = Object.entries(currentAnswers).findIndex(
@@ -106,14 +104,12 @@ const Quiz = () => {
         answerFour: questions[currentQuestionIndex].correctAnswer,
       });
     }
-  }, [currentQuestionIndex]);
+  }, [currentQuestionIndex, gameStateFetched, questions]);
 
   useEffect(() => {
-    let timeout;
-
     if (correct) {
       setIsTimeOut(true);
-      timeout = setTimeout(() => {
+      setTimeout(() => {
         setCorrect(null);
         setIncorrect(null);
         if (currentQuestionIndex < 9) {
@@ -133,7 +129,15 @@ const Quiz = () => {
         setIsTimeOut(false);
       }, 2000);
     }
-  }, [correct, currentQuestionIndex, points]);
+  }, [
+    correct,
+    currentQuestionIndex,
+    points,
+    updateScore,
+    gameId,
+    socket,
+    updateGameState,
+  ]);
 
   useEffect(() => {
     const initGame = async () => {
@@ -161,11 +165,8 @@ const Quiz = () => {
       }
     };
 
-    if (!isEffectExecutedRef.current) {
-      initGame();
-      isEffectExecutedRef.current = true;
-    }
-  }, []);
+    initGame();
+  }, [updateGameState]);
 
   useEffect(() => {
     const gameState = {
@@ -188,6 +189,8 @@ const Quiz = () => {
     gameStates.quiz,
     playerScore.quiz,
     gameStateFetched,
+    gameStartTime,
+    updateGame,
   ]);
 
   return (

@@ -37,7 +37,7 @@ const MainMenu = () => {
     return () => {
       socket?.off("gameStart");
     };
-  }, [socket, navigate]);
+  }, [socket, navigate, setOpenGameInvite, setOpenGameInvitePending]);
 
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh] font-bold text-white">

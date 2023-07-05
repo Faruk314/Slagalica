@@ -56,7 +56,7 @@ function App() {
     return () => {
       socket?.off("gameInvite");
     };
-  }, [socket]);
+  }, [socket, setSenderUsername, setOpenGameInvite]);
 
   useEffect(() => {
     socket?.on("gameInvitePending", () => {
@@ -66,7 +66,7 @@ function App() {
     return () => {
       socket?.off("gameInvitePending");
     };
-  }, [socket]);
+  }, [socket, setOpenGameInvitePending]);
 
   useEffect(() => {
     const getLoginStatus = async () => {
@@ -84,7 +84,7 @@ function App() {
     };
 
     getLoginStatus();
-  }, []);
+  }, [setIsLoggedIn, setLoggedUserInfo]);
 
   useEffect(() => {
     getGameInfo();
@@ -104,7 +104,7 @@ function App() {
     return () => {
       socket?.off("gameUpdate");
     };
-  }, [socket]);
+  }, [socket, loggedUserInfo.userId, setOpponentScore]);
 
   return (
     <BrowserRouter>

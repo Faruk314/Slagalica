@@ -74,7 +74,14 @@ const SinglePlayer = () => {
     };
 
     checkGameOver();
-  }, [gameStates, navigate]);
+  }, [
+    navigate,
+    setGameFinished,
+    setPlayerScore,
+    gameStates,
+    setTotalScore,
+    setGameStates,
+  ]);
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">

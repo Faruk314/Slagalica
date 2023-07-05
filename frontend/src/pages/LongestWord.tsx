@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext, useMemo } from "react";
 import axios from "axios";
 import { GameContext } from "../context/GameContext";
 import LongestWordModal from "../modals/LongestWordModal";
@@ -20,15 +20,26 @@ const LongestWord = () => {
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const { socket } = useContext(SocketContext);
 
-  const updatedGameState = {
-    longestWord,
-    chosenLetters,
-    chosenLettersIndexes,
-    letters,
-    seconds: gameStartTime,
-    gameState: gameStates.longestWord,
-    score: playerScore.longestWord,
-  };
+  const updatedGameState = useMemo(
+    () => ({
+      longestWord,
+      chosenLetters,
+      chosenLettersIndexes,
+      letters,
+      seconds: gameStartTime,
+      gameState: gameStates.longestWord,
+      score: playerScore.longestWord,
+    }),
+    [
+      longestWord,
+      chosenLetters,
+      chosenLettersIndexes,
+      letters,
+      gameStartTime,
+      gameStates.longestWord,
+      playerScore.longestWord,
+    ]
+  );
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -55,7 +66,14 @@ const LongestWord = () => {
     return () => {
       clearInterval(countdown);
     };
-  }, [seconds, gameStates.longestWord, gameId, socket]);
+  }, [
+    seconds,
+    gameStates.longestWord,
+    gameId,
+    socket,
+    updateGameState,
+    updateScore,
+  ]);
 
   const submitHandler = async () => {
     const word: string = chosenLetters.join("");
@@ -139,7 +157,7 @@ const LongestWord = () => {
       initGame();
       isEffectExecutedRef.current = true;
     }
-  }, []);
+  }, [updateGameState]);
 
   useEffect(() => {
     if (gameStateFetched) {
@@ -152,6 +170,9 @@ const LongestWord = () => {
     longestWord,
     gameStates.longestWord,
     playerScore.longestWord,
+    updateGame,
+    gameStateFetched,
+    updatedGameState,
   ]);
 
   return (

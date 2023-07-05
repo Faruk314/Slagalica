@@ -5,6 +5,7 @@ import React, {
   useState,
   useRef,
   useContext,
+  useCallback,
 } from "react";
 import { AuthContext, UserInfo } from "../context/AuthContext";
 
@@ -183,19 +184,25 @@ export const GameContextProvider = ({ children }: any) => {
     image: "",
   });
 
-  const updateGameState = (name: string, state: string) => {
-    setGameStates((prevState) => ({
-      ...prevState,
-      [name]: state,
-    }));
-  };
+  const updateGameState = useCallback(
+    (name: string, state: string) => {
+      setGameStates((prevState) => ({
+        ...prevState,
+        [name]: state,
+      }));
+    },
+    [setGameStates]
+  );
 
-  const updateScore = (name: string, score: number) => {
-    setPlayerScore((prevScore) => ({
-      ...prevScore,
-      [name]: score,
-    }));
-  };
+  const updateScore = useCallback(
+    (name: string, score: number) => {
+      setPlayerScore((prevScore) => ({
+        ...prevScore,
+        [name]: score,
+      }));
+    },
+    [setPlayerScore]
+  );
 
   const createGameSession = async () => {
     try {
@@ -205,7 +212,7 @@ export const GameContextProvider = ({ children }: any) => {
     }
   };
 
-  const getGameInfo = async () => {
+  const getGameInfo = useCallback(async () => {
     try {
       const response = await axios.get(
         "http://localhost:4000/api/game/getGameInfo"
@@ -215,6 +222,8 @@ export const GameContextProvider = ({ children }: any) => {
       setGameInfo(response.data.gameData);
 
       const scores = response.data.scores;
+
+      console.log(scores);
 
       if (scores.playerOne.userId === loggedUserInfo.userId) {
         setOpponentScore(scores.playerTwo);
@@ -236,7 +245,14 @@ export const GameContextProvider = ({ children }: any) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [
+    setGameId,
+    setGameInfo,
+    setOpponentScore,
+    setPlayerScore,
+    setWaitMessage,
+    loggedUserInfo,
+  ]);
 
   useEffect(() => {
     const { userId, gamesPlayed, ...playerScores } = playerScore;
@@ -263,16 +279,19 @@ export const GameContextProvider = ({ children }: any) => {
     }
   }, [playerScore, opponentScore]);
 
-  const updateGame = async (updatedGameState: any, gameName: string) => {
-    try {
-      await axios.put("http://localhost:4000/api/game/updateGameState", {
-        updatedGameState,
-        gameName,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const updateGame = useCallback(
+    async (updatedGameState: any, gameName: string) => {
+      try {
+        await axios.put("http://localhost:4000/api/game/updateGameState", {
+          updatedGameState,
+          gameName,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const retrieveGameStats = async () => {
@@ -313,7 +332,7 @@ export const GameContextProvider = ({ children }: any) => {
       retrieveGameStats();
       isEffectExecutedRef.current = true;
     }
-  }, []);
+  }, [gameStates, playerScore]);
 
   return (
     <GameContext.Provider
