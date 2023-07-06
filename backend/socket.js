@@ -191,6 +191,19 @@ export default function setupSocket() {
       }
     });
 
+    socket.on("cancelInvite", async () => {
+      if (!socket.userId) {
+        console.log("User not authenticated");
+        return;
+      }
+      let q =
+        "SELECT `gameId` FROM games WHERE (`receiverId`= ? OR `senderId` = ?)";
+
+      let data = await query(q, [socket.userId, socket.userId]);
+
+      io.to(data[0].gameId).emit("inviteCanceled");
+    });
+
     socket.on("updateGameState", async (data) => {
       console.log(data, "dataSocket");
       let result = await client.get(data.gameId);

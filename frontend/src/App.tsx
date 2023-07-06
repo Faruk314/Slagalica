@@ -48,6 +48,10 @@ function App() {
   }, [socket, gameId, isLoggedIn]);
 
   useEffect(() => {
+    socket?.emit("cancelInvite");
+  }, [socket]);
+
+  useEffect(() => {
     socket?.on("gameInvite", (senderUsername) => {
       setSenderUsername(senderUsername);
       setOpenGameInvite(true);

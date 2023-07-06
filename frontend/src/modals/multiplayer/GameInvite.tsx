@@ -3,7 +3,7 @@ import { GameContext } from "../../context/GameContext";
 import { SocketContext } from "../../context/SocketContext";
 
 const GameInvite = () => {
-  const { senderUsername } = useContext(GameContext);
+  const { senderUsername, setOpenGameInvite } = useContext(GameContext);
   const { socket } = useContext(SocketContext);
 
   return (
@@ -23,7 +23,13 @@ const GameInvite = () => {
           <p className="text-gray-600">wants to play against you!</p>
         </div>
 
-        <div className="flex space-x-2">
+        <div
+          onClick={() => {
+            socket?.emit("cancelInvite");
+            setOpenGameInvite(false);
+          }}
+          className="flex space-x-2"
+        >
           <button className="px-2 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500">
             CANCEL
           </button>

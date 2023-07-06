@@ -39,6 +39,17 @@ const MainMenu = () => {
     };
   }, [socket, navigate, setOpenGameInvite, setOpenGameInvitePending]);
 
+  useEffect(() => {
+    socket?.on("inviteCanceled", () => {
+      setOpenGameInvite(false);
+      setOpenGameInvitePending(false);
+    });
+
+    return () => {
+      socket?.off("inviteCanceled");
+    };
+  }, [socket]);
+
   return (
     <section className="flex flex-col space-y-10 items-center justify-center h-[100vh] font-bold text-white">
       <div className="flex items-center space-x-1 text-4xl">
