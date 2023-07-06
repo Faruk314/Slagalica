@@ -30,13 +30,9 @@ const SinglePlayer = () => {
       console.log(numberOfFinishedGames);
 
       if (numberOfFinishedGames === 6) {
-        try {
-          await deleteGameSession();
-          setGameFinished(true);
-          navigate("/menu");
-        } catch (error) {
-          console.log(error);
-        }
+        await deleteGameSession();
+        setGameFinished(true);
+        navigate("/menu");
       }
     };
 

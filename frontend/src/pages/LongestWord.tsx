@@ -179,6 +179,14 @@ const LongestWord = () => {
     updatedGameState,
   ]);
 
+  if (!gameStateFetched) {
+    return (
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
   return (
     <section className="flex flex-col justify-center h-[100vh] mx-2 mt-2 space-y-5  max-w-5xl md:mx-auto">
       <span className="absolute top-0">{seconds}</span>

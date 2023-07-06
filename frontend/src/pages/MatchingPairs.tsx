@@ -176,9 +176,16 @@ const MatchingPairs = () => {
     gameStates.matchingPairs,
     playerScore.matchingPairs,
     gameStateFetched,
-    updateGame,
     gameStartTime,
   ]);
+
+  if (!gameStateFetched) {
+    return (
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <section className="flex items-center justify-center h-[100vh] font-bold">

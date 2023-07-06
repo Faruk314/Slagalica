@@ -206,6 +206,8 @@ export default function setupSocket() {
 
       let data = await query(q, [socket.userId, socket.userId]);
 
+      if (data.length === 0) return;
+
       io.to(data[0].gameId).emit("inviteCanceled");
     });
 

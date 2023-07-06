@@ -15,7 +15,7 @@ interface Question {
 }
 
 const Quiz = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(9);
   const [currentAnswers, setCurrentAnswers] = useState<Question | {}>({});
   const [correct, setCorrect] = useState<number | null>(null);
   const [incorrect, setIncorrect] = useState<number | null>(null);
@@ -194,12 +194,20 @@ const Quiz = () => {
     playerScore.quiz,
   ]);
 
+  if (!gameStateFetched) {
+    return (
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
   return (
     <section className="flex items-center h-[100vh] text-white font-bold">
       <div className="absolute top-0 left-0">
         <span className="text-black">{seconds}</span>
       </div>
-      {questions.length > 0 && (
+      {questions.length > 0 && gameStateFetched && (
         <div className="w-full max-w-4xl mx-2 md:mx-auto">
           <div className="relative h-[5rem] flex justify-center items-center text-center bg-blue-600 rounded-md">
             <p>
