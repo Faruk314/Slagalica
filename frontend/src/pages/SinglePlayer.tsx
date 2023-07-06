@@ -13,9 +13,14 @@ const SinglePlayer = () => {
     gameStates,
     deleteGameSession,
     setGameFinished,
+    retrieveGameStats,
   } = useContext(GameContext);
   const navigate = useNavigate();
   const [openLeaveGame, setOpenLeaveGame] = useState(false);
+
+  useEffect(() => {
+    retrieveGameStats();
+  }, []);
 
   useEffect(() => {
     const checkGameOver = async () => {
@@ -27,7 +32,7 @@ const SinglePlayer = () => {
         }
       });
 
-      console.log(numberOfFinishedGames);
+      console.log(numberOfFinishedGames, "numberOfFinishedGames");
 
       if (numberOfFinishedGames === 6) {
         await deleteGameSession();
@@ -39,17 +44,7 @@ const SinglePlayer = () => {
     checkGameOver();
   }, [navigate]);
 
-  useEffect(() => {
-    const createGameSession = async () => {
-      try {
-        await axios.post("http://localhost:4000/api/game/createGameSession");
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    createGameSession();
-  }, []);
+  console.log(playerScore);
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">

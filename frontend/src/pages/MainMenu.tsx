@@ -14,7 +14,7 @@ const MainMenu = () => {
   const [openSearch, setOpenSearch] = useState(false);
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { socket } = useContext(SocketContext);
-  const { setOpenGameInvite, setOpenGameInvitePending } =
+  const { setOpenGameInvite, setOpenGameInvitePending, createGameSession } =
     useContext(GameContext);
 
   const logoutHandler = async () => {
@@ -28,6 +28,7 @@ const MainMenu = () => {
 
   useEffect(() => {
     socket?.on("gameStart", () => {
+      createGameSession();
       navigate("/multiplayer");
       setOpenGameInvite(false);
       setOpenGameInvitePending(false);
@@ -37,7 +38,7 @@ const MainMenu = () => {
     return () => {
       socket?.off("gameStart");
     };
-  }, [socket, navigate, setOpenGameInvite, setOpenGameInvitePending]);
+  }, [socket, navigate]);
 
   useEffect(() => {
     socket?.on("inviteCanceled", () => {
@@ -60,7 +61,10 @@ const MainMenu = () => {
       <div className="flex flex-col space-y-4 text-2xl">
         <button
           className="w-[15rem] flex justify-center items-center py-1 shadow-md rounded-full text-blue-500 hover:text-white  hover:bg-blue-600 disabled:text-gray-400 disabled:pointer-events-none"
-          onClick={() => navigate("/singlePlayer")}
+          onClick={() => {
+            createGameSession();
+            navigate("/singlePlayer");
+          }}
         >
           Singleplayer
         </button>

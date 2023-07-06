@@ -13,19 +13,14 @@ const Multiplayer = () => {
     opponentTotal,
     waitMessage,
     gameInfo,
-    getGameInfo,
-    createGameSession,
     setWinnerId,
+    getGameInfo,
   } = useContext(GameContext);
   const { loggedUserInfo } = useContext(AuthContext);
   const { playerScore, gameStates, setMultiplayerGameOver } =
     useContext(GameContext);
   const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    createGameSession();
-  }, []);
 
   useEffect(() => {
     getGameInfo();
@@ -44,14 +39,6 @@ const Multiplayer = () => {
     setWinnerId,
     setMultiplayerGameOver,
   ]);
-
-  // if (gameInfo.gameId === "") {
-  //   return (
-  //     <div className="flex items-center justify-center h-[100vh]">
-  //       <div className="loader"></div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">

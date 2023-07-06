@@ -19,14 +19,10 @@ const ConfirmLeave = ({ setOpenLeaveGame }: Props) => {
 
         <div className="flex space-x-2">
           <button
-            onClick={async () => {
+            onClick={() => {
               setOpenLeaveGame(false);
-              try {
-                await deleteGameSession();
-                navigate("/menu");
-              } catch (error) {
-                console.log(error);
-              }
+              deleteGameSession();
+              navigate("/menu");
             }}
             className="px-4 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500"
           >

@@ -35,7 +35,6 @@ function App() {
     gameId,
     setOpponentScore,
     gameFinished,
-    getGameInfo,
     multiplayerGameOver,
   } = useContext(GameContext);
 
@@ -89,10 +88,6 @@ function App() {
 
     getLoginStatus();
   }, [setIsLoggedIn, setLoggedUserInfo]);
-
-  useEffect(() => {
-    getGameInfo();
-  }, []);
 
   useEffect(() => {
     socket?.on("gameUpdate", (data) => {

@@ -3,7 +3,6 @@ import React, {
   createContext,
   useEffect,
   useState,
-  useRef,
   useContext,
   useCallback,
 } from "react";
@@ -22,6 +21,7 @@ interface PlayerScore {
   targetNumber: number;
   userId?: number;
   gamesPlayed?: number;
+  [key: string]: string | number | undefined;
 }
 
 interface GameStats {
@@ -37,6 +37,7 @@ interface GameStates {
   matchingPairs: string;
   quiz: string;
   targetNumber: string;
+  [key: string]: string; // Index signature
 }
 
 interface GameContextProps {
@@ -75,6 +76,7 @@ interface GameContextProps {
   setWinnerId: React.Dispatch<React.SetStateAction<number | null>>;
   winnerId: number | null;
   deleteGameSession: () => void;
+  retrieveGameStats: () => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -139,6 +141,7 @@ export const GameContext = createContext<GameContextProps>({
   setWinnerId: () => {},
   winnerId: null,
   deleteGameSession: () => {},
+  retrieveGameStats: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -151,7 +154,6 @@ export const GameContextProvider = ({ children }: any) => {
   const [gameInvitePendingOpen, setOpenGameInvitePending] = useState(false);
   const [openGameInvite, setOpenGameInvite] = useState(false);
   const [senderUsername, setSenderUsername] = useState("");
-  const isEffectExecutedRef = useRef(false);
   const [totalScore, setTotalScore] = useState(0);
   const [gameStates, setGameStates] = useState<GameStates>({
     associations: "",
@@ -168,6 +170,8 @@ export const GameContextProvider = ({ children }: any) => {
     matchingPairs: 0,
     quiz: 0,
     targetNumber: 0,
+    gamesPlayed: 0,
+    userId: 0,
   });
   const [opponentScore, setOpponentScore] = useState<PlayerScore>({
     associations: 0,
@@ -176,6 +180,8 @@ export const GameContextProvider = ({ children }: any) => {
     mastermind: 0,
     targetNumber: 0,
     quiz: 0,
+    gamesPlayed: 0,
+    userId: 0,
   });
   const [statsFetched, setStatsFetched] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
@@ -247,28 +253,29 @@ export const GameContextProvider = ({ children }: any) => {
     } catch (error) {
       console.log(error);
     }
-  }, [
-    setGameId,
-    setGameInfo,
-    setOpponentScore,
-    setPlayerScore,
-    setWaitMessage,
-    loggedUserInfo,
-  ]);
+  }, [loggedUserInfo.userId]);
 
   useEffect(() => {
-    const { userId, gamesPlayed, ...playerScores } = playerScore;
-
     const calcTotal = () => {
+      const {
+        userId: playerId,
+        gamesPlayed: playerGamesPlayed,
+        ...playerScores
+      } = playerScore;
+
       const totalScore = Object.values(playerScores).reduce(
-        (acc, score) => acc + score,
+        (acc: number, score) => acc + (score as number),
         0
       );
 
-      const { userId, gamesPlayed, ...opponentScores } = opponentScore;
+      const {
+        userId: opponentId,
+        gamesPlayed: opponentGamesPlayed,
+        ...opponentScores
+      } = opponentScore;
 
       const opponentTotal = Object.values(opponentScores).reduce(
-        (sum, score) => sum + score,
+        (acc: number, score) => acc + (score as number),
         0
       );
 
@@ -295,44 +302,39 @@ export const GameContextProvider = ({ children }: any) => {
     []
   );
 
-  useEffect(() => {
-    const retrieveGameStats = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/game/getGameStats"
+  const retrieveGameStats = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/api/game/getGameStats"
+      );
+
+      let playerScoreCopy: PlayerScore = { ...playerScore };
+      let gameStatesCopy: GameStates = { ...gameStates };
+
+      console.log(response.data);
+
+      response.data.forEach((game: any, index: number) => {
+        let playerScoreKey = Object.keys(playerScoreCopy).find(
+          (key) => key === game.gameName
+        );
+        let gameStatesKey = Object.keys(gameStatesCopy).find(
+          (key) => key === game.gameName
         );
 
-        let playerScoreCopy: any = { ...playerScore };
-        let gameStatesCopy: any = { ...gameStates };
+        if (playerScoreKey) {
+          playerScoreCopy[playerScoreKey] = game.score;
+        }
 
-        response.data.forEach((game: GameStats, index: number) => {
-          let playerScoreKey = Object.keys(playerScoreCopy).find(
-            (key) => key === game.gameName
-          );
-          let gameStatesKey = Object.keys(gameStatesCopy).find(
-            (key) => key === game.gameName
-          );
+        if (gameStatesKey) {
+          gameStatesCopy[gameStatesKey] = game.gameState;
+        }
+      });
 
-          if (playerScoreKey) {
-            playerScoreCopy[playerScoreKey] = game.score;
-          }
-
-          if (gameStatesKey) {
-            gameStatesCopy[gameStatesKey] = game.gameState;
-          }
-        });
-
-        setStatsFetched(true);
-        setGameStates(gameStatesCopy);
-        setPlayerScore(playerScoreCopy);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (!isEffectExecutedRef.current) {
-      retrieveGameStats();
-      isEffectExecutedRef.current = true;
+      setStatsFetched(true);
+      setGameStates(gameStatesCopy);
+      setPlayerScore(playerScoreCopy);
+    } catch (error) {
+      console.log(error);
     }
   }, [gameStates, playerScore]);
 
@@ -365,6 +367,7 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        retrieveGameStats,
         deleteGameSession,
         setWinnerId,
         winnerId,
