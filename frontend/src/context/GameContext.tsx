@@ -69,14 +69,18 @@ interface GameContextProps {
   setWaitMessage: React.Dispatch<React.SetStateAction<string>>;
   waitMessage: string;
   gameInfo: GameInfo;
-  getGameInfo: () => void;
+  getGameInfo: (loggedUserInfo: UserInfo) => Promise<void>;
   createGameSession: () => void;
   setMultiplayerGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   multiplayerGameOver: boolean;
   setWinnerId: React.Dispatch<React.SetStateAction<number | null>>;
   winnerId: number | null;
-  deleteGameSession: () => void;
-  retrieveGameStats: () => void;
+  deleteGameSession: () => Promise<void>;
+  retrieveGameStats: () => Promise<void>;
+  setOpenLeaveGame: React.Dispatch<React.SetStateAction<boolean>>;
+  openLeaveGame: boolean;
+  openPlayerLeftModal: boolean;
+  setOpenPlayerLeftModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -134,20 +138,25 @@ export const GameContext = createContext<GameContextProps>({
     userName: "",
     image: "",
   },
-  getGameInfo: () => {},
+  getGameInfo: async (loggedUserInfo: UserInfo) => {},
   createGameSession: () => {},
   setMultiplayerGameOver: () => {},
   multiplayerGameOver: false,
   setWinnerId: () => {},
   winnerId: null,
-  deleteGameSession: () => {},
-  retrieveGameStats: () => {},
+  deleteGameSession: async () => {},
+  retrieveGameStats: async () => {},
+  setOpenLeaveGame: () => {},
+  openLeaveGame: false,
+  openPlayerLeftModal: false,
+  setOpenPlayerLeftModal: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [openPlayerLeftModal, setOpenPlayerLeftModal] = useState(false);
+  const [openLeaveGame, setOpenLeaveGame] = useState(false);
   const [winnerId, setWinnerId] = useState<null | number>(null);
   const [multiplayerGameOver, setMultiplayerGameOver] = useState(false);
-  const { loggedUserInfo } = useContext(AuthContext);
   const [waitMessage, setWaitMessage] = useState("");
   const [opponentTotal, setOpponentTotal] = useState(0);
   const [gameId, setGameId] = useState("");
@@ -220,7 +229,7 @@ export const GameContextProvider = ({ children }: any) => {
     }
   };
 
-  const getGameInfo = useCallback(async () => {
+  const getGameInfo = useCallback(async (loggedUserInfo: UserInfo) => {
     try {
       const response = await axios.get(
         "http://localhost:4000/api/game/getGameInfo"
@@ -230,8 +239,6 @@ export const GameContextProvider = ({ children }: any) => {
       setGameInfo(response.data.gameData);
 
       const scores = response.data.scores;
-
-      console.log(scores);
 
       if (scores.playerOne.userId === loggedUserInfo.userId) {
         setOpponentScore(scores.playerTwo);
@@ -243,6 +250,7 @@ export const GameContextProvider = ({ children }: any) => {
       }
 
       if (scores.playerTwo.userId === loggedUserInfo.userId) {
+        console.log(scores.playerOne, "palyerOneScore");
         setOpponentScore(scores.playerOne);
         setPlayerScore(scores.playerTwo);
 
@@ -253,7 +261,7 @@ export const GameContextProvider = ({ children }: any) => {
     } catch (error) {
       console.log(error);
     }
-  }, [loggedUserInfo.userId]);
+  }, []);
 
   useEffect(() => {
     const calcTotal = () => {
@@ -367,6 +375,10 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        setOpenPlayerLeftModal,
+        openPlayerLeftModal,
+        openLeaveGame,
+        setOpenLeaveGame,
         retrieveGameStats,
         deleteGameSession,
         setWinnerId,

@@ -293,6 +293,24 @@ export default function setupSocket() {
         return;
       }
     });
+
+    socket.on("leaveGame", async (data) => {
+      const receiverSocketId = getUser(data.receiverId);
+      const gameId = data.gameId;
+
+      let q = "DELETE FROM games WHERE `gameId` = ?";
+
+      await query(q, [gameId]);
+      await client.del(data.receiverId);
+      await client.del(gameId);
+
+      q =
+        "INSERT INTO leaderboard (`userId`, `score`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `score` = `score` + ?";
+
+      await query(q, [data.receiverId, 5, 5]);
+
+      io.to(receiverSocketId).emit("opponentLeft");
+    });
   });
 
   io.listen(5001);

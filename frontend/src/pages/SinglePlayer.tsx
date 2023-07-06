@@ -14,9 +14,10 @@ const SinglePlayer = () => {
     deleteGameSession,
     setGameFinished,
     retrieveGameStats,
+    openLeaveGame,
+    setOpenLeaveGame,
   } = useContext(GameContext);
   const navigate = useNavigate();
-  const [openLeaveGame, setOpenLeaveGame] = useState(false);
 
   useEffect(() => {
     retrieveGameStats();
@@ -43,8 +44,6 @@ const SinglePlayer = () => {
 
     checkGameOver();
   }, [navigate]);
-
-  console.log(playerScore);
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
@@ -149,6 +148,7 @@ const SinglePlayer = () => {
           </span>
         </div>
       </div>
+
       {openLeaveGame && <ConfirmLeave setOpenLeaveGame={setOpenLeaveGame} />}
     </div>
   );

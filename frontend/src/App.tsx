@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { Routes, BrowserRouter, Route } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Routes, BrowserRouter, Route, useNavigate } from "react-router-dom";
 import Associations from "./pages/Associations";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -19,10 +19,12 @@ import GameInvitePending from "./modals/multiplayer/GameInvitePending";
 import Multiplayer from "./pages/Multiplayer";
 import GameFinished from "./modals/GameFinished";
 import MultiplayerGameOver from "./modals/multiplayer/MultiplayerGameOver";
+import PlayerLeft from "./modals/multiplayer/PlayerLeft";
 
 axios.defaults.withCredentials = true;
 
 function App() {
+  const navigate = useNavigate();
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo, loggedUserInfo } =
     useContext(AuthContext);
   const { socket } = useContext(SocketContext);
@@ -36,6 +38,8 @@ function App() {
     setOpponentScore,
     gameFinished,
     multiplayerGameOver,
+    openPlayerLeftModal,
+    setOpenPlayerLeftModal,
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -105,8 +109,19 @@ function App() {
     };
   }, [socket, loggedUserInfo?.userId, setOpponentScore]);
 
+  useEffect(() => {
+    socket?.on("opponentLeft", () => {
+      setOpenPlayerLeftModal(true);
+      navigate("/menu");
+    });
+
+    return () => {
+      socket?.off("opponentLeft");
+    };
+  }, [socket, navigate]);
+
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -124,7 +139,10 @@ function App() {
       {gameInvitePendingOpen && <GameInvitePending />}
       {gameFinished && <GameFinished />}
       {multiplayerGameOver && <MultiplayerGameOver />}
-    </BrowserRouter>
+      {openPlayerLeftModal && (
+        <PlayerLeft setOpenPlayerLeftModal={setOpenPlayerLeftModal} />
+      )}
+    </>
   );
 }
 

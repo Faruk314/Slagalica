@@ -1,13 +1,15 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
+import { SocketContext } from "../context/SocketContext";
 
 interface Props {
   setOpenLeaveGame: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ConfirmLeave = ({ setOpenLeaveGame }: Props) => {
-  const { deleteGameSession } = useContext(GameContext);
+  const { deleteGameSession, gameId, opponentScore } = useContext(GameContext);
+  const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
 
   return (
@@ -22,6 +24,14 @@ const ConfirmLeave = ({ setOpenLeaveGame }: Props) => {
             onClick={() => {
               setOpenLeaveGame(false);
               deleteGameSession();
+
+              if (gameId !== "") {
+                socket?.emit("leaveGame", {
+                  receiverId: opponentScore.userId,
+                  gameId: gameId,
+                });
+              }
+
               navigate("/menu");
             }}
             className="px-4 py-1 text-[0.9rem] font-bold text-white bg-blue-600 rounded-md hover:bg-blue-500"

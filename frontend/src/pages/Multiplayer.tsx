@@ -1,12 +1,15 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { GameContext } from "../context/GameContext";
 import { useNavigate } from "react-router-dom";
 import { FaPuzzlePiece } from "react-icons/fa";
 import Player from "../cards/Player";
 import { AuthContext } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
+import { BiLogOut } from "react-icons/bi";
+import ConfirmLeave from "../modals/ConfirmLeave";
 
 const Multiplayer = () => {
+  const [loading, setLoading] = useState(true);
   const {
     opponentScore,
     totalScore,
@@ -15,6 +18,9 @@ const Multiplayer = () => {
     gameInfo,
     setWinnerId,
     getGameInfo,
+    retrieveGameStats,
+    setOpenLeaveGame,
+    openLeaveGame,
   } = useContext(GameContext);
   const { loggedUserInfo } = useContext(AuthContext);
   const { playerScore, gameStates, setMultiplayerGameOver } =
@@ -23,8 +29,19 @@ const Multiplayer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getGameInfo();
-  }, []);
+    const fetchData = async () => {
+      try {
+        await getGameInfo(loggedUserInfo);
+        await retrieveGameStats();
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false); // Set loading to false even if there's an error
+      }
+    };
+
+    fetchData();
+  }, [loggedUserInfo]);
 
   useEffect(() => {
     socket?.on("gameOver", (data) => {
@@ -32,16 +49,29 @@ const Multiplayer = () => {
       setWinnerId(data.winnerId);
       navigate("/menu");
     });
-  }, [
-    socket,
-    loggedUserInfo.userId,
-    navigate,
-    setWinnerId,
-    setMultiplayerGameOver,
-  ]);
+  }, [socket, loggedUserInfo.userId, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
+      <div className="absolute flex items-center justify-between w-full px-2 top-2">
+        <div></div>
+        <button
+          onClick={() => {
+            setOpenLeaveGame(true);
+          }}
+        >
+          <BiLogOut size={30} />
+        </button>
+      </div>
+
       <div className="flex items-center space-x-1 text-4xl">
         <FaPuzzlePiece size={70} className="text-blue-600" />
         <h1 className="text-gray-500">GAME</h1>
@@ -158,6 +188,7 @@ const Multiplayer = () => {
       </div>
 
       {waitMessage && <p className="text-black">{waitMessage}</p>}
+      {openLeaveGame && <ConfirmLeave setOpenLeaveGame={setOpenLeaveGame} />}
     </div>
   );
 };
