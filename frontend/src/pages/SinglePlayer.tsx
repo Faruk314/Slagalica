@@ -1,20 +1,21 @@
 import axios from "axios";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
+import { BiLogOut } from "react-icons/bi";
+import ConfirmLeave from "../modals/ConfirmLeave";
 
 const SinglePlayer = () => {
   const {
     playerScore,
     totalScore,
     gameStates,
-    setTotalScore,
-    setGameStates,
-    setPlayerScore,
+    deleteGameSession,
     setGameFinished,
   } = useContext(GameContext);
   const navigate = useNavigate();
+  const [openLeaveGame, setOpenLeaveGame] = useState(false);
 
   useEffect(() => {
     const checkGameOver = async () => {
@@ -30,27 +31,7 @@ const SinglePlayer = () => {
 
       if (numberOfFinishedGames === 6) {
         try {
-          await axios.delete(
-            "http://localhost:4000/api/game/deleteGameSession"
-          );
-
-          setTotalScore(0);
-          setGameStates({
-            associations: "",
-            longestWord: "",
-            mastermind: "",
-            matchingPairs: "",
-            quiz: "",
-            targetNumber: "",
-          });
-          setPlayerScore({
-            associations: 0,
-            longestWord: 0,
-            mastermind: 0,
-            matchingPairs: 0,
-            quiz: 0,
-            targetNumber: 0,
-          });
+          await deleteGameSession();
           setGameFinished(true);
           navigate("/menu");
         } catch (error) {
@@ -76,11 +57,15 @@ const SinglePlayer = () => {
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
-      <div className="absolute top-2">
+      <div className="absolute flex items-center justify-between w-full px-2 top-2">
         <div className="p-1 px-2 text-xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-full">
           <span className="text-blue-500">Total: </span>
           <span>{totalScore}</span>
         </div>
+
+        <button onClick={() => setOpenLeaveGame(true)}>
+          <BiLogOut size={30} />
+        </button>
       </div>
 
       <div className="flex items-center space-x-1 text-4xl">
@@ -173,6 +158,7 @@ const SinglePlayer = () => {
           </span>
         </div>
       </div>
+      {openLeaveGame && <ConfirmLeave setOpenLeaveGame={setOpenLeaveGame} />}
     </div>
   );
 };

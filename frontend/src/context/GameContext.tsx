@@ -74,6 +74,7 @@ interface GameContextProps {
   multiplayerGameOver: boolean;
   setWinnerId: React.Dispatch<React.SetStateAction<number | null>>;
   winnerId: number | null;
+  deleteGameSession: () => void;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -137,6 +138,7 @@ export const GameContext = createContext<GameContextProps>({
   multiplayerGameOver: false,
   setWinnerId: () => {},
   winnerId: null,
+  deleteGameSession: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
@@ -334,9 +336,36 @@ export const GameContextProvider = ({ children }: any) => {
     }
   }, [gameStates, playerScore]);
 
+  const deleteGameSession = useCallback(async () => {
+    try {
+      await axios.delete("http://localhost:4000/api/game/deleteGameSession");
+
+      setTotalScore(0);
+      setGameStates({
+        associations: "",
+        longestWord: "",
+        mastermind: "",
+        matchingPairs: "",
+        quiz: "",
+        targetNumber: "",
+      });
+      setPlayerScore({
+        associations: 0,
+        longestWord: 0,
+        mastermind: 0,
+        matchingPairs: 0,
+        quiz: 0,
+        targetNumber: 0,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [setTotalScore, setGameStates, setPlayerScore]);
+
   return (
     <GameContext.Provider
       value={{
+        deleteGameSession,
         setWinnerId,
         winnerId,
         setMultiplayerGameOver,
