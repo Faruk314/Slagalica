@@ -37,6 +37,7 @@ const Mastermind = () => {
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const { socket } = useContext(SocketContext);
+  const isEffectExecutedRef = useRef(false);
 
   console.log(winCombination);
 
@@ -66,8 +67,11 @@ const Mastermind = () => {
       }
     };
 
-    initGame();
-  }, [updateGameState]);
+    if (!isEffectExecutedRef.current) {
+      initGame();
+      isEffectExecutedRef.current = true;
+    }
+  }, [updateGameState, gameStateFetched]);
 
   console.log(winCombination);
 

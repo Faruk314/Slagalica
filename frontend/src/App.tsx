@@ -104,7 +104,7 @@ function App() {
     return () => {
       socket?.off("gameUpdate");
     };
-  }, [socket, loggedUserInfo.userId, setOpponentScore]);
+  }, [socket, loggedUserInfo?.userId, setOpponentScore]);
 
   return (
     <BrowserRouter>

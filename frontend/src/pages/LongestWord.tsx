@@ -42,6 +42,39 @@ const LongestWord = () => {
   );
 
   useEffect(() => {
+    let unsubscribed = false;
+    const initGame = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/longestWord"
+        );
+
+        updateGameState("longestWord", response.data.gameState);
+        setChossenLetters(response.data.chosenLetters);
+        setChosenLettersIndexes(response.data.chosenLettersIndexes);
+        setLetters(response.data.letters);
+        setLongestWord(response.data.longestWord);
+        setGameStateFetched(true);
+        setGameStartTime(response.data.seconds);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (!unsubscribed) {
+      initGame();
+    }
+
+    return () => {
+      unsubscribed = true;
+    };
+  }, []);
+
+  useEffect(() => {
     const countdown = setInterval(() => {
       setSeconds((prev) => prev - 1);
     }, 1000);
@@ -129,35 +162,6 @@ const LongestWord = () => {
     setChossenLetters(chosenLettersCopy);
     setChosenLettersIndexes(chosenlettersIndexesCopy);
   };
-
-  useEffect(() => {
-    const initGame = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/game/getGameState/longestWord"
-        );
-
-        updateGameState("longestWord", response.data.gameState);
-        setChossenLetters(response.data.chosenLetters);
-        setChosenLettersIndexes(response.data.chosenLettersIndexes);
-        setLetters(response.data.letters);
-        setLongestWord(response.data.longestWord);
-        setGameStateFetched(true);
-        setGameStartTime(response.data.seconds);
-        const currentTime = Math.floor(Date.now() / 1000);
-        const gameStartTime = response.data.seconds;
-        const timeLeft = 60 - (currentTime - gameStartTime);
-        setSeconds(timeLeft);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (!isEffectExecutedRef.current) {
-      initGame();
-      isEffectExecutedRef.current = true;
-    }
-  }, [updateGameState]);
 
   useEffect(() => {
     if (gameStateFetched) {

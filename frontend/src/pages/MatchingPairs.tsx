@@ -34,6 +34,7 @@ const MatchingPairs = () => {
   const [gameStateFetched, setGameStateFetched] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const { socket } = useContext(SocketContext);
+  const isEffectExecutedRef = useRef(false);
 
   const handleLeftSideClick = (id: number) => {
     setLeftClickedIndex(id);
@@ -42,6 +43,37 @@ const MatchingPairs = () => {
   const handleRightSideClick = (id: number) => {
     setRightClickedIndex(id);
   };
+
+  useEffect(() => {
+    const initGame = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/matchingPairs"
+        );
+
+        updateGameState("matchingPairs", response.data.gameState);
+        setGameStartTime(response.data.seconds);
+        setRightSide(response.data.rightSide);
+        setLeftSide(response.data.leftSide);
+        setSeconds(response.data.seconds);
+        setCorrects(response.data.corrects);
+        setIncorrects(response.data.incorrects);
+        setGameStateFetched(true);
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (!isEffectExecutedRef.current) {
+      initGame();
+      isEffectExecutedRef.current = true;
+    }
+  }, []);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -69,15 +101,7 @@ const MatchingPairs = () => {
     return () => {
       clearInterval(countdown);
     };
-  }, [
-    seconds,
-    gameStates.matchingPairs,
-    gameId,
-    socket,
-    score,
-    updateGameState,
-    updateScore,
-  ]);
+  }, []);
 
   useEffect(() => {
     const checkGameStatus = () => {
@@ -129,34 +153,6 @@ const MatchingPairs = () => {
       checkCorrect();
     }
   }, [rightClickedIndex, leftClickedIndex, corrects, incorrects]);
-
-  useEffect(() => {
-    const initGame = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/game/getGameState/matchingPairs"
-        );
-
-        updateGameState("matchingPairs", response.data.gameState);
-        setGameStartTime(response.data.seconds);
-        setRightSide(response.data.rightSide);
-        setLeftSide(response.data.leftSide);
-        setSeconds(response.data.seconds);
-        setCorrects(response.data.corrects);
-        setIncorrects(response.data.incorrects);
-        setGameStateFetched(true);
-
-        const currentTime = Math.floor(Date.now() / 1000);
-        const gameStartTime = response.data.seconds;
-        const timeLeft = 60 - (currentTime - gameStartTime);
-        setSeconds(timeLeft);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    initGame();
-  }, [updateGameState]);
 
   useEffect(() => {
     const gameState = {

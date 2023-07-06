@@ -27,6 +27,38 @@ const TargetNumber = () => {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
+    const initGame = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/targetNumber"
+        );
+
+        console.log(response.data);
+
+        setGameStartTime(response.data.seconds);
+        setGameStateFetched(true);
+        updateGameState("targetNumber", response.data.gameState);
+        setTargetNumber(response.data.targetNumber);
+        setRandomNumbers(response.data.randomNumbers);
+        setChars(response.data.chars);
+        setUsedNumbersIndexes(response.data.usedNumbersIndexes);
+        setResult(response.data.result);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 90 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (!isEffectExecutedRef.current) {
+      initGame();
+      isEffectExecutedRef.current = true;
+    }
+  }, [updateGameState]);
+
+  useEffect(() => {
     const countdown = setInterval(() => {
       setSeconds((prev) => prev - 1);
     }, 1000);
@@ -141,38 +173,6 @@ const TargetNumber = () => {
     const updatedChars = [...chars, char];
     setChars(updatedChars);
   };
-
-  useEffect(() => {
-    const initGame = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/game/getGameState/targetNumber"
-        );
-
-        console.log(response.data);
-
-        setGameStartTime(response.data.seconds);
-        setGameStateFetched(true);
-        updateGameState("targetNumber", response.data.gameState);
-        setTargetNumber(response.data.targetNumber);
-        setRandomNumbers(response.data.randomNumbers);
-        setChars(response.data.chars);
-        setUsedNumbersIndexes(response.data.usedNumbersIndexes);
-        setResult(response.data.result);
-        const currentTime = Math.floor(Date.now() / 1000);
-        const gameStartTime = response.data.seconds;
-        const timeLeft = 90 - (currentTime - gameStartTime);
-        setSeconds(timeLeft);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (!isEffectExecutedRef.current) {
-      initGame();
-      isEffectExecutedRef.current = true;
-    }
-  }, [updateGameState]);
 
   useEffect(() => {
     const gameState = {

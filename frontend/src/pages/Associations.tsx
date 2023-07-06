@@ -47,6 +47,40 @@ const Associations = () => {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
+    let unsubscribed = false;
+    const initGame = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/game/getGameState/associations"
+        );
+
+        updateGameState("associations", response.data.gameState);
+        setAnsweredCorrectly(response.data.answeredCorrectly);
+        setFieldsOpenCount(response.data.fieldsOpenCount);
+        setScore(response.data.score);
+        setFinalAnswer(response.data.finalAnswer);
+        setAss(response.data.ass);
+        setGameStartTime(response.data.seconds);
+        setGameStateFetched(true);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const gameStartTime = response.data.seconds;
+        const timeLeft = 60 - (currentTime - gameStartTime);
+        setSeconds(timeLeft);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (!unsubscribed) {
+      initGame();
+    }
+
+    return () => {
+      unsubscribed = true;
+    };
+  }, []);
+
+  useEffect(() => {
     const countdown = setInterval(() => {
       setSeconds((prev) => prev - 1);
     }, 1000);
@@ -71,47 +105,7 @@ const Associations = () => {
     return () => {
       clearInterval(countdown);
     };
-  }, [
-    seconds,
-    gameStates.associations,
-    updateScore,
-    gameId,
-    score,
-    updateGameState,
-    socket,
-  ]);
-
-  useEffect(() => {
-    const initGame = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/game/getGameState/associations"
-        );
-
-        console.log(response.data);
-
-        updateGameState("associations", response.data.gameState);
-        setAnsweredCorrectly(response.data.answeredCorrectly);
-        setFieldsOpenCount(response.data.fieldsOpenCount);
-        setScore(response.data.score);
-        setFinalAnswer(response.data.finalAnswer);
-        setAss(response.data.ass);
-        setGameStartTime(response.data.seconds);
-        setGameStateFetched(true);
-        const currentTime = Math.floor(Date.now() / 1000);
-        const gameStartTime = response.data.seconds;
-        const timeLeft = 60 - (currentTime - gameStartTime);
-        setSeconds(timeLeft);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (!isEffectExecutedRef.current) {
-      initGame();
-      isEffectExecutedRef.current = true;
-    }
-  }, [updateGameState]);
+  }, [seconds]);
 
   useEffect(() => {
     const gameState = {
@@ -134,7 +128,6 @@ const Associations = () => {
     finalAnswer,
     answeredCorrectly,
     gameStates.associations,
-    updateGame,
     gameStateFetched,
     gameStartTime,
   ]);

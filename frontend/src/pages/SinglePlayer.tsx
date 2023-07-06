@@ -17,24 +17,10 @@ const SinglePlayer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const createGameSession = async () => {
-      try {
-        await axios.post("http://localhost:4000/api/game/createGameSession");
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    createGameSession();
-  }, []);
-
-  useEffect(() => {
     const checkGameOver = async () => {
       let numberOfFinishedGames = 0;
 
-      console.log(Object.values(gameStates));
-
-      Object.values(gameStates).forEach((value) => {
+      Object.values({ ...gameStates }).forEach((value) => {
         if (value !== "" && value !== "playing") {
           numberOfFinishedGames++;
         }
@@ -47,7 +33,7 @@ const SinglePlayer = () => {
           await axios.delete(
             "http://localhost:4000/api/game/deleteGameSession"
           );
-          console.log("uslo");
+
           setTotalScore(0);
           setGameStates({
             associations: "",
@@ -74,14 +60,19 @@ const SinglePlayer = () => {
     };
 
     checkGameOver();
-  }, [
-    navigate,
-    setGameFinished,
-    setPlayerScore,
-    gameStates,
-    setTotalScore,
-    setGameStates,
-  ]);
+  }, [navigate]);
+
+  useEffect(() => {
+    const createGameSession = async () => {
+      try {
+        await axios.post("http://localhost:4000/api/game/createGameSession");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    createGameSession();
+  }, []);
 
   return (
     <div className="flex flex-col space-y-10 items-center justify-center h-[100vh] text-gray-400 font-bold">
