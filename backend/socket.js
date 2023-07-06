@@ -155,6 +155,11 @@ export default function setupSocket() {
 
       if (!senderSocketId) return;
 
+      if (!receiverSocketId) {
+        io.to(senderSocketId).emit("playerOffline");
+        return;
+      }
+
       let q = "SELECT `userName` FROM users WHERE `userId`= ?";
       let userInfo = await query(q, [socket.userId]);
 

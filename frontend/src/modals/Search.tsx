@@ -1,8 +1,9 @@
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { UserInfo } from "../context/AuthContext";
 import { SocketContext } from "../context/SocketContext";
+import PlayerOffline from "./multiplayer/PlayerOffline";
 
 interface Props {
   setOpenSearch: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,6 +14,7 @@ const Search = ({ setOpenSearch }: Props) => {
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [clicked, setClicked] = useState(false);
   const { socket } = useContext(SocketContext);
+  const [openPlayerOfflineModal, setOpenPlayerOfflineModal] = useState(false);
 
   const searchHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +29,16 @@ const Search = ({ setOpenSearch }: Props) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    socket?.on("playerOffline", () => {
+      setOpenPlayerOfflineModal(true);
+    });
+
+    return () => {
+      socket?.off("playerOffline");
+    };
+  }, [socket]);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center bg-[rgb(0,0,0,0.7)]">
@@ -96,6 +108,9 @@ const Search = ({ setOpenSearch }: Props) => {
           ))}
         </div>
       </div>
+      {openPlayerOfflineModal && (
+        <PlayerOffline setOpenPlayerOfflineModal={setOpenPlayerOfflineModal} />
+      )}
     </div>
   );
 };
