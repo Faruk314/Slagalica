@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Routes, BrowserRouter, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Associations from "./pages/Associations";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -20,10 +20,12 @@ import Multiplayer from "./pages/Multiplayer";
 import GameFinished from "./modals/GameFinished";
 import MultiplayerGameOver from "./modals/multiplayer/MultiplayerGameOver";
 import PlayerLeft from "./modals/multiplayer/PlayerLeft";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 axios.defaults.withCredentials = true;
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { setIsLoggedIn, isLoggedIn, setLoggedUserInfo, loggedUserInfo } =
     useContext(AuthContext);
@@ -87,11 +89,13 @@ function App() {
         setLoggedUserInfo(response.data.userInfo);
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     getLoginStatus();
-  }, [setIsLoggedIn, setLoggedUserInfo]);
+  }, []);
 
   useEffect(() => {
     socket?.on("gameUpdate", (data) => {
@@ -120,20 +124,91 @@ function App() {
     };
   }, [socket, navigate]);
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[100vh]">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/menu" element={<MainMenu />} />
-        <Route path="/multiplayer" element={<Multiplayer />} />
-        <Route path="/singlePlayer" element={<SinglePlayer />} />
-        <Route path="/longestWord" element={<LongestWord />} />
-        <Route path="/targetNumber" element={<TargetNumber />} />
-        <Route path="/matchingPairs" element={<MatchingPairs />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/mastermind" element={<Mastermind />} />
-        <Route path="/associations" element={<Associations />} />
+        <Route
+          path="/menu"
+          element={
+            <ProtectedRoute>
+              <MainMenu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/multiplayer"
+          element={
+            <ProtectedRoute>
+              <Multiplayer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/singlePlayer"
+          element={
+            <ProtectedRoute>
+              <SinglePlayer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/longestWord"
+          element={
+            <ProtectedRoute>
+              <LongestWord />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/targetNumber"
+          element={
+            <ProtectedRoute>
+              <TargetNumber />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/matchingPairs"
+          element={
+            <ProtectedRoute>
+              <MatchingPairs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz"
+          element={
+            <ProtectedRoute>
+              <Quiz />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mastermind"
+          element={
+            <ProtectedRoute>
+              <Mastermind />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/associations"
+          element={
+            <ProtectedRoute>
+              <Associations />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       {openGameInvite && <GameInvite />}
       {gameInvitePendingOpen && <GameInvitePending />}

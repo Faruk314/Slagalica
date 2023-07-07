@@ -1,5 +1,4 @@
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { GameContext } from "../context/GameContext";
