@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useContext, useState, useEffect } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import { GameContext } from "../context/GameContext";
 import { SocketContext } from "../context/SocketContext";
 import LeaderBoard from "../modals/LeaderBoard";
@@ -14,12 +15,14 @@ const MainMenu = () => {
   const [openSearch, setOpenSearch] = useState(false);
   const [openLeaderboard, setOpenLeaderboard] = useState(false);
   const { socket } = useContext(SocketContext);
+  const { setIsLoggedIn } = useContext(AuthContext);
   const { setOpenGameInvite, setOpenGameInvitePending, createGameSession } =
     useContext(GameContext);
 
   const logoutHandler = async () => {
     try {
       await axios.get("http://localhost:4000/api/auth/logout");
+      setIsLoggedIn(false);
       navigate("/");
     } catch (error) {
       console.log(error);

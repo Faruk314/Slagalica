@@ -1,13 +1,15 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("farukspahictz@gmail.com");
   const [password, setPassword] = useState("ispitivac");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setIsLoggedIn } = useContext(AuthContext);
 
   const loginHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,7 @@ const Login = () => {
         email,
         password,
       });
+      setIsLoggedIn(true);
       navigate("/menu");
     } catch (error: any) {
       console.log(error);

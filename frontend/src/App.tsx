@@ -21,6 +21,7 @@ import GameFinished from "./modals/GameFinished";
 import MultiplayerGameOver from "./modals/multiplayer/MultiplayerGameOver";
 import PlayerLeft from "./modals/multiplayer/PlayerLeft";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthProtection from "./components/AuthProtection";
 
 axios.defaults.withCredentials = true;
 
@@ -135,8 +136,22 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <AuthProtection>
+              <Login />
+            </AuthProtection>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <AuthProtection>
+              <Register />
+            </AuthProtection>
+          }
+        />
         <Route
           path="/menu"
           element={

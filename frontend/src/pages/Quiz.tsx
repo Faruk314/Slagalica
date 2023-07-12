@@ -192,6 +192,7 @@ const Quiz = () => {
     currentQuestionIndex,
     gameStates.quiz,
     playerScore.quiz,
+    gameStartTime,
   ]);
 
   return (
