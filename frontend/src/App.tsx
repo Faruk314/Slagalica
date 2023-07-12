@@ -43,6 +43,9 @@ function App() {
     multiplayerGameOver,
     openPlayerLeftModal,
     setOpenPlayerLeftModal,
+    getGameInfo,
+    retrieveGameStats,
+    setLoadingGameInfo,
   } = useContext(GameContext);
 
   useEffect(() => {
@@ -124,6 +127,21 @@ function App() {
       socket?.off("opponentLeft");
     };
   }, [socket, navigate]);
+
+  useEffect(() => {
+    const fetchGameData = async () => {
+      try {
+        await getGameInfo(loggedUserInfo);
+        await retrieveGameStats();
+        setLoadingGameInfo(false);
+      } catch (error) {
+        console.log(error);
+        setLoadingGameInfo(false); // Set loading to false even if there's an error
+      }
+    };
+
+    fetchGameData();
+  }, [loggedUserInfo]);
 
   if (isLoading) {
     return (
@@ -225,11 +243,11 @@ function App() {
           }
         />
       </Routes>
-      {openGameInvite && <GameInvite />}
-      {gameInvitePendingOpen && <GameInvitePending />}
-      {gameFinished && <GameFinished />}
-      {multiplayerGameOver && <MultiplayerGameOver />}
-      {openPlayerLeftModal && (
+      {openGameInvite && isLoggedIn && <GameInvite />}
+      {gameInvitePendingOpen && isLoggedIn && <GameInvitePending />}
+      {gameFinished && isLoggedIn && <GameFinished />}
+      {multiplayerGameOver && isLoggedIn && <MultiplayerGameOver />}
+      {openPlayerLeftModal && isLoggedIn && (
         <PlayerLeft setOpenPlayerLeftModal={setOpenPlayerLeftModal} />
       )}
     </>

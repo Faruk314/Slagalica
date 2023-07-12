@@ -81,6 +81,8 @@ interface GameContextProps {
   openLeaveGame: boolean;
   openPlayerLeftModal: boolean;
   setOpenPlayerLeftModal: React.Dispatch<React.SetStateAction<boolean>>;
+  loadingGameInfo: boolean;
+  setLoadingGameInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextProps>({
@@ -150,9 +152,12 @@ export const GameContext = createContext<GameContextProps>({
   openLeaveGame: false,
   openPlayerLeftModal: false,
   setOpenPlayerLeftModal: () => {},
+  loadingGameInfo: true,
+  setLoadingGameInfo: () => {},
 });
 
 export const GameContextProvider = ({ children }: any) => {
+  const [loadingGameInfo, setLoadingGameInfo] = useState(true);
   const [openPlayerLeftModal, setOpenPlayerLeftModal] = useState(false);
   const [openLeaveGame, setOpenLeaveGame] = useState(false);
   const [winnerId, setWinnerId] = useState<null | number>(null);
@@ -375,6 +380,8 @@ export const GameContextProvider = ({ children }: any) => {
   return (
     <GameContext.Provider
       value={{
+        loadingGameInfo,
+        setLoadingGameInfo,
         setOpenPlayerLeftModal,
         openPlayerLeftModal,
         openLeaveGame,

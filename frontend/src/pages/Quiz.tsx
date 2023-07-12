@@ -185,7 +185,9 @@ const Quiz = () => {
       currentAnswers,
     };
 
-    updateGame(gameState, "quiz");
+    if (gameStateFetched) {
+      updateGame(gameState, "quiz");
+    }
   }, [
     currentAnswers,
     questions,
@@ -193,6 +195,7 @@ const Quiz = () => {
     gameStates.quiz,
     playerScore.quiz,
     gameStartTime,
+    gameStateFetched,
   ]);
 
   return (

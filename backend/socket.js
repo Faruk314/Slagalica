@@ -115,6 +115,8 @@ export default function setupSocket() {
           (playerId) => playerId !== playerOneId && playerId !== playerTwoId
         );
 
+        console.log(usersLookingForMatch);
+
         const playerOnesocketId = getUser(playerOneId);
         const playerTwoSocketId = getUser(playerTwoId);
 
